@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <base href="malnossi.github.io/"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/assets/css/pico.min.css" />
+    <meta name="description" content=" Django REST framework is a powerful and flexible toolkit for building Web APIs. It is built on top of the popular Django web framework. It allows developers to quickly create APIs that various clients, including web, mobile, and desktop applications. In this article I would like to share with you a tip that helped me alot to improve the developer experience.
+">
+    <title> Django Rest Framework, take this Id and give me back all your serializers power! </title>
+  </head>
+  <body>
+    <nav class="container">
+    <ul>
+      <li><strong>Mohamed Al Nossirat</strong></li>
+    </ul>
+    <ul>
+      
+      <li><a href="/">Home</a></li>
+      
+      <li><a href="/blog">Blog</a></li>
+      
+    </ul>
+  </nav>
+    <div class="container">
+        
+<article>
+  <header class="post-header">
+    <figure>
+      <img
+        class="post-img"
+        src="/assets/post_images/djangorest.jpeg"
+        alt=""
+      />
+      <figcaption></figcaption>
+    </figure>
+    <span>
+      <h4>Django Rest Framework, take this Id and give me back all your serializers power!</h4>
+    </span>
+  </header>
+  <div class="grid is-flex">
+    <div>Mohamed AL NOSSIRAT</div>
+    <div>22/07/2023</div>
+  </div>
+  <hr>
+  <div class="post"><h2>Introduction</h2>
+
+<p><a href="https://www.django-rest-framework.org/">Django REST Framework</a> is an amazing librairy built on top of Python's most powerful web framework <a href="https://docs.djangoproject.com/">Django</a>. It is one of the best features to add to Django. But as always, nothing is perfect and to get the best out of this framework, you have to tinker with a few things around it.</p>
+
+<p>There's always one thing that annoys me when I use this framework, that's how serializers behave when it comes to retrieving and validating data.</p>
+
+<h3>Example</h3>
+
+<p>Let's imagine that we have theses Models:</p>
+
+<pre><code>from django.db import models
+
+class Department(models.Model):
+
+    name = models.CharField(max_length=50)
+
+    def __str__(self) -&gt; str:
+        return self.name
+
+class Employee(models.Model):
+
+    department = models.ForeignKey(Department,
+                                    on_delete=models.CASCADE,
+                                    related_name="employees")
+    employee_name = models.CharField(max_length=100)
+
+    def __str__(self) -&gt; str:
+        return self.employee_name
+</code></pre>
+
+<p>Then we need serializers</p>
+
+<pre><code>from rest_framework import serializers
+from .models import (Department, Employee,)
+
+
+class DepartmentSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = Department
+        fields = '__all__'
+
+
+class EmployeeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = Employee
+        fields = '__all__'
+</code></pre>
+
+<blockquote>
+  <p>I assume that you know how to build views or viewsets and write the urlpatterns to use an api which expose Employees and Departments, if not! It's time to go and look at the <a href="https://www.django-rest-framework.org/">DRF</a> and <a href="https://docs.djangoproject.com/">Django</a> documentations.</p>
+</blockquote>
+
+<h2>What we can get</h2>
+
+<p>Choices that we can get from this example:</p>
+
+<pre><code>GET /api/v1/employees/1
+{
+    "id":1,
+    "employee_name":"mohamed",
+    "department":1
+}
+</code></pre>
+
+<p>Not so practical to read, we want more information about the department. But so efficient when writing</p>
+
+<pre><code>POST /api/v1/employees/
+{
+    "id":2,
+    "employee_name":"another employee_name that we want to create",
+    "department":1
+}
+</code></pre>
+
+<p>We can play with depth property of the serializer by example</p>
+
+<pre><code>class EmployeeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = Employee
+        fields = '__all__'
+        depth = 1
+</code></pre>
+
+<p>and we get this</p>
+
+<pre><code>GET /api/v1/employees/1
+{
+    "id":1,
+    "employee_name":"mohamed",
+    "department":{
+        "id":1,
+        "name":"Information technology"
+    }
+}
+</code></pre>
+
+<p>But if we want to create a new employee_name we should send all the department object again, here in this example we don't have so much informations but what if we have a model with multiple nested relations, it will be so annoying.</p>
+
+<pre><code>POST /api/v1/employees/
+{
+    "id":1,
+    "employee_name":"mohamed",
+    "department":{
+        "id":1,
+        "name":"Information technology",
+        "section":1
+    },
+    "issues":[
+        {
+            "id":1,
+            "title":"Optimizing fetch in the frontend"
+        }
+    ]
+    // and so go on
+}
+</code></pre>
+
+<h2>Solutions</h2>
+
+<h4>1- Use nested serializers</h4>
+
+<p>We can here use the DepartmentSerializer to retrieve the nested relation informations. But this will be a read only field as described in DRF documentation:</p>
+
+<blockquote>
+  <p>By default nested serializers are read-only. If you want to support write-operations to a nested serializer field you'll need to create <code>create()</code> and/or <code>update()</code> methods in order to explicitly specify how the child relationships should be saved
+  "Django REST Framework documentation" you can see <a href="https://www.django-rest-framework.org/api-guide/relations/#writable-nested-serializers">here</a></p>
+</blockquote>
+
+<pre><code>class EmployeeSerializer(serializers.ModelSerializer):
+    department = DepartmentSerializer()
+    class Meta:
+
+        model = Employee
+        fields = '__all__'
+
+    def create(self,validated_data):
+        department_data = validated_data.pop('department')
+        department = Department.objects.create(**department_data)
+        employee = Employee(department=department,**validated_data)
+        employee.save()
+        return employee
+
+    def update(self,instance, validated_data):
+        department = validated_data.pop('department')
+        department, created = Department.objects.get_or_create(**department_data)
+        instance.department = department
+        instance.save()
+        return instance
+</code></pre>
+
+<p>Again, here we have a very simple example, but with multiple nested serializers this will become very long and very hard to maintain. So very good solution to read data but not so easy to write these relations.</p>
+
+<h4>2- Use two serializers one to read data and the other to write it</h4>
+
+<p>We can use two serializers to make it easier to read and write data. However, we need to change the behaviour of our views or viewsets. So, to read the data (with GET http verb) or with (list, retrieve viewset actions) we use the ReadSerializer and to write the data with (POSt, PUT http verbs) or with (create, update viewset actions) we use the WriteSerializer.</p>
+
+<pre><code>from rest_framework import serializers
+
+class EmployeeReadSerializer(serializers.ModelSerializer):
+    department = DepartmentSerializer()
+
+    class Meta:
+
+        model = Employee
+        fields = '__all__'
+
+class EmployeeWriteSerializer(serializers.ModelSerializer):
+
+    class Meta:
+
+        model = Employee
+        fields = '__all__'
+</code></pre>
+
+<p>And in the ViewSet we can override the <code>get_serializer_class</code> methode to explicitly specify which serializer to use depending on which action we make:</p>
+
+<pre><code>from rest_framework import viewsets
+
+from .models import Employee
+from .serializers import (EmployeeReadSerializer, EmployeeWriteSerializer,)
+
+class EmployeeViewSet(viewsets.ModelViewSet):
+
+    queryset = Employee.objects.all()
+
+    def get_serializer_class(self):
+        if self.action in ["create", "update", "partial_update", "destroy"]:
+            return EmployeeWriteSerializer
+        return EmployeeReadSerializer
+</code></pre>
+
+<p>This solution may work, but you're writing almost the same serializer twice, and you're overriding the method in the viewset, so there's more code to write. Not very funny.</p>
+
+<h4>3- His Majesty, the PrimaryKeyRelatedField</h4>
+
+<p>Finally, we come to the purpose of this article. Here I'm going to tell you about this little trick I found.</p>
+
+<p>Looking at the DRF <a href="https://github.com/encode/django-rest-framework/tree/master">source-code</a>, especially the ModelSerializer class, I noticed that it automatically generates a <code>PrimaryKeyRelatedField</code> for the model's relationships. which itself makes the link via the Id.</p>
+
+<p>So, the idea here is to inherit from this Class in order to build our own PrimaryKeyRelatedField:</p>
+
+<pre><code>from collections import OrderedDict
+from rest_framework import serializers
+
+# Here I give this class the name of TheAmazingField you can name it whatever you want
+
+class TheAmazingField(serializers.PrimaryKeyRelatedField):
+
+    def __init__(self,serializer, many=False,*args,**kwargs) -&gt; None:
+        super().__init__(*args,**kwargs)
+        self.serializer = serializer
+        self.many=many
+
+    # When read data we need all the serialized object not only the Id
+    def to_representation(self,value):
+        return self.serializer(instance=value, many=self.many).data
+
+    """
+    I use a small but not mandatory trick to help you reduce typing:
+    make sure the queryset of the serialized model is automatically
+    inherited. I am very lazy
+    """
+    def get_queryset(self):
+        if self.queryset:
+            return self.queryset
+        return self.serializer.Meta.model.objects.all()
+
+    """
+    Get choices is used by the DRF autodoc and expects to_representation()
+    to return an ID, which causes everything to crash.
+    We rewrite the trick to use item.pk instead of to_representation()
+    """
+    def get_choices(self, cutoff=None):
+        queryset = self.get_queryset()
+        if queryset is None:
+            return {}
+
+        if cutoff is not None:
+            queryset = queryset[:cutoff]
+
+        return OrderedDict([
+            (
+                item.pk,
+                self.display_value(item)
+            )
+            for item in queryset
+        ])
+
+        """
+        DRF skips certain validations when there is only the id,
+        and as this is not the case here, everything crashes. We disable this.
+        """
+        def use_pk_only_optimization(self):
+        return False
+</code></pre>
+
+<p>Then we can use it like this:</p>
+
+<pre><code>class EmployeeSerializer(serializers.ModelSerializer):
+    department = TheAmazingField(serializer=DepartmentSerializer)
+    class Meta:
+        model = Employee
+        fields = '__all__'
+</code></pre>
+
+<p>So when we POST a new employee to the endpoint:</p>
+
+<pre><code>POST api/v1/employees/
+{
+    "department": 1,
+    "employee_name": "this works"
+}
+</code></pre>
+
+<p>The response of the API will retrieve directly the department object 🎉</p>
+
+<pre><code>{
+    "id": 1,
+    "department": {
+        "id": 1,
+        "name": "Information Technology"
+    },
+    "employee_name": "this works"
+}
+</code></pre>
+
+<h2>Conclusion</h2>
+
+<p>I don't claim to be an expert on Django's REST Framework, but the solution I've found here has enabled me to make progress on my projects, and when I've presented it to my colleagues, they've been pleased. However, I'd be happy to talk to anyone who would like to improve or criticise this solution.</p>
+
+<p>Also, you can refer to this <a href="https://github.com/malnossi/theamazingfield">github repo</a> if you want to see the source-code of the solution I mentioned in this article.</p>
+</div>
+  <footer>
+    <div id="article-footer"></div>
+  </footer>
+</article>
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/default.min.css"
+/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+<script>
+  hljs.highlightAll();
+  function goToTarget(item) {
+    item.scrollIntoView({ behavior: "smooth" });
+  }
+</script>
+<script>
+  window.onload = () => {
+    const year = new Date().getFullYear();
+    document.getElementById(
+      "article-footer"
+    ).innerText = `Mohamed Al Nossirat - ${year}`;
+  };
+</script>
+<style>
+  .is-flex{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  .post-header {
+    text-align: center;
+  }
+  .post-img {
+    border-radius: 10px;
+    max-width: 70vw;
+  }
+  #article-footer {
+    text-align: center;
+  }
+  .post{
+    text-align: justify;
+  }
+</style>
+
+    </div>
+  </body>
+</html>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@300&display=swap');
+  html,body {
+    font-family: 'IBM Plex Serif', serif;
+  }
+</style>
