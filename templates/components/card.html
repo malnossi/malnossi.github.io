@@ -1,0 +1,37 @@
+<div class="card">
+    <div class="card-image">
+        <figure class="image is-4by3">
+            <img src="/{{page.extra.cover}}" alt="Placeholder image" />
+        </figure>
+    </div>
+    <div class="card-content">
+        <div class="media">
+            <p class="title is-5 has-text-centered">{{page.title}}</p>
+        </div>
+        <nav class="level is-mobile">
+            <div class="level-left">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Reading time</p>
+                        <p class="">{{page.reading_time}} minutes</p>
+                    </div>
+                </div>
+            </div>
+            <div class="level-right">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <p class="heading">Published at</p>
+                        <time class="" datetime="{{page.date}}">{{page.date | date(format="%d/%m/%Y")}}</time>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <hr />
+        <a class="button is-info is-light is-fullwidth" href="{{page.permalink | safe}}">
+            <span>Read</span>
+            <span class="icon mt-1">
+                <i class="fa-brands fa-readme"></i>
+            </span>
+        </a>
+    </div>
+</div>

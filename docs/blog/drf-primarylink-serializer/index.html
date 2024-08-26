@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://malnossi.github.io/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>
+Mohamed Nossirat | Django Rest Framework take this id and give me your serializer power
+</title>
+</head>
+
+<body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div class="navbar-menu" id="navbarBasicExample">
+        <div class="navbar-end">
+            <a class="navbar-item is-size-4" href="/">Home</a>
+            
+            
+                
+                <a class="navbar-item is-size-4" href="https://malnossi.github.io/blog/"> Blog</a>
+            
+        </div>
+    </div>
+    </div>
+
+    <div class="navbar-end">
+    </div>
+    </div>
+</nav>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    
+      // Get all "navbar-burger" elements
+      const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+    
+      // Add a click event on each of them
+      $navbarBurgers.forEach( el => {
+        el.addEventListener('click', () => {
+    
+          // Get the target from the "data-target" attribute
+          const target = el.dataset.target;
+          const $target = document.getElementById(target);
+    
+          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+          el.classList.toggle('is-active');
+          $target.classList.toggle('is-active');
+    
+        });
+      });
+    
+    });
+      </script>
+    
+    
+<div class="container">
+    <div class="box">
+        <figure class="image is-16by9">
+            <img src="/pro_django.avif" style="border-radius: 0.75rem;"/>
+            
+        </figure>
+        <div class="is-flex is-justify-content-flex-end">
+            <small>Image Unsplash</small>
+        </div>
+        <h4 class="title is-size-4 has-text-centered mt-4">Django Rest Framework take this id and give me your serializer power</h4>
+        
+        <hr/>
+        <div class="mb-6">
+            <p class="has-text-weight-bold">Mohamed AL NOSSIRAT</p>
+            <span>
+                <small>23&#x2F;08&#x2F;2024</small>
+            </span>
+        </div>
+        <div>
+            <div class="content has-text-justified">
+                <h1 id="introduction">Introduction</h1>
+<p><a href="https://www.django-rest-framework.org/">Django REST Framework</a> is an amazing librairy built on top of Python's most powerful web framework <a href="https://docs.djangoproject.com/">Django</a>. It is one of the best features to add to Django. But as always, nothing is perfect and to get the best out of this framework, you have to tinker with a few things around it.
+There's always one thing that annoys me when I use this framework, that's how serializers behave when it comes to retrieving and validating data.</p>
+<h2 id="example">Example</h2>
+<p>Let's imagine that we have theses Models:</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>rest_framework </span><span style="color:#b48ead;">import </span><span>serializers
+</span><span style="color:#b48ead;">from .</span><span>models </span><span style="color:#b48ead;">import </span><span>(Department, Employee,)
+</span><span>
+</span><span>
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">DepartmentSerializer</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">serializers.ModelSerializer</span><span style="color:#eff1f5;">):
+</span><span>
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Meta</span><span style="color:#eff1f5;">:
+</span><span>
+</span><span>        model = Department
+</span><span>        fields = &#39;</span><span style="color:#a3be8c;">__all__</span><span>&#39;
+</span><span>
+</span><span>
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">EmployeeSerializer</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">serializers.ModelSerializer</span><span style="color:#eff1f5;">):
+</span><span>
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Meta</span><span style="color:#eff1f5;">:
+</span><span>
+</span><span>        model = Employee
+</span><span>        fields = &#39;</span><span style="color:#a3be8c;">__all__</span><span>&#39;
+</span></code></pre>
+<blockquote>
+<p><em>I assume that you know how to build views or viewsets and write the urlpatterns to use an api which expose Employees and Departments, if not! It's time to go and look at the DRF and Django documentations.</em></p>
+</blockquote>
+<h2 id="what-we-can-get">What we can get</h2>
+<p>Choices that we can get from this example:</p>
+<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#65737e;">// GET /api/v1/employees/1
+</span><span>{
+</span><span>    &quot;</span><span style="color:#a3be8c;">id</span><span>&quot;:</span><span style="color:#d08770;">1</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">employee_name</span><span>&quot;:&quot;</span><span style="color:#a3be8c;">mohamed</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">department</span><span>&quot;:</span><span style="color:#d08770;">1
+</span><span>}
+</span></code></pre>
+<p>Not so practical to read, we want more information about the department. But so efficient when writing</p>
+<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#65737e;">//POST /api/v1/employees/
+</span><span>{
+</span><span>    &quot;</span><span style="color:#a3be8c;">id</span><span>&quot;:</span><span style="color:#d08770;">2</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">employee_name</span><span>&quot;:&quot;</span><span style="color:#a3be8c;">another employee_name that we want to create</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">department</span><span>&quot;:</span><span style="color:#d08770;">1
+</span><span>}
+</span></code></pre>
+<p>We can play with depth property of the serializer by example</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">EmployeeSerializer</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">serializers.ModelSerializer</span><span style="color:#eff1f5;">):
+</span><span>
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Meta</span><span style="color:#eff1f5;">:
+</span><span>
+</span><span>        model = Employee
+</span><span>        fields = &#39;</span><span style="color:#a3be8c;">__all__</span><span>&#39;
+</span><span>        depth = </span><span style="color:#d08770;">1
+</span></code></pre>
+<p>We get this</p>
+<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#65737e;">// GET /api/v1/employees/1
+</span><span>{
+</span><span>    &quot;</span><span style="color:#a3be8c;">id</span><span>&quot;:</span><span style="color:#d08770;">1</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">employee_name</span><span>&quot;:&quot;</span><span style="color:#a3be8c;">mohamed</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">department</span><span>&quot;:{
+</span><span>        &quot;</span><span style="color:#a3be8c;">id</span><span>&quot;:</span><span style="color:#d08770;">1</span><span>,
+</span><span>        &quot;</span><span style="color:#a3be8c;">name</span><span>&quot;:&quot;</span><span style="color:#a3be8c;">Information technology</span><span>&quot;
+</span><span>    }
+</span><span>}
+</span></code></pre>
+<p>But if we want to create a new <code>employee_name</code> we should send all the department object again, here in this example we don't have so much informations but what if we have a model with multiple nested relations, it will be so annoying</p>
+<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#65737e;">// POST /api/v1/employees/
+</span><span>{
+</span><span>    &quot;</span><span style="color:#a3be8c;">id</span><span>&quot;:</span><span style="color:#d08770;">1</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">employee_name</span><span>&quot;:&quot;</span><span style="color:#a3be8c;">mohamed</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">department</span><span>&quot;:{
+</span><span>        &quot;</span><span style="color:#a3be8c;">id</span><span>&quot;:</span><span style="color:#d08770;">1</span><span>,
+</span><span>        &quot;</span><span style="color:#a3be8c;">name</span><span>&quot;:&quot;</span><span style="color:#a3be8c;">Information technology</span><span>&quot;,
+</span><span>        &quot;</span><span style="color:#a3be8c;">section</span><span>&quot;:</span><span style="color:#d08770;">1
+</span><span>    },
+</span><span>    &quot;</span><span style="color:#a3be8c;">issues</span><span>&quot;:[
+</span><span>        {
+</span><span>            &quot;</span><span style="color:#a3be8c;">id</span><span>&quot;:</span><span style="color:#d08770;">1</span><span>,
+</span><span>            &quot;</span><span style="color:#a3be8c;">title</span><span>&quot;:&quot;</span><span style="color:#a3be8c;">Optimizing fetch in the frontend</span><span>&quot;
+</span><span>        }
+</span><span>    ]
+</span><span>    </span><span style="color:#65737e;">// and so go on
+</span><span>}
+</span></code></pre>
+<h1 id="solutions">Solutions</h1>
+<h2 id="1-use-nested-serializers">1- Use nested serializers</h2>
+<p>We can here use the DepartmentSerializer to retrieve the nested relation informations. But this will be a read only field as described in DRF documentation:</p>
+<blockquote>
+<p><em>By default nested serializers are read-only. If you want to support write-operations to a nested serializer field you'll need to create create() and/or update() methods in order to explicitly specify how the child relationships should be saved "Django REST Framework documentation" you can see <a href="https://www.django-rest-framework.org/api-guide/relations/#writable-nested-serializers">here</a></em></p>
+</blockquote>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">EmployeeSerializer</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">serializers.ModelSerializer</span><span style="color:#eff1f5;">):
+</span><span>    department = </span><span style="color:#bf616a;">DepartmentSerializer</span><span>() </span><span style="color:#65737e;"># assume you have created the Departement serializer class
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Meta</span><span style="color:#eff1f5;">:
+</span><span>
+</span><span>        model = Employee
+</span><span>        fields = &#39;</span><span style="color:#a3be8c;">__all__</span><span>&#39;
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">create</span><span>(</span><span style="color:#bf616a;">self</span><span>,</span><span style="color:#bf616a;">validated_data</span><span>):
+</span><span>        department_data = validated_data.</span><span style="color:#bf616a;">pop</span><span>(&#39;</span><span style="color:#a3be8c;">department</span><span>&#39;)
+</span><span>        department = Department.objects.</span><span style="color:#bf616a;">create</span><span>(**department_data)
+</span><span>        employee = </span><span style="color:#bf616a;">Employee</span><span>(</span><span style="color:#bf616a;">department</span><span>=department,**validated_data)
+</span><span>        employee.</span><span style="color:#bf616a;">save</span><span>()
+</span><span>        </span><span style="color:#b48ead;">return </span><span>employee
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">update</span><span>(</span><span style="color:#bf616a;">self</span><span>,</span><span style="color:#bf616a;">instance</span><span>, </span><span style="color:#bf616a;">validated_data</span><span>):
+</span><span>        department = validated_data.</span><span style="color:#bf616a;">pop</span><span>(&#39;</span><span style="color:#a3be8c;">department</span><span>&#39;)
+</span><span>        department, created = Department.objects.</span><span style="color:#bf616a;">get_or_create</span><span>(**department_data)
+</span><span>        instance.department = department
+</span><span>        instance.</span><span style="color:#bf616a;">save</span><span>()
+</span><span>        </span><span style="color:#b48ead;">return </span><span>instance
+</span></code></pre>
+<p>Again, here we have a very simple example, but with multiple nested serializers this will become very long and very hard to maintain. So very good solution to read data but not so easy to write these relations</p>
+<h2 id="2-use-two-serializers-one-to-read-data-and-the-other-to-write-it">2- Use two serializers one to read data and the other to write it</h2>
+<p>We can use two serializers to make it easier to read and write data. However, we need to change the behaviour of our views or viewsets. So, to read the data (with GET http verb) or with (list, retrieve viewset actions) we use the ReadSerializer and to write the data with (POSt, PUT http verbs) or with (create, update viewset actions) we use the WriteSerializer.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>rest_framework </span><span style="color:#b48ead;">import </span><span>serializers
+</span><span>
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">EmployeeReadSerializer</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">serializers.ModelSerializer</span><span style="color:#eff1f5;">):
+</span><span>    department = </span><span style="color:#bf616a;">DepartmentSerializer</span><span>()
+</span><span>
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Meta</span><span style="color:#eff1f5;">:
+</span><span>
+</span><span>        model = Employee
+</span><span>        fields = &#39;</span><span style="color:#a3be8c;">__all__</span><span>&#39;
+</span><span>
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">EmployeeWriteSerializer</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">serializers.ModelSerializer</span><span style="color:#eff1f5;">):
+</span><span>
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Meta</span><span style="color:#eff1f5;">:
+</span><span>
+</span><span>        model = Employee
+</span><span>        fields = &#39;</span><span style="color:#a3be8c;">__all__</span><span>&#39;
+</span></code></pre>
+<p>And in the ViewSet or View we can override the get_serializer_class methode to explicitly specify which serializer to use depending on which action we make:</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>rest_framework </span><span style="color:#b48ead;">import </span><span>viewsets
+</span><span>
+</span><span style="color:#b48ead;">from .</span><span>models </span><span style="color:#b48ead;">import </span><span>Employee
+</span><span style="color:#b48ead;">from .</span><span>serializers </span><span style="color:#b48ead;">import </span><span>(EmployeeReadSerializer, EmployeeWriteSerializer,)
+</span><span>
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">EmployeeViewSet</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">viewsets.ModelViewSet</span><span style="color:#eff1f5;">):
+</span><span>
+</span><span>    queryset = Employee.objects.</span><span style="color:#bf616a;">all</span><span>()
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">get_serializer_class</span><span>(</span><span style="color:#bf616a;">self</span><span>):
+</span><span>        </span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">self</span><span>.action in [&quot;</span><span style="color:#a3be8c;">create</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">update</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">partial_update</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">destroy</span><span>&quot;]:
+</span><span>            </span><span style="color:#b48ead;">return </span><span>EmployeeWriteSerializer
+</span><span>        </span><span style="color:#b48ead;">return </span><span>EmployeeReadSerializer
+</span></code></pre>
+<p>This solution may work, but you're writing almost the same serializer twice, and you're overriding the method in the viewset, so there's more code to write. Not very funny.</p>
+<h2 id="3-the-primarykeyrelatedfield">3- The PrimaryKeyRelatedField</h2>
+<p>Finally, we come to the purpose of this article. Here I'm going to tell you about this little trick I found.</p>
+<p>Looking at the DRF <a href="https://github.com/encode/django-rest-framework/tree/master">source-code</a>, especially the ModelSerializer class, I noticed that it automatically generates a <code>PrimaryKeyRelatedField</code> for the model's relationships. which itself makes the link via the Id.</p>
+<p>So, the idea here is to inherit from this Class in order to build our own PrimaryKeyRelatedField:</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>collections </span><span style="color:#b48ead;">import </span><span>OrderedDict
+</span><span style="color:#b48ead;">from </span><span>rest_framework </span><span style="color:#b48ead;">import </span><span>serializers
+</span><span>
+</span><span style="color:#65737e;"># Here I give this class the name of TheAmazingField you can name it whatever you want
+</span><span>
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">TheAmazingField</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">serializers.PrimaryKeyRelatedField</span><span style="color:#eff1f5;">):
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#96b5b4;">__init__</span><span>(</span><span style="color:#bf616a;">self</span><span>,</span><span style="color:#bf616a;">serializer</span><span>, </span><span style="color:#bf616a;">many</span><span>=</span><span style="color:#d08770;">False</span><span>,*</span><span style="color:#bf616a;">args</span><span>,**</span><span style="color:#bf616a;">kwargs</span><span>) -&gt; </span><span style="color:#d08770;">None</span><span>:
+</span><span>        </span><span style="color:#96b5b4;">super</span><span>().</span><span style="color:#96b5b4;">__init__</span><span>(*args,**kwargs)
+</span><span>        </span><span style="color:#bf616a;">self</span><span>.serializer = serializer
+</span><span>        </span><span style="color:#bf616a;">self</span><span>.many=many
+</span><span>
+</span><span>    </span><span style="color:#65737e;"># When read data we need all the serialized object not only the Id
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">to_representation</span><span>(</span><span style="color:#bf616a;">self</span><span>,</span><span style="color:#bf616a;">value</span><span>):
+</span><span>        </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">serializer</span><span>(</span><span style="color:#bf616a;">instance</span><span>=value, </span><span style="color:#bf616a;">many</span><span>=</span><span style="color:#bf616a;">self</span><span>.many).data
+</span><span>
+</span><span>    </span><span style="color:#65737e;">&quot;&quot;&quot;
+</span><span style="color:#65737e;">    I use a small but not mandatory trick to help you reduce typing:
+</span><span style="color:#65737e;">    make sure the queryset of the serialized model is automatically
+</span><span style="color:#65737e;">    inherited. I am very lazy
+</span><span style="color:#65737e;">    &quot;&quot;&quot;
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">get_queryset</span><span>(</span><span style="color:#bf616a;">self</span><span>):
+</span><span>        </span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">self</span><span>.queryset:
+</span><span>            </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">self</span><span>.queryset
+</span><span>        </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">self</span><span>.serializer.Meta.model.objects.</span><span style="color:#bf616a;">all</span><span>()
+</span><span>
+</span><span>    </span><span style="color:#65737e;">&quot;&quot;&quot;
+</span><span style="color:#65737e;">    Get choices is used by the DRF autodoc and expects to_representation()
+</span><span style="color:#65737e;">    to return an ID, which causes everything to crash.
+</span><span style="color:#65737e;">    We rewrite the trick to use item.pk instead of to_representation()
+</span><span style="color:#65737e;">    &quot;&quot;&quot;
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">get_choices</span><span>(</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">cutoff</span><span>=</span><span style="color:#d08770;">None</span><span>):
+</span><span>        queryset = </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">get_queryset</span><span>()
+</span><span>        </span><span style="color:#b48ead;">if </span><span>queryset is </span><span style="color:#d08770;">None</span><span>:
+</span><span>            </span><span style="color:#b48ead;">return </span><span>{}
+</span><span>
+</span><span>        </span><span style="color:#b48ead;">if </span><span>cutoff is not </span><span style="color:#d08770;">None</span><span>:
+</span><span>            queryset = queryset[:cutoff]
+</span><span>
+</span><span>        </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">OrderedDict</span><span>([
+</span><span>            (
+</span><span>                item.pk,
+</span><span>                </span><span style="color:#bf616a;">self</span><span>.</span><span style="color:#bf616a;">display_value</span><span>(item)
+</span><span>            )
+</span><span>            </span><span style="color:#b48ead;">for </span><span>item </span><span style="color:#b48ead;">in </span><span>queryset
+</span><span>        ])
+</span><span>
+</span><span>        </span><span style="color:#65737e;">&quot;&quot;&quot;
+</span><span style="color:#65737e;">        DRF skips certain validations when there is only the id,
+</span><span style="color:#65737e;">        and as this is not the case here, everything crashes. We disable this.
+</span><span style="color:#65737e;">        &quot;&quot;&quot;
+</span><span>        </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">use_pk_only_optimization</span><span>(</span><span style="color:#bf616a;">self</span><span>):
+</span><span>        </span><span style="color:#b48ead;">return </span><span style="color:#d08770;">False
+</span></code></pre>
+<p>Then we can use it like this:</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">EmployeeSerializer</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">serializers.ModelSerializer</span><span style="color:#eff1f5;">):
+</span><span>    department = </span><span style="color:#bf616a;">TheAmazingField</span><span>(</span><span style="color:#bf616a;">serializer</span><span>=DepartmentSerializer)
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Meta</span><span style="color:#eff1f5;">:
+</span><span>        model = Employee
+</span><span>        fields = &#39;</span><span style="color:#a3be8c;">__all__</span><span>&#39;
+</span></code></pre>
+<p>So when we POST a new employee to the endpoint:</p>
+<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#65737e;">// POST api/v1/employees/
+</span><span>{
+</span><span>    &quot;</span><span style="color:#a3be8c;">department</span><span>&quot;: </span><span style="color:#d08770;">1</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">employee_name</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">this works</span><span>&quot;
+</span><span>}
+</span></code></pre>
+<p>The response of the API will retrieve directly the department object 🎉</p>
+<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span>{
+</span><span>    &quot;</span><span style="color:#a3be8c;">id</span><span>&quot;: </span><span style="color:#d08770;">1</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">department</span><span>&quot;: {
+</span><span>        &quot;</span><span style="color:#a3be8c;">id</span><span>&quot;: </span><span style="color:#d08770;">1</span><span>,
+</span><span>        &quot;</span><span style="color:#a3be8c;">name</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">Information Technology</span><span>&quot;
+</span><span>    },
+</span><span>    &quot;</span><span style="color:#a3be8c;">employee_name</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">this works</span><span>&quot;
+</span><span>}
+</span></code></pre>
+<h1 id="final-words">Final words</h1>
+<p>I don't claim to be an expert on Django's REST Framework, but the solution I've found here has enabled me to make progress on my projects, and when I've presented it to my colleagues, they've been pleased. However, I'd be happy to talk to anyone who would like to improve or criticise this solution.</p>
+<p>Also, you can refer to this <a href="https://github.com/malnossi/theamazingfield">github repo</a> if you want to see the source-code of the solution I mentioned in this article.</p>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+    <footer class="footer">
+    <div class="has-text-centered">
+        Mohamed AL NOSSIRAT <span id="date"></span>
+    </div>
+</footer>
+<script lang="js">
+    window.onload = () => {
+        const date = new Date().getFullYear()
+        document.querySelector("#date").textContent = date;
+    }
+</script>
+</body>
+<style lang="css">
+</style>
+</html>

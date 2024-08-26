@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}
+Mohamed Nossirat | {{ page.title }}
+{% endblock title %}
+{% block content %}
+<div class="container">
+    <div class="box">
+        <figure class="image is-16by9">
+            <img src="/{{page.extra.cover}}" style="border-radius: 0.75rem;"/>
+            
+        </figure>
+        <div class="is-flex is-justify-content-flex-end">
+            <small>Image {{page.extra.cover_source}}</small>
+        </div>
+        <h4 class="title is-size-4 has-text-centered mt-4">{{page.title}}</h4>
+        
+        <hr/>
+        <div class="mb-6">
+            <p class="has-text-weight-bold">{{page.authors[0]}}</p>
+            <span>
+                <small>{{page.date | date(format="%d/%m/%Y")}}</small>
+            </span>
+        </div>
+        <div>
+            <div class="content has-text-justified">
+                {{ page.content | safe }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
