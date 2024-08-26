@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://malnossi.github.io/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>
+Mohamed AL NOSSIRAT | Tags
+</title>
+</head>
+
+<body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div class="navbar-menu" id="navbarBasicExample">
+        <div class="navbar-end">
+            <a class="navbar-item" href="/">Home</a>
+            
+            
+                
+                <a class="navbar-item" href="https://malnossi.github.io/blog/"> Blog</a>
+            
+        </div>
+    </div>
+    </div>
+
+    <div class="navbar-end">
+    </div>
+    </div>
+</nav>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    
+      // Get all "navbar-burger" elements
+      const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+    
+      // Add a click event on each of them
+      $navbarBurgers.forEach( el => {
+        el.addEventListener('click', () => {
+    
+          // Get the target from the "data-target" attribute
+          const target = el.dataset.target;
+          const $target = document.getElementById(target);
+    
+          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+          el.classList.toggle('is-active');
+          $target.classList.toggle('is-active');
+    
+        });
+      });
+    
+    });
+      </script>
+    
+    
+<div class="section">
+    <div class="tags are-medium has-text-centered">
+        
+        <a class="tag is-hoverable" href="https://malnossi.github.io/tags/django/">Django</a>
+        
+        <a class="tag is-hoverable" href="https://malnossi.github.io/tags/drf/">Drf</a>
+        
+        <a class="tag is-hoverable" href="https://malnossi.github.io/tags/javascript/">Javascript</a>
+        
+        <a class="tag is-hoverable" href="https://malnossi.github.io/tags/python/">Python</a>
+        
+        <a class="tag is-hoverable" href="https://malnossi.github.io/tags/vuejs/">Vuejs</a>
+        
+        <a class="tag is-hoverable" href="https://malnossi.github.io/tags/web/">Web</a>
+        
+    </div>
+</div>
+
+    <footer class="footer">
+    <div class="has-text-centered">
+        Mohamed AL NOSSIRAT <span id="date"></span>
+    </div>
+</footer>
+<script lang="js">
+    window.onload = () => {
+        const date = new Date().getFullYear()
+        document.querySelector("#date").textContent = date;
+    }
+</script>
+</body>
+<style lang="css">
+</style>
+</html>

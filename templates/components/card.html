@@ -27,6 +27,11 @@
             </div>
         </nav>
         <hr />
+        <div class="tags">
+            {%for tag in page.taxonomies.tags%}
+                <a class="tag is-link" href="/tags/{{tag|lower}}">#{{tag}}</a>
+            {%endfor%}
+        </div>
         <a class="button is-info is-light is-fullwidth" href="{{page.permalink | safe}}">
             <span>Read</span>
             <span class="icon mt-1">

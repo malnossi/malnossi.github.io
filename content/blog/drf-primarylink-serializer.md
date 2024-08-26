@@ -3,6 +3,8 @@ title="Django Rest Framework rich related serializer"
 date=2024-08-23
 authors = ["Mohamed AL NOSSIRAT"]
 description="Django REST framework is a powerful and flexible toolkit for building Web APIs. It is built on top of the popular Django web framework. It allows developers to quickly create APIs that various clients, including web, mobile, and desktop applications. In this article I would like to share with you a tip that helped me alot to improve the developer experience."
+[taxonomies]
+tags=["Django","Drf","Python"]
 [extra]
 cover="pro_django.avif"
 cover_source="Unsplash"

@@ -4,29 +4,41 @@
 Mohamed Nossirat | {{ page.title }}
 {% endblock title %}
 {% block content %}
-<div class="container">
-    <div class="box">
-        <figure class="image is-16by9">
-            <img src="/{{page.extra.cover}}" style="border-radius: 0.75rem;"/>
-            
-        </figure>
-        <div class="is-flex is-justify-content-flex-end">
-            <small>Image {{page.extra.cover_source}}</small>
+<div class="section">
+    <div class="card">
+        <div class="card-image">
+          <figure class="image is-16by9">
+            <img
+              src="/{{page.extra.cover}}"
+              alt="Placeholder image"
+            />
+          </figure>
         </div>
-        <h4 class="title is-size-4 has-text-centered mt-4">{{page.title}}</h4>
-        
-        <hr/>
-        <div class="mb-6">
-            <p class="has-text-weight-bold">{{page.authors[0]}}</p>
-            <span>
-                <small>{{page.date | date(format="%d/%m/%Y")}}</small>
-            </span>
-        </div>
-        <div>
-            <div class="content has-text-justified">
-                {{ page.content | safe }}
+        <div class="card-content">
+            <div class="level">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <div class="heading is-size-5"><strong>{{page.title}}</strong></div>
+                        <div class="tags is-flex is-justify-content-center">
+                            {%for tag in page.taxonomies.tags%}
+                            <a class="tag is-link is-hoverable" href="/tags/{{tag|lower}}">#{{tag}}</a>
+                            {%endfor%}
+                        </div>
+                    </div>
+                </div>
             </div>
+          <div class="media">
+            <div class="media-content">
+              <span class="title is-size-6">{{page.authors[0]}}</span> |
+              <time datetime="{{page.date}}">{{page.date |date(format="%d/%m/%Y")}}</time>
+              <hr/>
+            </div>
+            
+          </div>
+          <div class="content has-text-justified">
+            {{page.content | safe}}
+          </div>
         </div>
-    </div>
+      </div>
 </div>
 {% endblock content %}

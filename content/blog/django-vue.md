@@ -6,6 +6,8 @@ description="Django is one of the most popular backend web application framework
 [extra]
 cover="two-scoops.avif"
 cover_source="Unsplash"
+[taxonomies]
+tags=["Django","Vuejs","Web","Javascript","Python"]
 +++
 # Introduction
 Going back in time, I was faced with a problem. We had a Django application in production, with some 4,000 deployments around France. We wanted to migrate the views to RESTfull architecture. But such a migration is costly in terms of time and development. Above all, we wanted to migrate from a monolithic application to a microservice with a Vuejs front end. The requirements were highly restrictive: we had to put in place a session authentication system, interoperability with other systems/applications etc...

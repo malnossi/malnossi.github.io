@@ -14,4 +14,25 @@
         <loc>https://malnossi.github.io/blog/drf-primarylink-serializer/</loc>
         <lastmod>2024-08-23</lastmod>
     </url>
+    <url>
+        <loc>https://malnossi.github.io/tags/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/tags/django/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/tags/drf/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/tags/javascript/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/tags/python/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/tags/vuejs/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/tags/web/</loc>
+    </url>
 </urlset>

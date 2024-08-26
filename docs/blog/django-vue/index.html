@@ -65,27 +65,47 @@ Mohamed Nossirat | Django &amp; VueJS 2 an alternative integration
       </script>
     
     
-<div class="container">
-    <div class="box">
-        <figure class="image is-16by9">
-            <img src="/two-scoops.avif" style="border-radius: 0.75rem;"/>
+<div class="section">
+    <div class="card">
+        <div class="card-image">
+          <figure class="image is-16by9">
+            <img
+              src="/two-scoops.avif"
+              alt="Placeholder image"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+            <div class="level">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <div class="heading is-size-5"><strong>Django &amp; VueJS 2 an alternative integration</strong></div>
+                        <div class="tags is-flex is-justify-content-center">
+                            
+                            <a class="tag is-link is-hoverable" href="/tags/django">#Django</a>
+                            
+                            <a class="tag is-link is-hoverable" href="/tags/vuejs">#Vuejs</a>
+                            
+                            <a class="tag is-link is-hoverable" href="/tags/web">#Web</a>
+                            
+                            <a class="tag is-link is-hoverable" href="/tags/javascript">#Javascript</a>
+                            
+                            <a class="tag is-link is-hoverable" href="/tags/python">#Python</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+          <div class="media">
+            <div class="media-content">
+              <span class="title is-size-6">Mohamed AL NOSSIRAT</span> |
+              <time datetime="2024-08-25">25&#x2F;08&#x2F;2024</time>
+              <hr/>
+            </div>
             
-        </figure>
-        <div class="is-flex is-justify-content-flex-end">
-            <small>Image Unsplash</small>
-        </div>
-        <h4 class="title is-size-4 has-text-centered mt-4">Django &amp; VueJS 2 an alternative integration</h4>
-        
-        <hr/>
-        <div class="mb-6">
-            <p class="has-text-weight-bold">Mohamed AL NOSSIRAT</p>
-            <span>
-                <small>25&#x2F;08&#x2F;2024</small>
-            </span>
-        </div>
-        <div>
-            <div class="content has-text-justified">
-                <h1 id="introduction">Introduction</h1>
+          </div>
+          <div class="content has-text-justified">
+            <h1 id="introduction">Introduction</h1>
 <p>Going back in time, I was faced with a problem. We had a Django application in production, with some 4,000 deployments around France. We wanted to migrate the views to RESTfull architecture. But such a migration is costly in terms of time and development. Above all, we wanted to migrate from a monolithic application to a microservice with a Vuejs front end. The requirements were highly restrictive: we had to put in place a session authentication system, interoperability with other systems/applications etc...</p>
 <p>So reinventing the wheel wasn't the best strategy to adopt. And we had to find a consensus, a common ground to facilitate the migration phase.</p>
 <p>I came up with a strategy for a Django-Vue integration that works in both development and production environments. As a bonus, it requires no extra dependencies.</p>
@@ -535,9 +555,9 @@ Congratulations, the Vuejs app integration works very well with django and now w
 A second benefit of this approach is that when you're developing new features or fixing bugs, you can run the production and development frontends in parallel, with Django's dev server running the production version and Vue's dev server doing the work - I'm working on it</p>
 <p>In this post, the Vue.js application and the Django API are treated as separate projects under the same roof, but this doesn't have to be the case.</p>
 
-            </div>
+          </div>
         </div>
-    </div>
+      </div>
 </div>
 
     <footer class="footer">
