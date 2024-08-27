@@ -1,10 +1,11 @@
 if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
     document.querySelectorAll("#homeicon").forEach(el => {
-        el.classList.add("transparent")
-    })
-
-
-
+        el.classList.remove('is-white')
+        el.classList.add("transparent")})
+}else{
+    document.querySelectorAll("#homeicon").forEach(el => {
+        el.classList.add('is-white')
+        el.classList.remove("transparent")})
 }
 window.matchMedia('(prefers-color-scheme: light)').addEventListener("change", event => {
     const buttons = document.querySelectorAll("#homeicon")
