@@ -15,6 +15,13 @@
         <lastmod>2024-08-23</lastmod>
     </url>
     <url>
+        <loc>https://malnossi.github.io/blog/page/1/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/blog/vuetify-dialog/</loc>
+        <lastmod>2024-08-28</lastmod>
+    </url>
+    <url>
         <loc>https://malnossi.github.io/tags/</loc>
     </url>
     <url>
@@ -31,6 +38,9 @@
     </url>
     <url>
         <loc>https://malnossi.github.io/tags/vuejs/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/tags/vuetify/</loc>
     </url>
     <url>
         <loc>https://malnossi.github.io/tags/web/</loc>

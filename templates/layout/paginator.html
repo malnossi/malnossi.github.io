@@ -1,0 +1,9 @@
+<div class="column">
+    <nav class="pagination is-right" role="navigation" aria-label="pagination">
+       <ul class="pagination-list">
+          {% for number in range(start=1, end=paginator.number_pagers + 1) %}
+          <a href="/blog/page/{{number}}" class="pagination-link {% if number == paginator.current_index %}is-current{% endif %}" aria-label="Goto page {{number}}">{{number}}</a>
+          {% endfor %}
+       </ul>
+    </nav>
+ </div>
