@@ -10,7 +10,7 @@
         integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
         crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>
-Mohamed Nossirat | Vue &amp; Vuetify Composable Programmatic Dialogs
+Mohamed Nossirat | Vue &amp; Vuetify Composable Confirm Dialogs
 </title>
 </head>
 
@@ -80,7 +80,7 @@ Mohamed Nossirat | Vue &amp; Vuetify Composable Programmatic Dialogs
             <div class="level">
                 <div class="level-item has-text-centered">
                     <div>
-                        <div class="heading is-size-5"><strong>Vue &amp; Vuetify Composable Programmatic Dialogs</strong></div>
+                        <div class="heading is-size-5"><strong>Vue &amp; Vuetify Composable Confirm Dialogs</strong></div>
                         <div class="tags is-flex is-justify-content-center">
                             
                             <a class="tag is-link is-hoverable" href="/tags/vuejs">#Vuejs</a>
@@ -102,7 +102,160 @@ Mohamed Nossirat | Vue &amp; Vuetify Composable Programmatic Dialogs
             
           </div>
           <div class="content has-text-justified">
-            
+            <h1 id="introduction">Introduction</h1>
+<p><a href="https://vuetifyjs.com/">Vuetify</a>, a popular Material Design framework for <a href="https://vuejs.org/">Vue</a>, provides a wide range of UI components, including highly customizable dialogs. This article will guide you through building composable programmatic dialogs using Vue and Vuetify, allowing you to manage dialogs efficiently and flexibly.Creating programmatic dialogs in Vue using Vuetify allows developers to dynamically generate dialogs that enhance the user experience without cluttering the template with numerous dialog components.</p>
+<h1 id="project-setup">Project Setup</h1>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#65737e;"># with npm
+</span><span style="color:#bf616a;">npm</span><span> create vuetify@latest
+</span><span style="color:#65737e;"># with yarn
+</span><span style="color:#bf616a;">yarn</span><span> create vuetify
+</span><span style="color:#65737e;"># with pnpm
+</span><span style="color:#bf616a;">pnpm</span><span> create vuetify
+</span><span style="color:#65737e;"># with bun
+</span><span style="color:#bf616a;">bun</span><span> create vuetify
+</span><span>
+</span></code></pre>
+<h1 id="create-the-dialog-component">Create the Dialog component</h1>
+<p>Create a new dialog component in <code>src/components</code>, here I will create a file names <code>Dialog.vue</code></p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">touch</span><span> src/dialogs/Dialog.vue
+</span></code></pre>
+<p>The content of this file is :</p>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">v-dialog </span><span style="color:#d08770;">v-model</span><span>=&quot;</span><span style="color:#a3be8c;">open</span><span>&quot; </span><span style="color:#d08770;">width</span><span>=&quot;</span><span style="color:#a3be8c;">50%</span><span>&quot; </span><span style="color:#d08770;">persistent max-width</span><span>=&quot;</span><span style="color:#a3be8c;">60%</span><span>&quot;&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">v-card </span><span style="color:#d08770;">:title</span><span>=&quot;</span><span style="color:#a3be8c;">title</span><span>&quot;&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">v-card-text</span><span>&gt;{{ message }}&lt;/</span><span style="color:#bf616a;">v-card-text</span><span>&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">v-card-actions</span><span>&gt;
+</span><span>                &lt;</span><span style="color:#bf616a;">v-btn </span><span style="color:#d08770;">color</span><span>=&quot;</span><span style="color:#a3be8c;">success</span><span>&quot; </span><span style="color:#d08770;">@click</span><span>=&quot;</span><span style="color:#a3be8c;">submitDialog</span><span>&quot;&gt;{{ submitText }}&lt;/</span><span style="color:#bf616a;">v-btn</span><span>&gt;
+</span><span>                &lt;</span><span style="color:#bf616a;">v-btn </span><span style="color:#d08770;">color</span><span>=&quot;</span><span style="color:#a3be8c;">error</span><span>&quot; </span><span style="color:#d08770;">@click</span><span>=&quot;</span><span style="color:#a3be8c;">cancelDialog</span><span>&quot;&gt;{{ cancelText }}&lt;/</span><span style="color:#bf616a;">v-btn</span><span>&gt;
+</span><span>            &lt;/</span><span style="color:#bf616a;">v-card-actions</span><span>&gt;
+</span><span>        &lt;/</span><span style="color:#bf616a;">v-card</span><span>&gt;
+</span><span>
+</span><span>    &lt;/</span><span style="color:#bf616a;">v-dialog</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
+</span><span>&lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">setup</span><span>&gt;
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">open </span><span>= </span><span style="color:#bf616a;">defineModel</span><span>({ default: </span><span style="color:#d08770;">false</span><span>, type: </span><span style="color:#ebcb8b;">Boolean </span><span>})
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">emits </span><span>= </span><span style="color:#bf616a;">defineEmits</span><span>([&quot;</span><span style="color:#a3be8c;">submit</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">cancel</span><span>&quot;])
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">props </span><span>= </span><span style="color:#bf616a;">defineProps</span><span>({
+</span><span>    title: {
+</span><span>        type: </span><span style="color:#ebcb8b;">String</span><span>,
+</span><span>        </span><span style="color:#8fa1b3;">default</span><span>: () </span><span style="color:#b48ead;">=&gt; </span><span>(&quot;</span><span style="color:#a3be8c;">Attention</span><span>&quot;),
+</span><span>    },
+</span><span>    message: {
+</span><span>        type: </span><span style="color:#ebcb8b;">String</span><span>,
+</span><span>        </span><span style="color:#8fa1b3;">default</span><span>: () </span><span style="color:#b48ead;">=&gt; </span><span>(</span><span style="color:#d08770;">null</span><span>),
+</span><span>    },
+</span><span>    submitText: {
+</span><span>        type: </span><span style="color:#ebcb8b;">String</span><span>,
+</span><span>        </span><span style="color:#8fa1b3;">default</span><span>: () </span><span style="color:#b48ead;">=&gt; </span><span>(&quot;</span><span style="color:#a3be8c;">Submit</span><span>&quot;),
+</span><span>    },
+</span><span>    cancelText: {
+</span><span>        type: </span><span style="color:#ebcb8b;">String</span><span>,
+</span><span>        </span><span style="color:#8fa1b3;">default</span><span>: () </span><span style="color:#b48ead;">=&gt; </span><span>(&quot;</span><span style="color:#a3be8c;">Cancel</span><span>&quot;),
+</span><span>    }
+</span><span>}
+</span><span>)
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">submitDialog </span><span>= () </span><span style="color:#b48ead;">=&gt; </span><span>{
+</span><span>    </span><span style="color:#bf616a;">emits</span><span>(&#39;</span><span style="color:#a3be8c;">submit</span><span>&#39;)
+</span><span>    </span><span style="color:#bf616a;">open</span><span>.value=</span><span style="color:#d08770;">false
+</span><span>}
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">cancelDialog </span><span>= () </span><span style="color:#b48ead;">=&gt; </span><span>{
+</span><span>    </span><span style="color:#bf616a;">emits</span><span>(&#39;</span><span style="color:#a3be8c;">cancel</span><span>&#39;)
+</span><span>    </span><span style="color:#bf616a;">open</span><span>.value=</span><span style="color:#d08770;">false
+</span><span>}
+</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
+</span></code></pre>
+<ul>
+<li><strong><code>&lt;v-dialog&gt;</code></strong>: A Vuetify component that creates a modal dialog box.</li>
+<li><code>persistent</code>: Prevents the user from closing the dialog by clicking outside of it.</li>
+<li><code>:title="title"</code>: Binds the <code>title</code> prop to the card title.</li>
+<li><strong><code>&lt;v-btn color="success"&gt;</code></strong>: A button with a green color labeled with the <code>submitText</code> prop (default is "Submit").</li>
+<li><strong><code>&lt;v-btn color="error"&gt;</code></strong>: A button with a red color labeled with the <code>cancelText</code> prop (default is "Cancel").</li>
+</ul>
+<p>And in the script section</p>
+<ul>
+<li><strong><code>const open = defineModel({ default: false, type: Boolean })</code></strong>: This line creates a reactive <code>open</code> property with a default value of <code>false</code> and specifies that it should be of type <code>Boolean</code>. This property controls whether the dialog is visible.</li>
+<li><strong><code>const emits = defineEmits(["submit", "cancel"])</code></strong>: Defines events that the component can emit, namely "submit" and "cancel". These events would typically be triggered when the corresponding buttons are clicked, but they are not explicitly emitted in the current code.</li>
+<li><strong><code>const props = defineProps({ ... })</code></strong>: Defines the properties (<code>props</code>) that the component accepts:
+<ul>
+<li><code>title</code>: A <code>String</code> prop with a default value of "Attention".</li>
+<li><code>message</code>: A <code>String</code> prop that defaults to <code>null</code>.</li>
+<li><code>submitText</code>: A <code>String</code> prop with a default value of "Submit".</li>
+<li><code>cancelText</code>: A <code>String</code> prop with a default value of "Cancel".</li>
+</ul>
+</li>
+</ul>
+<h1 id="create-composable-file">Create Composable file</h1>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">mkdir -p</span><span> src/composables &amp;&amp; </span><span style="color:#bf616a;">touch</span><span> /src/composable/useDialog.js
+</span></code></pre>
+<p>In the <code>useDialog.js</code> file copy and past this coce :</p>
+<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">createApp</span><span>, </span><span style="color:#bf616a;">mergeProps </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vue</span><span>&#39;
+</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">Dialog </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">@/components/Dialog.vue</span><span>&#39;
+</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">vuetify </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">@/plugins/vuetify</span><span>&#39;
+</span><span>
+</span><span style="color:#b48ead;">export const </span><span style="color:#8fa1b3;">getVAppRoot </span><span>= () </span><span style="color:#b48ead;">=&gt; </span><span>document.body
+</span><span style="color:#b48ead;">export const </span><span style="color:#8fa1b3;">createContainer </span><span>= () </span><span style="color:#b48ead;">=&gt; </span><span>document.</span><span style="color:#96b5b4;">createElement</span><span>(&#39;</span><span style="color:#a3be8c;">div</span><span>&#39;)
+</span><span>
+</span><span style="color:#b48ead;">export const </span><span style="color:#8fa1b3;">useDialog </span><span>= (</span><span style="color:#bf616a;">props</span><span>) </span><span style="color:#b48ead;">=&gt; </span><span>{    
+</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">rootElement </span><span>= </span><span style="color:#8fa1b3;">getVAppRoot</span><span>()
+</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">container </span><span>= </span><span style="color:#8fa1b3;">createContainer</span><span>()
+</span><span>    </span><span style="color:#b48ead;">return </span><span>new Promise((</span><span style="color:#bf616a;">resolve</span><span>) </span><span style="color:#b48ead;">=&gt; </span><span>{
+</span><span>        </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">componentApp </span><span>= </span><span style="color:#8fa1b3;">createApp</span><span>(</span><span style="color:#bf616a;">Dialog</span><span>, </span><span style="color:#8fa1b3;">mergeProps</span><span>(
+</span><span>            </span><span style="color:#bf616a;">props</span><span>,
+</span><span>            { modelValue: </span><span style="color:#d08770;">true </span><span>},
+</span><span>            {
+</span><span>                </span><span style="color:#8fa1b3;">onSubmit</span><span>() {
+</span><span>                    </span><span style="color:#8fa1b3;">resolve</span><span>(</span><span style="color:#d08770;">true</span><span>)
+</span><span>                },
+</span><span>                </span><span style="color:#8fa1b3;">onCancel</span><span>() {
+</span><span>                    </span><span style="color:#8fa1b3;">resolve</span><span>(</span><span style="color:#d08770;">false</span><span>)
+</span><span>                }
+</span><span>            }
+</span><span>        ))
+</span><span>        </span><span style="color:#bf616a;">rootElement</span><span>.</span><span style="color:#96b5b4;">appendChild</span><span>(</span><span style="color:#bf616a;">container</span><span>)
+</span><span>        </span><span style="color:#bf616a;">componentApp</span><span>.</span><span style="color:#8fa1b3;">use</span><span>(</span><span style="color:#bf616a;">vuetify</span><span>).</span><span style="color:#8fa1b3;">mount</span><span>(</span><span style="color:#bf616a;">container</span><span>)
+</span><span>    })
+</span><span>}
+</span></code></pre>
+<h1 id="usage">Usage</h1>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
+</span><span>  &lt;</span><span style="color:#bf616a;">v-container </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">fill-height</span><span>&quot;&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">v-btn </span><span style="color:#d08770;">@click</span><span>=&quot;</span><span style="color:#a3be8c;">clickedAsync</span><span>&quot;&gt;Click Async&lt;/</span><span style="color:#bf616a;">v-btn</span><span>&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">v-btn </span><span style="color:#d08770;">@click</span><span>=&quot;</span><span style="color:#a3be8c;">clickedThen</span><span>&quot;&gt;Click Then&lt;/</span><span style="color:#bf616a;">v-btn</span><span>&gt;
+</span><span>  &lt;/</span><span style="color:#bf616a;">v-container</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
+</span><span>
+</span><span>&lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">setup</span><span>&gt;
+</span><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">useDialog </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">@/composable/useDialog</span><span>&#39;;
+</span><span>
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">clickedAsync </span><span>= </span><span style="color:#b48ead;">async </span><span>() </span><span style="color:#b48ead;">=&gt; </span><span>{
+</span><span>  </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">response </span><span>= </span><span style="color:#b48ead;">await </span><span style="color:#bf616a;">useDialog</span><span>({ message: &quot;</span><span style="color:#a3be8c;">this works very nice !</span><span>&quot; });
+</span><span>  </span><span style="color:#b48ead;">if </span><span>(</span><span style="color:#bf616a;">response</span><span>) {
+</span><span>    </span><span style="color:#bf616a;">alert</span><span>(&quot;</span><span style="color:#a3be8c;">Dialog confirmed </span><span>&quot; + </span><span style="color:#bf616a;">response</span><span>,)
+</span><span>  } </span><span style="color:#b48ead;">else </span><span>{
+</span><span>    </span><span style="color:#bf616a;">alert</span><span>(&quot;</span><span style="color:#a3be8c;">Dialog canceled </span><span>&quot; + </span><span style="color:#bf616a;">response</span><span>, </span><span style="color:#bf616a;">response</span><span>)
+</span><span>  }
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">clickedThen </span><span>= () </span><span style="color:#b48ead;">=&gt; </span><span>{
+</span><span>  </span><span style="color:#bf616a;">useDialog</span><span>({ message: &quot;</span><span style="color:#a3be8c;">this works very nice !</span><span>&quot; }).</span><span style="color:#bf616a;">then</span><span>(response</span><span style="color:#b48ead;">=&gt;</span><span>{
+</span><span>    </span><span style="color:#b48ead;">if </span><span>(</span><span style="color:#bf616a;">response</span><span>) {
+</span><span>    </span><span style="color:#bf616a;">alert</span><span>(&quot;</span><span style="color:#a3be8c;">Dialog confirmed </span><span>&quot; + </span><span style="color:#bf616a;">response</span><span>,)
+</span><span>  } </span><span style="color:#b48ead;">else </span><span>{
+</span><span>    </span><span style="color:#bf616a;">alert</span><span>(&quot;</span><span style="color:#a3be8c;">Dialog canceled </span><span>&quot; + </span><span style="color:#bf616a;">response</span><span>, </span><span style="color:#bf616a;">response</span><span>)
+</span><span>  }
+</span><span>  })
+</span><span>}
+</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
+</span></code></pre>
+<h1 id="result">Result</h1>
+<div align="center">
+<img src="/dialog.gif" width="70%"/>
+</div>
+<h1 id="github-source">Github source</h1>
+<p><a href="https://github.com/malnossi/vue-vuetify-composable-dialog">vue-vuetify-composable-dialog</a></p>
+<h1 id="final-words">Final Words</h1>
+<p>Dialogs are essential for displaying critical information, confirmations, or forms without leaving the current page. However, managing dialogs can become cumbersome, especially in large-scale applications. Programmatic dialogs help mitigate this by creating dialogs on the fly using JavaScript, making them more manageable and reducing template bloat. Composable dialogs are built using the Composition API in Vue, enabling the encapsulation of dialog-related logic in a reusable and maintainable way.</p>
+
           </div>
         </div>
       </div>
