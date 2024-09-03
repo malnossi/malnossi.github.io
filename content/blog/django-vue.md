@@ -9,7 +9,7 @@ cover_source="Unsplash"
 [taxonomies]
 tags=["Django","Vuejs","Web","Javascript","Python"]
 +++
-# Introduction
+## Introduction
 Going back in time, I was faced with a problem. We had a Django application in production, with some 4,000 deployments around France. We wanted to migrate the views to RESTfull architecture. But such a migration is costly in terms of time and development. Above all, we wanted to migrate from a monolithic application to a microservice with a Vuejs front end. The requirements were highly restrictive: we had to put in place a session authentication system, interoperability with other systems/applications etc...
 
 So reinventing the wheel wasn't the best strategy to adopt. And we had to find a consensus, a common ground to facilitate the migration phase.
@@ -25,8 +25,8 @@ Let's get started !
 
 > *Here I'm going to talk about VueJs V2 integration, for VueJs V3 that will come in a future post*
 
-# Project setup
-## Setup Django project
+## Project setup
+#### Setup Django project
 Let's start by setting up a Django project in your favorite location
 > *I use MacOs, please refer to your OS documentation for equivalent commands*
 ```bash
@@ -49,16 +49,16 @@ For now, we have the initial architecture of a Django project:
 
 2 directories, 6 files
 ```
-## Setup vue-cli project for Vue2
-### Install vue-cli:
+#### Setup vue-cli project for Vue2
+###### Install vue-cli:
 ```bash
 $ npm install -g @vue/cli
-# OR
+## OR
 $ yarn global add @vue/cli
 ```
-### Create a Vue2 project:
+###### Create a Vue2 project:
 ```bash
-# you can name the Vue project whatever you want, here I name it webapp
+## you can name the Vue project whatever you want, here I name it webapp
 $ vue create webapp
 ```
 ```bash
@@ -66,7 +66,7 @@ Vue CLI v5.0.8
 ? Please pick a preset:
   Default ([Vue 3] babel, eslint)
   Default ([Vue 2] babel, eslint)
-❯ Manually select features # < Chose this one
+❯ Manually select features ## < Chose this one
 ```
 ```bash
 Vue CLI v5.0.8
@@ -76,7 +76,7 @@ toggle all, <i> to invert selection, and <enter> to proceed)
  ◉ Babel
  ◯ TypeScript
  ◯ Progressive Web App (PWA) Support
- ◉ Router # include Router
+ ◉ Router ## include Router
  ◯ Vuex
  ◯ CSS Pre-processors
  ◯ Linter / Formatter
@@ -89,7 +89,7 @@ Vue CLI v5.0.8
 ? Check the features needed for your project: Babel, Router
 ? Choose a version of Vue.js that you want to start the project with
   3.x
-❯ 2.x # Chose version 2.x
+❯ 2.x ## Chose version 2.x
 ```
 ```bash
 Vue CLI v5.0.8
@@ -97,7 +97,7 @@ Vue CLI v5.0.8
 ? Check the features needed for your project: Babel, Router
 ? Choose a version of Vue.js that you want to start the project with 2.x
 ? Use history mode for router? (Requires proper server setup for index fallback
-in production) (Y/n) n # No we will talk about router modes later
+in production) (Y/n) n ## No we will talk about router modes later
 ```
 After all these steps VueCLI will generate an application VueJs called webapp in the root directory of ower Django application
 ```bash
@@ -133,8 +133,8 @@ After all these steps VueCLI will generate an application VueJs called webapp in
 
 9 directories, 21 files
 ```
-# The Integration strategy
-## Config the vuejs app folder
+## The Integration strategy
+#### Config the vuejs app folder
 First things first, We have to include The webapp directory as a Django's application so in `settings.py` we're going to declare two new apps in the `INSTALLED_APPS` list
 ```python
 INSTALLED_APPS = [
@@ -150,9 +150,9 @@ In the webapp directory we have to add 3 files:
 ```bash
 touch webapp/{__init__.py,views.py,urls.py}
 ```
-## Configuration of Webpack
+#### Configuration of Webpack
 In the webapp folder we will change some of webpack settings to customize the build strategy to match Django's app conventions:
-### Staticfiles
+###### Staticfiles
 If we refer to Django's Documentations we find the following in the StaticFiles section:
 > *Store your static files in a folder called static in your app. For example my_app/static/my_app/example.jpg.*
 
@@ -207,10 +207,10 @@ Then we can build the Vuejs app `yarn build` or `npm run build` and the director
     │   └── views
     │       ├── AboutView.vue
     │       └── HomeView.vue
-    ├── static #NEW
+    ├── static ##NEW
     │   ├── favicon.ico
     │   ├── index.html
-    │   └── webapp # The assets directory
+    │   └── webapp ## The assets directory
     │       ├── css
     │       │   └── app.ff62af08.css
     │       └── js
@@ -227,7 +227,7 @@ Then we can build the Vuejs app `yarn build` or `npm run build` and the director
 
 13 directories, 34 files
 ```
-### Templates
+###### Templates
 By default the Django template loader will look within each app for a templates folder. But to avoid namespace issues you also need to repeat the app name in a folder below that before adding your template file.
 
 So, within the webapp app we create a templates directory, then a webapp directory, and finally our index.html file. The good news is that we can do this automatically during the vujs build phase.
@@ -251,7 +251,7 @@ module.exports = defineConfig({
   */
 })
 ```
-### PublicPath and Static settings
+###### PublicPath and Static settings
 Django uses the `STATIC_URL` when referring to static files located in `STATIC_ROOT`.
 
 In Django's Documentation we find:
@@ -281,10 +281,10 @@ module.exports = defineConfig({
    */
 });
 ```
-### Vue-router Hash mode
+###### Vue-router Hash mode
 The default mode for vue-router is hash mode - it uses the URL hash to simulate a full URL so that the page won't be reloaded when the URL changes. In other words, Django will provide the navigation to render the Vuejs application, then Vuejs will take over the internal navigation with the hash prefix.
 
-For example `www.mywebsite.com/#/` will load the Vuejs application and to go to `www.mywebsite.com/#/about` the about route is provided by the Vue Router and not by Django url patterns. So, in `webapp/router/index.js` we should change the configurations like this:
+For example `www.mywebsite.com/##/` will load the Vuejs application and to go to `www.mywebsite.com/##/about` the about route is provided by the Vue Router and not by Django url patterns. So, in `webapp/router/index.js` we should change the configurations like this:
 ```js
 import Vue from 'vue'
 import VueRouter from 'vue-router'
@@ -316,7 +316,7 @@ const router = new VueRouter({
 export default router
 ```
 After this we run `yarn build` or `npm run build` in the root folder of the webapp directory
-### Views ans Urls
+###### Views ans Urls
 In the `webapp/views.py`
 ```python
 from django.shortcuts import render
@@ -336,14 +336,14 @@ urlpatterns = [
 and then in the main `urls.py` file in the django_vue folder we set the root path to the webappurls:
 ```python
 from django.contrib import admin
-from django.urls import path, include #new
+from django.urls import path, include ##new
 
 urlpatterns = [
-    path('', include('webapp.urls')), #new
+    path('', include('webapp.urls')), ##new
     path('admin/', admin.site.urls)
 ]
 ```
-# Run the Devlopment server
+## Run the Devlopment server
 ```bash
 (venv)$ python manage.py runserver
 ```
@@ -352,7 +352,7 @@ urlpatterns = [
 </div>
 Congratulations, the Vuejs app integration works very well with django and now we're going to mock up an API to see how it all works.
 
-# Example app
+## Example app
 Start a new django app:
 ```bash
 (venv)$ python manage.py startapp posts
@@ -385,11 +385,11 @@ urlpatterns = [
 and in the `urls.py` file in the project folder:
 ```python
 from django.contrib import admin
-from django.urls import path,include,re_path #new
+from django.urls import path,include,re_path ##new
 
 urlpatterns = [
     path('',include('webapp.urls')),
-    re_path(r"^api/", include('posts.urls')),#new
+    re_path(r"^api/", include('posts.urls')),##new
     path('admin/', admin.site.urls),
 ]
 ```
@@ -398,7 +398,7 @@ Now Create a `PostsView.vue` file in `webapp/src/views`, the file content :
 <template>
     <div>
         <div v-for="post in posts" :key="post.id">
-            <span># {{ post.id }}</span> - <span>{{ post.framework }}</span>
+            <span>## {{ post.id }}</span> - <span>{{ post.framework }}</span>
         </div>
     </div>
 </template>
@@ -480,12 +480,12 @@ In the `App.vue` file add the router link to the posts component:
 </template>
 ```
 Rebuild the vue app with `yarn build` or `npm run build` and run the django server `python manage.py runserver`
-# Results
+## Results
 <div align="center">
 <img src="/results_vue_django.gif" width="100%"/>
 </div>
 
-# Final words
+## Final words
 With a little configuration, Django and Vue can work well together during web application development and when it's ready to go live.
 A second benefit of this approach is that when you're developing new features or fixing bugs, you can run the production and development frontends in parallel, with Django's dev server running the production version and Vue's dev server doing the work - I'm working on it
 

@@ -9,10 +9,10 @@ tags=["Django","DRF","Python"]
 cover="pro_django.avif"
 cover_source="Unsplash"
 +++
-# Introduction
+## Introduction
 [Django REST Framework](https://www.django-rest-framework.org/) is an amazing librairy built on top of Python's most powerful web framework [Django](https://docs.djangoproject.com/). It is one of the best features to add to Django. But as always, nothing is perfect and to get the best out of this framework, you have to tinker with a few things around it.
 There's always one thing that annoys me when I use this framework, that's how serializers behave when it comes to retrieving and validating data.
-## Example
+#### Example
 Let's imagine that we have theses Models:
 ```python
 from rest_framework import serializers
@@ -35,7 +35,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 ```
 > *I assume that you know how to build views or viewsets and write the urlpatterns to use an api which expose Employees and Departments, if not! It's time to go and look at the DRF and Django documentations.*
-## What we can get
+#### What we can get
 Choices that we can get from this example:
 ```js
 // GET /api/v1/employees/1
@@ -96,14 +96,14 @@ But if we want to create a new ```employee_name``` we should send all the depart
     // and so go on
 }
 ```
-# Solutions
-## 1- Use nested serializers
+## Solutions
+#### 1- Use nested serializers
 We can here use the DepartmentSerializer to retrieve the nested relation informations. But this will be a read only field as described in DRF documentation:
 
-> *By default nested serializers are read-only. If you want to support write-operations to a nested serializer field you'll need to create create() and/or update() methods in order to explicitly specify how the child relationships should be saved "Django REST Framework documentation" you can see [here](https://www.django-rest-framework.org/api-guide/relations/#writable-nested-serializers)*
+> *By default nested serializers are read-only. If you want to support write-operations to a nested serializer field you'll need to create create() and/or update() methods in order to explicitly specify how the child relationships should be saved "Django REST Framework documentation" you can see [here](https://www.django-rest-framework.org/api-guide/relations/##writable-nested-serializers)*
 ```python
 class EmployeeSerializer(serializers.ModelSerializer):
-    department = DepartmentSerializer() # assume you have created the Departement serializer class
+    department = DepartmentSerializer() ## assume you have created the Departement serializer class
     class Meta:
 
         model = Employee
@@ -125,7 +125,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
 ```
 Again, here we have a very simple example, but with multiple nested serializers this will become very long and very hard to maintain. So very good solution to read data but not so easy to write these relations
 
-## 2- Use two serializers one to read data and the other to write it
+#### 2- Use two serializers one to read data and the other to write it
 We can use two serializers to make it easier to read and write data. However, we need to change the behaviour of our views or viewsets. So, to read the data (with GET http verb) or with (list, retrieve viewset actions) we use the ReadSerializer and to write the data with (POSt, PUT http verbs) or with (create, update viewset actions) we use the WriteSerializer.
 ```python
 from rest_framework import serializers
@@ -162,7 +162,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         return EmployeeReadSerializer
 ```
 This solution may work, but you're writing almost the same serializer twice, and you're overriding the method in the viewset, so there's more code to write. Not very funny.
-## 3- The PrimaryKeyRelatedField
+#### 3- The PrimaryKeyRelatedField
 Finally, we come to the purpose of this article. Here I'm going to tell you about this little trick I found.
 
 Looking at the DRF [source-code](https://github.com/encode/django-rest-framework/tree/master), especially the ModelSerializer class, I noticed that it automatically generates a `PrimaryKeyRelatedField` for the model's relationships. which itself makes the link via the Id.
@@ -172,7 +172,7 @@ So, the idea here is to inherit from this Class in order to build our own Primar
 from collections import OrderedDict
 from rest_framework import serializers
 
-# Here I give this class the name of TheAmazingField you can name it whatever you want
+## Here I give this class the name of TheAmazingField you can name it whatever you want
 
 class TheAmazingField(serializers.PrimaryKeyRelatedField):
 
@@ -181,7 +181,7 @@ class TheAmazingField(serializers.PrimaryKeyRelatedField):
         self.serializer = serializer
         self.many=many
 
-    # When read data we need all the serialized object not only the Id
+    ## When read data we need all the serialized object not only the Id
     def to_representation(self,value):
         return self.serializer(instance=value, many=self.many).data
 
@@ -250,7 +250,7 @@ The response of the API will retrieve directly the department object 🎉
     "employee_name": "this works"
 }
 ```
-# Final words
+## Final words
 I don't claim to be an expert on Django's REST Framework, but the solution I've found here has enabled me to make progress on my projects, and when I've presented it to my colleagues, they've been pleased. However, I'd be happy to talk to anyone who would like to improve or criticise this solution.
 
 Also, you can refer to this [github repo](https://github.com/malnossi/theamazingfield) if you want to see the source-code of the solution I mentioned in this article.

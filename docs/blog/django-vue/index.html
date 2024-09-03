@@ -80,7 +80,7 @@ Mohamed Nossirat | Django &amp; VueJS 2 an alternative integration
             <div class="level">
                 <div class="level-item has-text-centered">
                     <div>
-                        <div class="heading is-size-5"><strong>Django &amp; VueJS 2 an alternative integration</strong></div>
+                        <h1 class="heading is-size-5"><strong>Django &amp; VueJS 2 an alternative integration</strong></h1>
                         <div class="tags is-flex is-justify-content-center">
                             
                             <a class="tag is-link is-hoverable" href="/tags/django">#Django</a>
@@ -106,7 +106,7 @@ Mohamed Nossirat | Django &amp; VueJS 2 an alternative integration
             
           </div>
           <div class="content has-text-justified">
-            <h1 id="introduction">Introduction</h1>
+            <h2 id="introduction">Introduction</h2>
 <p>Going back in time, I was faced with a problem. We had a Django application in production, with some 4,000 deployments around France. We wanted to migrate the views to RESTfull architecture. But such a migration is costly in terms of time and development. Above all, we wanted to migrate from a monolithic application to a microservice with a Vuejs front end. The requirements were highly restrictive: we had to put in place a session authentication system, interoperability with other systems/applications etc...</p>
 <p>So reinventing the wheel wasn't the best strategy to adopt. And we had to find a consensus, a common ground to facilitate the migration phase.</p>
 <p>I came up with a strategy for a Django-Vue integration that works in both development and production environments. As a bonus, it requires no extra dependencies.</p>
@@ -120,8 +120,8 @@ Mohamed Nossirat | Django &amp; VueJS 2 an alternative integration
 <blockquote>
 <p><em>Here I'm going to talk about VueJs V2 integration, for VueJs V3 that will come in a future post</em></p>
 </blockquote>
-<h1 id="project-setup">Project setup</h1>
-<h2 id="setup-django-project">Setup Django project</h2>
+<h2 id="project-setup">Project setup</h2>
+<h4 id="setup-django-project">Setup Django project</h4>
 <p>Let's start by setting up a Django project in your favorite location</p>
 <blockquote>
 <p><em>I use MacOs, please refer to your OS documentation for equivalent commands</em></p>
@@ -144,21 +144,21 @@ Mohamed Nossirat | Django &amp; VueJS 2 an alternative integration
 </span><span>
 </span><span style="color:#bf616a;">2</span><span> directories, 6 files
 </span></code></pre>
-<h2 id="setup-vue-cli-project-for-vue2">Setup vue-cli project for Vue2</h2>
-<h3 id="install-vue-cli">Install vue-cli:</h3>
+<h4 id="setup-vue-cli-project-for-vue2">Setup vue-cli project for Vue2</h4>
+<h6 id="install-vue-cli">Install vue-cli:</h6>
 <pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">$</span><span> npm install</span><span style="color:#bf616a;"> -g</span><span> @vue/cli
-</span><span style="color:#65737e;"># OR
+</span><span style="color:#65737e;">## OR
 </span><span style="color:#bf616a;">$</span><span> yarn global add @vue/cli
 </span></code></pre>
-<h3 id="create-a-vue2-project">Create a Vue2 project:</h3>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#65737e;"># you can name the Vue project whatever you want, here I name it webapp
+<h6 id="create-a-vue2-project">Create a Vue2 project:</h6>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#65737e;">## you can name the Vue project whatever you want, here I name it webapp
 </span><span style="color:#bf616a;">$</span><span> vue create webapp
 </span></code></pre>
 <pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">Vue</span><span> CLI v5.0.8
 </span><span style="color:#bf616a;">?</span><span> Please pick a preset:
 </span><span>  </span><span style="color:#bf616a;">Default</span><span> (</span><span style="color:#b48ead;">[</span><span>Vue 3</span><span style="color:#b48ead;">]</span><span> babel, eslint)
 </span><span>  </span><span style="color:#bf616a;">Default</span><span> (</span><span style="color:#b48ead;">[</span><span>Vue 2</span><span style="color:#b48ead;">]</span><span> babel, eslint)
-</span><span style="color:#bf616a;">❯</span><span> Manually select features </span><span style="color:#65737e;"># &lt; Chose this one
+</span><span style="color:#bf616a;">❯</span><span> Manually select features </span><span style="color:#65737e;">## &lt; Chose this one
 </span></code></pre>
 <pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">Vue</span><span> CLI v5.0.8
 </span><span style="color:#bf616a;">?</span><span> Please pick a preset: Manually select features
@@ -167,7 +167,7 @@ Mohamed Nossirat | Django &amp; VueJS 2 an alternative integration
 </span><span> </span><span style="color:#bf616a;">◉</span><span> Babel
 </span><span> </span><span style="color:#bf616a;">◯</span><span> TypeScript
 </span><span> </span><span style="color:#bf616a;">◯</span><span> Progressive Web App (PWA) </span><span style="color:#bf616a;">Support
-</span><span> </span><span style="color:#bf616a;">◉</span><span> Router </span><span style="color:#65737e;"># include Router
+</span><span> </span><span style="color:#bf616a;">◉</span><span> Router </span><span style="color:#65737e;">## include Router
 </span><span> </span><span style="color:#bf616a;">◯</span><span> Vuex
 </span><span> </span><span style="color:#bf616a;">◯</span><span> CSS Pre-processors
 </span><span> </span><span style="color:#bf616a;">◯</span><span> Linter / Formatter
@@ -179,14 +179,14 @@ Mohamed Nossirat | Django &amp; VueJS 2 an alternative integration
 </span><span style="color:#bf616a;">?</span><span> Check the features needed for your project: Babel, Router
 </span><span style="color:#bf616a;">?</span><span> Choose a version of Vue.js that you want to start the project with
 </span><span>  </span><span style="color:#bf616a;">3.x
-</span><span style="color:#bf616a;">❯</span><span> 2.x </span><span style="color:#65737e;"># Chose version 2.x
+</span><span style="color:#bf616a;">❯</span><span> 2.x </span><span style="color:#65737e;">## Chose version 2.x
 </span></code></pre>
 <pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">Vue</span><span> CLI v5.0.8
 </span><span style="color:#bf616a;">?</span><span> Please pick a preset: Manually select features
 </span><span style="color:#bf616a;">?</span><span> Check the features needed for your project: Babel, Router
 </span><span style="color:#bf616a;">?</span><span> Choose a version of Vue.js that you want to start the project with 2.x
 </span><span style="color:#bf616a;">?</span><span> Use history mode for router? (Requires proper server setup for index fallback
-</span><span style="color:#bf616a;">in</span><span> production) (</span><span style="color:#bf616a;">Y/n</span><span>) n </span><span style="color:#65737e;"># No we will talk about router modes later
+</span><span style="color:#bf616a;">in</span><span> production) (</span><span style="color:#bf616a;">Y/n</span><span>) n </span><span style="color:#65737e;">## No we will talk about router modes later
 </span></code></pre>
 <p>After all these steps VueCLI will generate an application VueJs called webapp in the root directory of ower Django application</p>
 <pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">├──</span><span> django_vue
@@ -221,8 +221,8 @@ Mohamed Nossirat | Django &amp; VueJS 2 an alternative integration
 </span><span>
 </span><span style="color:#bf616a;">9</span><span> directories, 21 files
 </span></code></pre>
-<h1 id="the-integration-strategy">The Integration strategy</h1>
-<h2 id="config-the-vuejs-app-folder">Config the vuejs app folder</h2>
+<h2 id="the-integration-strategy">The Integration strategy</h2>
+<h4 id="config-the-vuejs-app-folder">Config the vuejs app folder</h4>
 <p>First things first, We have to include The webapp directory as a Django's application so in <code>settings.py</code> we're going to declare two new apps in the <code>INSTALLED_APPS</code> list</p>
 <pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#bf616a;">INSTALLED_APPS </span><span>= [
 </span><span>    //
@@ -238,9 +238,9 @@ Mohamed Nossirat | Django &amp; VueJS 2 an alternative integration
 </ol>
 <pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">touch</span><span> webapp/{__init__.py,views.py,urls.py}
 </span></code></pre>
-<h2 id="configuration-of-webpack">Configuration of Webpack</h2>
+<h4 id="configuration-of-webpack">Configuration of Webpack</h4>
 <p>In the webapp folder we will change some of webpack settings to customize the build strategy to match Django's app conventions:</p>
-<h3 id="staticfiles">Staticfiles</h3>
+<h6 id="staticfiles">Staticfiles</h6>
 <p>If we refer to Django's Documentations we find the following in the StaticFiles section:</p>
 <blockquote>
 <p><em>Store your static files in a folder called static in your app. For example my_app/static/my_app/example.jpg.</em></p>
@@ -293,10 +293,10 @@ Mohamed Nossirat | Django &amp; VueJS 2 an alternative integration
 </span><span>    </span><span style="color:#bf616a;">│</span><span>   └── views
 </span><span>    </span><span style="color:#bf616a;">│</span><span>       ├── AboutView.vue
 </span><span>    </span><span style="color:#bf616a;">│</span><span>       └── HomeView.vue
-</span><span>    </span><span style="color:#bf616a;">├──</span><span> static </span><span style="color:#65737e;">#NEW
+</span><span>    </span><span style="color:#bf616a;">├──</span><span> static </span><span style="color:#65737e;">##NEW
 </span><span>    </span><span style="color:#bf616a;">│</span><span>   ├── favicon.ico
 </span><span>    </span><span style="color:#bf616a;">│</span><span>   ├── index.html
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   └── webapp </span><span style="color:#65737e;"># The assets directory
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   └── webapp </span><span style="color:#65737e;">## The assets directory
 </span><span>    </span><span style="color:#bf616a;">│</span><span>       ├── css
 </span><span>    </span><span style="color:#bf616a;">│</span><span>       │   └── app.ff62af08.css
 </span><span>    </span><span style="color:#bf616a;">│</span><span>       └── js
@@ -313,7 +313,7 @@ Mohamed Nossirat | Django &amp; VueJS 2 an alternative integration
 </span><span>
 </span><span style="color:#bf616a;">13</span><span> directories, 34 files
 </span></code></pre>
-<h3 id="templates">Templates</h3>
+<h6 id="templates">Templates</h6>
 <p>By default the Django template loader will look within each app for a templates folder. But to avoid namespace issues you also need to repeat the app name in a folder below that before adding your template file.</p>
 <p>So, within the webapp app we create a templates directory, then a webapp directory, and finally our index.html file. The good news is that we can do this automatically during the vujs build phase.</p>
 <p>Again in the <code>vue.config.js</code> file :</p>
@@ -334,7 +334,7 @@ Mohamed Nossirat | Django &amp; VueJS 2 an alternative integration
 </span><span style="color:#65737e;">  */
 </span><span>})
 </span></code></pre>
-<h3 id="publicpath-and-static-settings">PublicPath and Static settings</h3>
+<h6 id="publicpath-and-static-settings">PublicPath and Static settings</h6>
 <p>Django uses the <code>STATIC_URL</code> when referring to static files located in <code>STATIC_ROOT</code>.</p>
 <p>In Django's Documentation we find:</p>
 <blockquote>
@@ -362,9 +362,9 @@ Mohamed Nossirat | Django &amp; VueJS 2 an alternative integration
 </span><span style="color:#65737e;">   */
 </span><span>});
 </span></code></pre>
-<h3 id="vue-router-hash-mode">Vue-router Hash mode</h3>
+<h6 id="vue-router-hash-mode">Vue-router Hash mode</h6>
 <p>The default mode for vue-router is hash mode - it uses the URL hash to simulate a full URL so that the page won't be reloaded when the URL changes. In other words, Django will provide the navigation to render the Vuejs application, then Vuejs will take over the internal navigation with the hash prefix.</p>
-<p>For example <code>www.mywebsite.com/#/</code> will load the Vuejs application and to go to <code>www.mywebsite.com/#/about</code> the about route is provided by the Vue Router and not by Django url patterns. So, in <code>webapp/router/index.js</code> we should change the configurations like this:</p>
+<p>For example <code>www.mywebsite.com/##/</code> will load the Vuejs application and to go to <code>www.mywebsite.com/##/about</code> the about route is provided by the Vue Router and not by Django url patterns. So, in <code>webapp/router/index.js</code> we should change the configurations like this:</p>
 <pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span style="color:#bf616a;">Vue </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vue</span><span>&#39;
 </span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">VueRouter </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vue-router</span><span>&#39;
 </span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">HomeView </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">../views/HomeView.vue</span><span>&#39;
@@ -395,7 +395,7 @@ Mohamed Nossirat | Django &amp; VueJS 2 an alternative integration
 </span><span style="color:#b48ead;">export default </span><span style="color:#bf616a;">router
 </span></code></pre>
 <p>After this we run <code>yarn build</code> or <code>npm run build</code> in the root folder of the webapp directory</p>
-<h3 id="views-ans-urls">Views ans Urls</h3>
+<h6 id="views-ans-urls">Views ans Urls</h6>
 <p>In the <code>webapp/views.py</code></p>
 <pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.shortcuts </span><span style="color:#b48ead;">import </span><span>render
 </span><span>
@@ -412,21 +412,21 @@ Mohamed Nossirat | Django &amp; VueJS 2 an alternative integration
 </span></code></pre>
 <p>and then in the main <code>urls.py</code> file in the django_vue folder we set the root path to the webappurls:</p>
 <pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.contrib </span><span style="color:#b48ead;">import </span><span>admin
-</span><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path, include </span><span style="color:#65737e;">#new
+</span><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path, include </span><span style="color:#65737e;">##new
 </span><span>
 </span><span>urlpatterns = [
-</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;&#39;, </span><span style="color:#bf616a;">include</span><span>(&#39;</span><span style="color:#a3be8c;">webapp.urls</span><span>&#39;)), </span><span style="color:#65737e;">#new
+</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;&#39;, </span><span style="color:#bf616a;">include</span><span>(&#39;</span><span style="color:#a3be8c;">webapp.urls</span><span>&#39;)), </span><span style="color:#65737e;">##new
 </span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">admin/</span><span>&#39;, admin.site.urls)
 </span><span>]
 </span></code></pre>
-<h1 id="run-the-devlopment-server">Run the Devlopment server</h1>
+<h2 id="run-the-devlopment-server">Run the Devlopment server</h2>
 <pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span>(</span><span style="color:#bf616a;">venv</span><span>)$ python manage.py runserver
 </span></code></pre>
 <div align=center>
 <img src="/django_vue.png" width="100%"/>
 </div>
 Congratulations, the Vuejs app integration works very well with django and now we're going to mock up an API to see how it all works.
-<h1 id="example-app">Example app</h1>
+<h2 id="example-app">Example app</h2>
 <p>Start a new django app:</p>
 <pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span>(</span><span style="color:#bf616a;">venv</span><span>)$ python manage.py startapp posts
 </span></code></pre>
@@ -455,11 +455,11 @@ Congratulations, the Vuejs app integration works very well with django and now w
 </span></code></pre>
 <p>and in the <code>urls.py</code> file in the project folder:</p>
 <pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.contrib </span><span style="color:#b48ead;">import </span><span>admin
-</span><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path,include,re_path </span><span style="color:#65737e;">#new
+</span><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path,include,re_path </span><span style="color:#65737e;">##new
 </span><span>
 </span><span>urlpatterns = [
 </span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;&#39;,</span><span style="color:#bf616a;">include</span><span>(&#39;</span><span style="color:#a3be8c;">webapp.urls</span><span>&#39;)),
-</span><span>    </span><span style="color:#bf616a;">re_path</span><span>(</span><span style="color:#b48ead;">r</span><span>&quot;</span><span style="color:#b48ead;">^</span><span style="color:#a3be8c;">api/</span><span>&quot;, </span><span style="color:#bf616a;">include</span><span>(&#39;</span><span style="color:#a3be8c;">posts.urls</span><span>&#39;)),</span><span style="color:#65737e;">#new
+</span><span>    </span><span style="color:#bf616a;">re_path</span><span>(</span><span style="color:#b48ead;">r</span><span>&quot;</span><span style="color:#b48ead;">^</span><span style="color:#a3be8c;">api/</span><span>&quot;, </span><span style="color:#bf616a;">include</span><span>(&#39;</span><span style="color:#a3be8c;">posts.urls</span><span>&#39;)),</span><span style="color:#65737e;">##new
 </span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">admin/</span><span>&#39;, admin.site.urls),
 </span><span>]
 </span></code></pre>
@@ -467,7 +467,7 @@ Congratulations, the Vuejs app integration works very well with django and now w
 <pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
 </span><span>    &lt;</span><span style="color:#bf616a;">div</span><span>&gt;
 </span><span>        &lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">v-for</span><span>=&quot;</span><span style="color:#a3be8c;">post in posts</span><span>&quot; </span><span style="color:#d08770;">:key</span><span>=&quot;</span><span style="color:#a3be8c;">post.id</span><span>&quot;&gt;
-</span><span>            &lt;</span><span style="color:#bf616a;">span</span><span>&gt;# {{ post.id }}&lt;/</span><span style="color:#bf616a;">span</span><span>&gt; - &lt;</span><span style="color:#bf616a;">span</span><span>&gt;{{ post.framework }}&lt;/</span><span style="color:#bf616a;">span</span><span>&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">span</span><span>&gt;## {{ post.id }}&lt;/</span><span style="color:#bf616a;">span</span><span>&gt; - &lt;</span><span style="color:#bf616a;">span</span><span>&gt;{{ post.framework }}&lt;/</span><span style="color:#bf616a;">span</span><span>&gt;
 </span><span>        &lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
 </span><span>    &lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
 </span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
@@ -547,11 +547,11 @@ Congratulations, the Vuejs app integration works very well with django and now w
 </span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
 </span></code></pre>
 <p>Rebuild the vue app with <code>yarn build</code> or <code>npm run build</code> and run the django server <code>python manage.py runserver</code></p>
-<h1 id="results">Results</h1>
+<h2 id="results">Results</h2>
 <div align="center">
 <img src="/results_vue_django.gif" width="100%"/>
 </div>
-<h1 id="final-words">Final words</h1>
+<h2 id="final-words">Final words</h2>
 <p>With a little configuration, Django and Vue can work well together during web application development and when it's ready to go live.
 A second benefit of this approach is that when you're developing new features or fixing bugs, you can run the production and development frontends in parallel, with Django's dev server running the production version and Vue's dev server doing the work - I'm working on it</p>
 <p>In this post, the Vue.js application and the Django API are treated as separate projects under the same roof, but this doesn't have to be the case.</p>

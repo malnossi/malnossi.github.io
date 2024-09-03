@@ -9,22 +9,22 @@ tags=["Vuejs","Vuetify","Javascript"]
 cover="vuetify.avif"
 cover_source="Unsplash"
 +++
-# Introduction
+## Introduction
 [Vuetify](https://vuetifyjs.com/), a popular Material Design framework for [Vue](https://vuejs.org/), provides a wide range of UI components, including highly customizable dialogs. This article will guide you through building composable programmatic dialogs using Vue and Vuetify, allowing you to manage dialogs efficiently and flexibly.Creating programmatic dialogs in Vue using Vuetify allows developers to dynamically generate dialogs that enhance the user experience without cluttering the template with numerous dialog components.
-# Project Setup
+## Project Setup
 ```bash
-# with npm
+## with npm
 npm create vuetify@latest
-# with yarn
+## with yarn
 yarn create vuetify
-# with pnpm
+## with pnpm
 pnpm create vuetify
-# with bun
+## with bun
 bun create vuetify
 
 ```
 
-# Create the Dialog component
+## Create the Dialog component
 
 Create a new dialog component in `src/components`, here I will create a file names `Dialog.vue`
 ```bash
@@ -91,7 +91,7 @@ And in the script section
     * `submitText`: A `String` prop with a default value of "Submit". 
     * `cancelText`: A `String` prop with a default value of "Cancel".
 
-# Create Composable file
+## Create Composable file
 ```bash
 mkdir -p src/composables && touch /src/composable/useDialog.js
 ```
@@ -125,7 +125,7 @@ export const useDialog = (props) => {
     })
 }
 ```
-# Usage
+## Usage
 ```html
 <template>
   <v-container class="fill-height">
@@ -157,12 +157,12 @@ const clickedThen = () => {
 }
 </script>
 ```
-# Result
+## Result
 <div align="center">
 <img src="/dialog.gif" width="70%"/>
 </div>
 
-# Github source
+## Github source
 [vue-vuetify-composable-dialog](https://github.com/malnossi/vue-vuetify-composable-dialog)
-# Final Words
+## Final Words
 Dialogs are essential for displaying critical information, confirmations, or forms without leaving the current page. However, managing dialogs can become cumbersome, especially in large-scale applications. Programmatic dialogs help mitigate this by creating dialogs on the fly using JavaScript, making them more manageable and reducing template bloat. Composable dialogs are built using the Composition API in Vue, enabling the encapsulation of dialog-related logic in a reusable and maintainable way.
