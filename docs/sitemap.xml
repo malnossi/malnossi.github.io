@@ -22,6 +22,10 @@
         <loc>https://malnossi.github.io/blog/page/1/</loc>
     </url>
     <url>
+        <loc>https://malnossi.github.io/blog/server-side-events/</loc>
+        <lastmod>2025-04-17</lastmod>
+    </url>
+    <url>
         <loc>https://malnossi.github.io/blog/vuetify-dialog/</loc>
         <lastmod>2024-08-28</lastmod>
     </url>
@@ -33,6 +37,9 @@
     </url>
     <url>
         <loc>https://malnossi.github.io/tags/drf/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/tags/fastapi/</loc>
     </url>
     <url>
         <loc>https://malnossi.github.io/tags/javascript/</loc>
