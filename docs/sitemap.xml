@@ -11,6 +11,10 @@
         <lastmod>2024-10-11</lastmod>
     </url>
     <url>
+        <loc>https://malnossi.github.io/blog/django-vite-integration/</loc>
+        <lastmod>2025-06-02</lastmod>
+    </url>
+    <url>
         <loc>https://malnossi.github.io/blog/django-vue/</loc>
         <lastmod>2024-08-25</lastmod>
     </url>
@@ -46,6 +50,15 @@
     </url>
     <url>
         <loc>https://malnossi.github.io/tags/python/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/tags/react/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/tags/vite/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/tags/vue/</loc>
     </url>
     <url>
         <loc>https://malnossi.github.io/tags/vuejs/</loc>
