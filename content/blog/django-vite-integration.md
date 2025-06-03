@@ -571,6 +571,9 @@ getTodos();
 <img src="/django-vite-final.gif" width="100%"/>
 </div>
 
+## Github Repo
+[Django + Vite Integration](https://github.com/malnossi/django-vite)
+
 ## Conclusion
 Integrating Django with a modern frontend powered by Vite and Vue (or any other Vite-compatible framework like React or Svelte) provides the best of both worlds: Django’s robust backend capabilities and modern JavaScript’s dynamic, component-based UIs. This hybrid approach keeps the development stack maintainable while allowing for progressive enhancement.
 
