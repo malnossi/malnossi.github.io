@@ -27,6 +27,10 @@
         <lastmod>2024-08-23</lastmod>
     </url>
     <url>
+        <loc>https://malnossi.github.io/blog/golang-vuetify-embedded/</loc>
+        <lastmod>2025-10-02</lastmod>
+    </url>
+    <url>
         <loc>https://malnossi.github.io/blog/page/1/</loc>
     </url>
     <url>
@@ -48,6 +52,9 @@
     </url>
     <url>
         <loc>https://malnossi.github.io/tags/fastapi/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/tags/go/</loc>
     </url>
     <url>
         <loc>https://malnossi.github.io/tags/javascript/</loc>

@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://malnossi.github.io/bulma.min.css">
+    <link rel="stylesheet" href="https://malnossi.github.io/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnapp.websitepolicies.net/widgets/cookies/mzad7vzz.js" defer></script>
+    <title>
+Mohamed Nossirat | Embedding a Vuetify Frontend into a Go Web Server
+</title>
+</head>
+
+<body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div class="navbar-menu" id="navbarBasicExample">
+        <div class="navbar-end">
+            <a class="navbar-item" href="/">Home</a>
+            
+            
+                
+                <a class="navbar-item" href="https://malnossi.github.io/blog/"> Blog</a>
+            
+        </div>
+    </div>
+    </div>
+
+    <div class="navbar-end">
+    </div>
+    </div>
+</nav>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    
+      // Get all "navbar-burger" elements
+      const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+    
+      // Add a click event on each of them
+      $navbarBurgers.forEach( el => {
+        el.addEventListener('click', () => {
+    
+          // Get the target from the "data-target" attribute
+          const target = el.dataset.target;
+          const $target = document.getElementById(target);
+    
+          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+          el.classList.toggle('is-active');
+          $target.classList.toggle('is-active');
+    
+        });
+      });
+    
+    });
+      </script>
+    
+    
+<div class="section">
+    <div class="card">
+        <div class="card-image">
+          <figure class="image is-16by9">
+            <img
+              src="/goembed.png"
+              alt="Placeholder image"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+            <div class="level">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <h1 class="heading is-size-5"><strong>Embedding a Vuetify Frontend into a Go Web Server</strong></h1>
+                        <div class="tags is-flex is-justify-content-center">
+                            
+                            <a class="tag is-link is-hoverable" href="/tags/vuejs">#Vuejs</a>
+                            
+                            <a class="tag is-link is-hoverable" href="/tags/vuetify">#Vuetify</a>
+                            
+                            <a class="tag is-link is-hoverable" href="/tags/javascript">#Javascript</a>
+                            
+                            <a class="tag is-link is-hoverable" href="/tags/go">#Go</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+          <div class="media">
+            <div class="media-content">
+              <span class="title is-size-6">Mohamed AL NOSSIRAT</span> |
+              <time datetime="2025-10-02">02&#x2F;10&#x2F;2025</time>
+              <hr/>
+            </div>
+            
+          </div>
+          <div class="content has-text-justified">
+            <h2 id="introduction">Introduction</h2>
+<p>Vuetify is a Material‑Design component library for Vue. The official site describes it as a "no‑design‑skills required Open Source UI library with beautifully handcrafted Vue components". It comes with more than seventy components, automatic tree shaking, RTL support, form validation and even internationalisation for 45 languages. Because it follows Google’s Material guidelines and supports server‑side rendering (SSR) and Nuxt a Vuetify SPA makes an excellent companion for a Go back‑end.</p>
+<p>Modern Go can embed static files directly into the binary using the embed package introduced in Go 1.16. This allows us to compile a single executable that serves both the API and the front‑end. This article shows how to create a Vuetify frontend (using Vite or the CLI) and then explores three ways to host the resulting dist directory with Go:</p>
+<ol>
+<li>
+<p>Using the Go standard library (net/http)</p>
+</li>
+<li>
+<p>Using Gin, a popular HTTP framework with an opinionated API</p>
+</li>
+<li>
+<p>Using Fiber, a high‑performance framework inspired by Express.js</p>
+</li>
+</ol>
+<p>Along the way we will discuss the pros and cons of each method and when you might prefer one over another. The style used here takes inspiration from my existing posts: conversational, example‑driven and focused on practical code.</p>
+<h2 id="building-the-vuetify-frontend">Building the Vuetify frontend</h2>
+<p>First create the Vue/Vuetify project. Vuetify provides a CLI (npm create vuetify) or you can add it to an existing Vue project via Vite. For example:</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#65737e;"># create a new Vue 3 project and move into it
+</span><span style="color:#bf616a;">pnpm</span><span> create vue@latest
+</span><span style="color:#96b5b4;">cd</span><span> my-vuetify-app
+</span><span>
+</span><span style="color:#65737e;"># install Vuetify and its peer dependencies
+</span><span style="color:#bf616a;">pnpm</span><span> add vuetify @vuetify/plugin-vuetify
+</span><span>
+</span><span style="color:#65737e;"># enable Vuetify in vite.config.js
+</span><span style="color:#bf616a;">//</span><span> vite.config.js
+</span><span style="color:#bf616a;">import </span><span>{ createVuetify } from &#39;</span><span style="color:#a3be8c;">vuetify</span><span>&#39;
+</span><span style="color:#bf616a;">import </span><span>* as components from &#39;</span><span style="color:#a3be8c;">vuetify/components</span><span>&#39;
+</span><span style="color:#bf616a;">import </span><span>* as directives from &#39;</span><span style="color:#a3be8c;">vuetify/directives</span><span>&#39;
+</span><span>
+</span><span style="color:#b48ead;">export </span><span style="color:#bf616a;">default defineConfig</span><span>({
+</span><span>  plugins: [
+</span><span>    vue(),
+</span><span>    vuetify({
+</span><span>      components,
+</span><span>      directives,
+</span><span>    }),
+</span><span>  ],
+</span><span>})
+</span><span>
+</span></code></pre>
+<p>Vuetify’s default preset already includes the Roboto font and Material Design icons. If you opt to embed everything via CDN, remember to include the required fonts and CSS in the <head> and load the Vue and Vuetify scripts at the bottom of the page.
+Once you’re happy with the UI, build the project:</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">pnpm</span><span> run build </span><span style="color:#65737e;"># produces a dist directory with index.html and assets
+</span><span>
+</span></code></pre>
+<p>The resulting dist/ directory is what we will embed into our Go application.</p>
+<h2 id="approach-1-serving-the-spa-with-the-go-standard-library">Approach 1 – Serving the SPA with the Go standard library</h2>
+<p>Go’s net/http package is minimal and gives you full control of the HTTP server. By combining it with the embed package, you can build a single binary that contains the front‑end assets. Below is a simplified example:</p>
+<pre data-lang="go" style="background-color:#2b303b;color:#c0c5ce;" class="language-go "><code class="language-go" data-lang="go"><span style="color:#b48ead;">package </span><span style="color:#bf616a;">main
+</span><span>
+</span><span style="color:#b48ead;">import </span><span>(
+</span><span>    &quot;</span><span style="color:#a3be8c;">embed</span><span>&quot;
+</span><span>    &quot;</span><span style="color:#a3be8c;">io/fs</span><span>&quot;
+</span><span>    &quot;</span><span style="color:#a3be8c;">log</span><span>&quot;
+</span><span>    &quot;</span><span style="color:#a3be8c;">net/http</span><span>&quot;
+</span><span>)
+</span><span>
+</span><span style="color:#65737e;">//go:embed dist
+</span><span style="color:#b48ead;">var </span><span style="color:#bf616a;">embeddedFiles embed</span><span>.</span><span style="color:#b48ead;">FS
+</span><span>
+</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">main</span><span>() {
+</span><span>    </span><span style="color:#65737e;">// strip the leading dist/ from the embedded filesystem
+</span><span>    </span><span style="color:#bf616a;">stripped</span><span>, </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">fs</span><span>.</span><span style="color:#bf616a;">Sub</span><span>(</span><span style="color:#bf616a;">embeddedFiles</span><span>, &quot;</span><span style="color:#a3be8c;">dist</span><span>&quot;)
+</span><span>    </span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
+</span><span>        </span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Fatal</span><span>(</span><span style="color:#bf616a;">err</span><span>)
+</span><span>    }
+</span><span>
+</span><span>    </span><span style="color:#65737e;">// create a file server using http.FS
+</span><span>    </span><span style="color:#bf616a;">spa </span><span>:= </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">FileServer</span><span>(</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">FS</span><span>(</span><span style="color:#bf616a;">stripped</span><span>))
+</span><span>
+</span><span>    </span><span style="color:#65737e;">// handle API routes first
+</span><span>    </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">HandleFunc</span><span>(&quot;</span><span style="color:#a3be8c;">/api/hello</span><span>&quot;, </span><span style="color:#b48ead;">func</span><span>(</span><span style="color:#bf616a;">w http</span><span>.</span><span style="color:#b48ead;">ResponseWriter</span><span>, </span><span style="color:#bf616a;">r </span><span>*</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#b48ead;">Request</span><span>) {
+</span><span>        </span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Content-Type</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">application/json</span><span>&quot;)
+</span><span>        </span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Write</span><span>([]</span><span style="color:#b48ead;">byte</span><span>(`</span><span style="color:#a3be8c;">{&quot;message&quot;: &quot;Hello from Go!&quot;}</span><span>`))
+</span><span>    })
+</span><span>
+</span><span>    </span><span style="color:#65737e;">// fallback to the SPA for all other routes
+</span><span>    </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Handle</span><span>(&quot;</span><span style="color:#a3be8c;">/</span><span>&quot;, </span><span style="color:#bf616a;">spa</span><span>)
+</span><span>
+</span><span>    </span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Println</span><span>(&quot;</span><span style="color:#a3be8c;">Server listening on :8080</span><span>&quot;)
+</span><span>    </span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Fatal</span><span>(</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">ListenAndServe</span><span>(&quot;</span><span style="color:#a3be8c;">:8080</span><span>&quot;, </span><span style="color:#d08770;">nil</span><span>))
+</span><span>}
+</span><span>
+</span></code></pre>
+<p>The call to <code>fs.Sub</code> strips the dist prefix and <code>http.FileServer</code> serves files from the embedded filesystem. Because we mount the file server at <code>/</code>, any path that is not handled by the API will fall back to the SPA’s <code>index.html</code>. This approach yields a tiny binary with zero external dependencies and maximal control. In fact, the <code>net/http</code> package is extremely fast due to minimal overhead and gives you direct access to <code>request/response</code> handling.</p>
+<h3 id="pros">Pros</h3>
+<ul>
+<li><strong>Maximal control and no dependencies – you explicitly define routing and middleware.</strong></li>
+<li><strong>Minimal overhead and high performance.</strong></li>
+<li><strong>Good learning exercise – you will gain deeper knowledge of Go’s networking primitives.</strong></li>
+</ul>
+<h3 id="cons">Cons</h3>
+<ul>
+<li><strong>Routing and middleware quickly become verbose for large applications.</strong></li>
+<li><strong>You must implement features like JSON binding, validation and error handling yourself.</strong></li>
+</ul>
+<blockquote>
+<p>This method suits small services where you need complete control and do not want any framework overhead.</p>
+</blockquote>
+<h2 id="approach-2-serving-the-spa-with-gin">Approach 2 – Serving the SPA with Gin</h2>
+<p><a href="https://gin-gonic.com/">Gin</a> is a popular HTTP framework built around a high‑performance router. It provides concise APIs for routing, middleware, JSON binding and error handling. To embed a front‑end in Gin you still use go:embed, but Gin offers helper functions such as StaticFS and FileFromFS to serve files from an embedded filesystem.</p>
+<pre data-lang="go" style="background-color:#2b303b;color:#c0c5ce;" class="language-go "><code class="language-go" data-lang="go"><span style="color:#b48ead;">package </span><span style="color:#bf616a;">main
+</span><span>
+</span><span style="color:#b48ead;">import </span><span>(
+</span><span>    &quot;</span><span style="color:#a3be8c;">embed</span><span>&quot;
+</span><span>    &quot;</span><span style="color:#a3be8c;">io/fs</span><span>&quot;
+</span><span>    &quot;</span><span style="color:#a3be8c;">net/http</span><span>&quot;
+</span><span>
+</span><span>    &quot;</span><span style="color:#a3be8c;">github.com/gin-gonic/gin</span><span>&quot;
+</span><span>)
+</span><span>
+</span><span style="color:#65737e;">//go:embed dist
+</span><span style="color:#b48ead;">var </span><span style="color:#bf616a;">embeddedFiles embed</span><span>.</span><span style="color:#b48ead;">FS
+</span><span>
+</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">main</span><span>() {
+</span><span>    </span><span style="color:#65737e;">// create a Gin router with default middleware (logger &amp; recovery)
+</span><span>    </span><span style="color:#bf616a;">router </span><span>:= </span><span style="color:#bf616a;">gin</span><span>.</span><span style="color:#bf616a;">Default</span><span>()
+</span><span>
+</span><span>    </span><span style="color:#65737e;">// set up API routes
+</span><span>    </span><span style="color:#bf616a;">router</span><span>.</span><span style="color:#bf616a;">GET</span><span>(&quot;</span><span style="color:#a3be8c;">/api/hello</span><span>&quot;, </span><span style="color:#b48ead;">func</span><span>(</span><span style="color:#bf616a;">c </span><span>*</span><span style="color:#bf616a;">gin</span><span>.</span><span style="color:#b48ead;">Context</span><span>) {
+</span><span>        </span><span style="color:#bf616a;">c</span><span>.</span><span style="color:#bf616a;">JSON</span><span>(</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusOK</span><span>, </span><span style="color:#bf616a;">gin</span><span>.</span><span style="color:#bf616a;">H</span><span>{&quot;</span><span style="color:#a3be8c;">message</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">Hello from Gin</span><span>&quot;})
+</span><span>    })
+</span><span>
+</span><span>    </span><span style="color:#65737e;">// mount the embedded SPA
+</span><span>    </span><span style="color:#bf616a;">stripped</span><span>, </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">fs</span><span>.</span><span style="color:#bf616a;">Sub</span><span>(</span><span style="color:#bf616a;">embeddedFiles</span><span>, &quot;</span><span style="color:#a3be8c;">dist</span><span>&quot;)
+</span><span>    </span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
+</span><span>        </span><span style="color:#96b5b4;">panic</span><span>(</span><span style="color:#bf616a;">err</span><span>)
+</span><span>    }
+</span><span>    </span><span style="color:#65737e;">// serve static files with a custom handler
+</span><span>    </span><span style="color:#bf616a;">fileServer </span><span>:= </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">FileServer</span><span>(</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">FS</span><span>(</span><span style="color:#bf616a;">stripped</span><span>))
+</span><span>    </span><span style="color:#bf616a;">router</span><span>.</span><span style="color:#bf616a;">NoRoute</span><span>(</span><span style="color:#b48ead;">func</span><span>(</span><span style="color:#bf616a;">c </span><span>*</span><span style="color:#bf616a;">gin</span><span>.</span><span style="color:#b48ead;">Context</span><span>) {
+</span><span>        </span><span style="color:#65737e;">// serve index.html for any route not matched by API routes
+</span><span>        </span><span style="color:#bf616a;">fileServer</span><span>.</span><span style="color:#bf616a;">ServeHTTP</span><span>(</span><span style="color:#bf616a;">c</span><span>.</span><span style="color:#bf616a;">Writer</span><span>, </span><span style="color:#bf616a;">c</span><span>.</span><span style="color:#bf616a;">Request</span><span>)
+</span><span>    })
+</span><span>
+</span><span>    </span><span style="color:#bf616a;">router</span><span>.</span><span style="color:#bf616a;">Run</span><span>(&quot;</span><span style="color:#a3be8c;">:8080</span><span>&quot;)
+</span><span>}
+</span><span>
+</span></code></pre>
+<p>In this setup, API routes are defined first. <code>NoRoute</code> acts as a catch‑all: if a request does not match an API route it calls the file server, which serves <code>index.html</code> or other static assets. You could also mount the SPA under a prefix using <code>router.StaticFS("/", http.FS(stripped))</code> and avoid route conflicts.</p>
+<h3 id="pros-of-using-gin">Pros of using Gin</h3>
+<ul>
+<li><strong>Rapid development – built‑in routing, middleware and JSON binding accelerate development.</strong></li>
+<li><strong>Readable code – concise API for common web patterns</strong></li>
+<li><strong>Performance and community – Gin’s trie‑based router is extremely fast and the framework has a large ecosystem</strong></li>
+<li><strong>Error handling &amp; recovery – <code>gin.Default()</code> includes logging and panic recovery.</strong></li>
+</ul>
+<h3 id="cons-1">Cons</h3>
+<ul>
+<li><strong>Adds an external dependency and introduces Gin‑specific abstractions.</strong></li>
+<li><strong>The framework’s conventions can hide some of the underlying HTTP details, which some developers may find too “magical”.</strong></li>
+</ul>
+<blockquote>
+<p>Use Gin when you need robust routing, middleware and request binding out‑of‑the‑box and are willing to trade a small amount of control for productivity</p>
+</blockquote>
+<h2 id="performance-considerations">Performance considerations</h2>
+<p>All approaches can handle a Vuetify SPA without noticeable latency. Go’s standard library is extremely fast because there is virtually no framework overhead. Gin introduces a small overhead but still ranks among the fastest frameworks. However, real‑world performance differences are often negligible compared to other factors like database calls, API logic and network latency.</p>
+<h2 id="choosing-the-right-approach">Choosing the right approach</h2>
+<ol>
+<li><strong>Small microservice or learning exercise</strong> – use net/http. You’ll write more boilerplate but gain mastery over Go’s HTTP primitives. Embedding the SPA is trivial and there are no dependencies.</li>
+<li><strong>General web API or REST service</strong> – use Gin. It provides robust routing, middleware, validation and has a large ecosystem. Embedding the SPA requires only a few extra lines and you get better error handling.</li>
+</ol>
+<h2 id="conclusion">Conclusion</h2>
+<p>By combining Vuetify’s polished Material‑Design components with Go’s powerful HTTP stack, you can deliver fast, responsive single‑page applications from a single binary. Start by building your Vuetify front‑end, then choose the Go serving approach that best fits your project:</p>
+<ul>
+<li>
+<p><strong>The standard library provides raw speed and maximum control but demands more boilerplate.</strong></p>
+</li>
+<li>
+<p><strong>Gin gives you features and conciseness at the cost of extra dependencies.</strong></p>
+</li>
+</ul>
+<p>Whichever path you choose, the embed package makes it trivial to package your Vue/Vuetify build inside the Go binary, enabling self‑contained deployments and a seamless developer experience.</p>
+
+          </div>
+        </div>
+      </div>
+</div>
+
+    <footer class="footer">
+    <div class="has-text-centered">
+        Mohamed AL NOSSIRAT <span id="date"></span>
+    </div>
+</footer>
+<script lang="js">
+    window.onload = () => {
+        const date = new Date().getFullYear()
+        document.querySelector("#date").textContent = date;
+    }
+</script>
+    <script lang="js" src='https://malnossi.github.io/script.js'></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV" defer></script>
+    <script defer>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-8LBRDGLXJV');
+    </script>
+</body>
+
+</html>
