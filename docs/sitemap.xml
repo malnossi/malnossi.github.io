@@ -34,6 +34,13 @@
         <loc>https://malnossi.github.io/blog/page/1/</loc>
     </url>
     <url>
+        <loc>https://malnossi.github.io/blog/page/2/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/blog/serve-side-events-golang/</loc>
+        <lastmod>2025-10-10</lastmod>
+    </url>
+    <url>
         <loc>https://malnossi.github.io/blog/server-side-events/</loc>
         <lastmod>2025-04-17</lastmod>
     </url>
@@ -57,6 +64,9 @@
         <loc>https://malnossi.github.io/tags/go/</loc>
     </url>
     <url>
+        <loc>https://malnossi.github.io/tags/html/</loc>
+    </url>
+    <url>
         <loc>https://malnossi.github.io/tags/javascript/</loc>
     </url>
     <url>
@@ -64,6 +74,12 @@
     </url>
     <url>
         <loc>https://malnossi.github.io/tags/react/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/tags/redis/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/tags/sse/</loc>
     </url>
     <url>
         <loc>https://malnossi.github.io/tags/vite/</loc>
