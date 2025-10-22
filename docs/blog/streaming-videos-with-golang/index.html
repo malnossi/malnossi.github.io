@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://malnossi.github.io/bulma.min.css">
+    <link rel="stylesheet" href="https://malnossi.github.io/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
+        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdnapp.websitepolicies.net/widgets/cookies/mzad7vzz.js" defer></script>
+    <title>
+Mohamed Nossirat | Stream videos with Go and Http
+</title>
+</head>
+
+<body>
+    <nav class="navbar" role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+            <span aria-hidden="true"></span>
+        </a>
+    </div>
+
+    <div class="navbar-menu" id="navbarBasicExample">
+        <div class="navbar-end">
+            <a class="navbar-item" href="/">Home</a>
+            
+            
+                
+                <a class="navbar-item" href="https://malnossi.github.io/blog/"> Blog</a>
+            
+        </div>
+    </div>
+    </div>
+
+    <div class="navbar-end">
+    </div>
+    </div>
+</nav>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+    
+      // Get all "navbar-burger" elements
+      const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+    
+      // Add a click event on each of them
+      $navbarBurgers.forEach( el => {
+        el.addEventListener('click', () => {
+    
+          // Get the target from the "data-target" attribute
+          const target = el.dataset.target;
+          const $target = document.getElementById(target);
+    
+          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+          el.classList.toggle('is-active');
+          $target.classList.toggle('is-active');
+    
+        });
+      });
+    
+    });
+      </script>
+    
+    
+<div class="section">
+    <div class="card">
+        <div class="card-image">
+          <figure class="image is-16by9">
+            <img
+              src="/govideo.png"
+              alt="Placeholder image"
+            />
+          </figure>
+        </div>
+        <div class="card-content">
+            <div class="level">
+                <div class="level-item has-text-centered">
+                    <div>
+                        <h1 class="heading is-size-5"><strong>Stream videos with Go and Http</strong></h1>
+                        <div class="tags is-flex is-justify-content-center">
+                            
+                            <a class="tag is-link is-hoverable" href="/tags/go">#Go</a>
+                            
+                            <a class="tag is-link is-hoverable" href="/tags/html">#HTML</a>
+                            
+                            <a class="tag is-link is-hoverable" href="/tags/streaming">#Streaming</a>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+          <div class="media">
+            <div class="media-content">
+              <span class="title is-size-6">Mohamed AL NOSSIRAT</span> |
+              <time datetime="2025-10-22">22&#x2F;10&#x2F;2025</time>
+              <hr/>
+            </div>
+            
+          </div>
+          <div class="content has-text-justified">
+            <h2 id="introduction">Introduction</h2>
+<p>In this article, we’ll explore different approaches for streaming video over the internet and demonstrate a simple, practical example of building a video streaming server using Go. The example will show how to serve video content efficiently with HTTP range requests, allowing playback directly in the browser through the HTML5 <code>&lt;video&gt;</code> tag.</p>
+<h3 id="video-streaming">Video Streaming</h3>
+<p>When it comes to streaming videos online, there are three main approaches developers can take:</p>
+<ol>
+<li><strong>HTTP-based streaming</strong>:</li>
+</ol>
+<p>This is the most straightforward and browser-friendly option. The video is served over standard HTTP and played using the browser’s built-in <code>&lt;video&gt;</code> tag. Modern browsers natively support this, which makes it perfect for serving video files directly from your Go server without extra dependencies or complex client-side logic.</p>
+<ol start="2">
+<li><strong>Streaming via WebSocket</strong>:</li>
+</ol>
+<p>Using WebSockets allows real-time, bidirectional data transfer between the client and server. However, the <code>&lt;video&gt;</code> element doesn’t natively support WebSockets. To make this work, you’d need to manually decode and render frames (for example, on a <code>&lt;canvas&gt;</code> element) and handle audio separately — a process that can quickly become complicated and is rarely worth the effort unless you’re building something highly custom, like a live data visualization or a remote desktop app.</p>
+<ol start="3">
+<li><strong>Streaming via WebRTC</strong>:</li>
+</ol>
+<p>WebRTC is a peer-to-peer communication protocol designed for real-time audio and video streaming between clients. Its main advantage is that once the connection is established, the media can flow directly between users without routing all the data through your server. However, establishing a WebRTC connection typically requires a signaling mechanism (such as WebSockets), and setup can be more involved than standard HTTP streaming.</p>
+<blockquote>
+<p>In this article, we’ll focus on streaming video using the HTTP protocol; because it’s simple, efficient, and requires minimal setup. The browser takes care of most of the heavy lifting, while your Go server only needs to handle HTTP range requests to support seeking and smooth playback. The server-side code is also lightweight and easy to understand, making it a great starting point for learning how video streaming works behind the scenes.</p>
+</blockquote>
+<h2 id="streaming-video-over-http">Streaming video over HTTP</h2>
+<p>Lets start by creating our project and setup the file structure</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">mkdir</span><span> govideostream
+</span><span style="color:#96b5b4;">cd</span><span> govideostream
+</span><span style="color:#bf616a;">go</span><span> mod init github.com/&lt;YOUR USER NAME&gt;/govideostream
+</span><span style="color:#bf616a;">touch</span><span> main.go index.html
+</span></code></pre>
+<p>Let's start with the frontend part, which is going to be just a <code>&lt;video&gt;</code>tag, in the index.html file copy and paste the following code:</p>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;!</span><span style="color:#b48ead;">DOCTYPE </span><span style="color:#d08770;">html</span><span>&gt;
+</span><span>&lt;</span><span style="color:#bf616a;">html</span><span>&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">head</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">title</span><span>&gt;Go video streaming&lt;/</span><span style="color:#bf616a;">title</span><span>&gt;
+</span><span>    &lt;/</span><span style="color:#bf616a;">head</span><span>&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">body</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">video </span><span style="color:#d08770;">width</span><span>=&quot;</span><span style="color:#a3be8c;">1200</span><span>&quot; </span><span style="color:#d08770;">controls muted</span><span>=&quot;</span><span style="color:#a3be8c;">muted</span><span>&quot;&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">source </span><span style="color:#d08770;">src</span><span>=&quot;</span><span style="color:#a3be8c;">http://localhost:8000/video</span><span>&quot; </span><span style="color:#d08770;">type</span><span>=&quot;</span><span style="color:#a3be8c;">video/mp4</span><span>&quot; /&gt;
+</span><span>        &lt;/</span><span style="color:#bf616a;">video</span><span>&gt;
+</span><span>    &lt;/</span><span style="color:#bf616a;">body</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">html</span><span>&gt;
+</span></code></pre>
+<p>On the frontend, all we need to do is define the path to our video file or stream and specify its format. In our example, the browser will load the video from the <code>/video</code> endpoint as <code>video/mp4</code>.
+You can also include multiple <code>&lt;source&gt;</code> tags inside the <code>&lt;video&gt;</code> element to provide different file formats or encodings this helps ensure compatibility across various browsers and devices.
+Additionally, the <code>&lt;video&gt;</code> tag supports several optional attributes to control the user experience. You can show or hide playback controls, set the video width, start playback muted, or even make it autoplay when the page loads.
+Once the <code>&lt;video&gt;</code> element is configured, the frontend part is complete; the browser takes care of fetching and playing the video stream automatically.</p>
+<h2 id="streaming-video-with-go">Streaming video with Go</h2>
+<p>Modern browsers use a simple but powerful mechanism to handle video playback efficiently. Instead of downloading the entire file at once, they can request specific parts of the video stream as needed.
+When the browser fetches data for the <code>&lt;video&gt;</code> element, it includes an HTTP header called Range. This header specifies the exact byte range it wants for example:</p>
+<pre data-lang="go" style="background-color:#2b303b;color:#c0c5ce;" class="language-go "><code class="language-go" data-lang="go"><span style="color:#bf616a;">Range</span><span>: </span><span style="color:#bf616a;">bytes</span><span>=</span><span style="color:#d08770;">1024000</span><span>-</span><span style="color:#d08770;">2048000
+</span></code></pre>
+<p>This tells the server to send only that specific portion of the file. The browser will automatically request additional chunks as playback progresses or when the user seeks to another part of the video.</p>
+<p>To make this work, the server’s response must include a few important headers <code>Content-Length</code> the size (in bytes) of the chunk being sent in this response. <code>Content-Range</code> indicates which part of the file this chunk represents and the total file size. <code>Content-Type</code> specifies the video format (e.g., video/mp4). <code>Accept-Ranges</code> tells the browser that the server supports partial content requests using byte ranges.</p>
+<p>Together, these headers enable smooth streaming, allowing users to start watching immediately, seek freely, and load only what’s necessary instead of the entire video file.</p>
+<p>The implementation code is fairly simple once we know what to do:</p>
+<pre data-lang="go" style="background-color:#2b303b;color:#c0c5ce;" class="language-go "><code class="language-go" data-lang="go"><span style="color:#b48ead;">package </span><span style="color:#bf616a;">main
+</span><span>
+</span><span style="color:#b48ead;">import </span><span>(
+</span><span>	&quot;</span><span style="color:#a3be8c;">fmt</span><span>&quot;
+</span><span>	&quot;</span><span style="color:#a3be8c;">html/template</span><span>&quot;
+</span><span>	&quot;</span><span style="color:#a3be8c;">io</span><span>&quot;
+</span><span>	&quot;</span><span style="color:#a3be8c;">log</span><span>&quot;
+</span><span>	&quot;</span><span style="color:#a3be8c;">net/http</span><span>&quot;
+</span><span>	&quot;</span><span style="color:#a3be8c;">os</span><span>&quot;
+</span><span>	&quot;</span><span style="color:#a3be8c;">path/filepath</span><span>&quot;
+</span><span>	&quot;</span><span style="color:#a3be8c;">strconv</span><span>&quot;
+</span><span>	&quot;</span><span style="color:#a3be8c;">strings</span><span>&quot;
+</span><span>)
+</span><span>
+</span><span style="color:#b48ead;">const </span><span>(
+</span><span>	</span><span style="color:#bf616a;">chunkSize </span><span>= </span><span style="color:#d08770;">1024 </span><span>* </span><span style="color:#d08770;">1024 </span><span style="color:#65737e;">// 1MB
+</span><span>	</span><span style="color:#bf616a;">videoPath </span><span>= &quot;</span><span style="color:#a3be8c;">video.mp4</span><span>&quot;
+</span><span>)
+</span><span>
+</span><span style="color:#b48ead;">var </span><span>(
+</span><span>	</span><span style="color:#bf616a;">tpl </span><span>*</span><span style="color:#bf616a;">template</span><span>.</span><span style="color:#b48ead;">Template
+</span><span>)
+</span><span>
+</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">main</span><span>() {
+</span><span>	</span><span style="color:#65737e;">// Parse the template once at startup
+</span><span>	</span><span style="color:#b48ead;">var </span><span style="color:#bf616a;">err </span><span style="color:#b48ead;">error
+</span><span>	</span><span style="color:#bf616a;">tpl</span><span>, </span><span style="color:#bf616a;">err </span><span>= </span><span style="color:#bf616a;">template</span><span>.</span><span style="color:#bf616a;">ParseFiles</span><span>(</span><span style="color:#bf616a;">filepath</span><span>.</span><span style="color:#bf616a;">Join</span><span>(&quot;</span><span style="color:#a3be8c;">index.html</span><span>&quot;))
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
+</span><span>		</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Fatalf</span><span>(&quot;</span><span style="color:#a3be8c;">parse template: </span><span style="color:#d08770;">%v</span><span>&quot;, </span><span style="color:#bf616a;">err</span><span>)
+</span><span>	}
+</span><span>
+</span><span>	</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">HandleFunc</span><span>(&quot;</span><span style="color:#a3be8c;">/</span><span>&quot;, </span><span style="color:#bf616a;">rootHandler</span><span>)
+</span><span>	</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">HandleFunc</span><span>(&quot;</span><span style="color:#a3be8c;">/video</span><span>&quot;, </span><span style="color:#bf616a;">videoHandler</span><span>)
+</span><span>
+</span><span>	</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Println</span><span>(&quot;</span><span style="color:#a3be8c;">listening on http://localhost:8000</span><span>&quot;)
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">ListenAndServe</span><span>(&quot;</span><span style="color:#a3be8c;">:8000</span><span>&quot;, </span><span style="color:#d08770;">nil</span><span>); </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
+</span><span>		</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Fatal</span><span>(</span><span style="color:#bf616a;">err</span><span>)
+</span><span>	}
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">rootHandler</span><span>(</span><span style="color:#bf616a;">w http</span><span>.</span><span style="color:#b48ead;">ResponseWriter</span><span>, </span><span style="color:#bf616a;">r </span><span>*</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#b48ead;">Request</span><span>) {
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Content-Type</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">text/html; charset=utf-8</span><span>&quot;)
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">tpl</span><span>.</span><span style="color:#bf616a;">Execute</span><span>(</span><span style="color:#bf616a;">w</span><span>, </span><span style="color:#b48ead;">map</span><span>[</span><span style="color:#b48ead;">string</span><span>]</span><span style="color:#b48ead;">any</span><span>{
+</span><span>		&quot;</span><span style="color:#a3be8c;">Request</span><span>&quot;: </span><span style="color:#bf616a;">r</span><span>, </span><span style="color:#65737e;">// roughly analogous to passing {&quot;request&quot;: request} in FastAPI/Jinja2
+</span><span>	}); </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
+</span><span>		</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">template error</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusInternalServerError</span><span>)
+</span><span>	}
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">videoHandler</span><span>(</span><span style="color:#bf616a;">w http</span><span>.</span><span style="color:#b48ead;">ResponseWriter</span><span>, </span><span style="color:#bf616a;">r </span><span>*</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#b48ead;">Request</span><span>) {
+</span><span>	</span><span style="color:#bf616a;">file</span><span>, </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">os</span><span>.</span><span style="color:#bf616a;">Open</span><span>(</span><span style="color:#bf616a;">videoPath</span><span>)
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
+</span><span>		</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">video not found</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusNotFound</span><span>)
+</span><span>		</span><span style="color:#b48ead;">return
+</span><span>	}
+</span><span>	</span><span style="color:#b48ead;">defer </span><span style="color:#bf616a;">file</span><span>.</span><span style="color:#bf616a;">Close</span><span>()
+</span><span>
+</span><span>	</span><span style="color:#bf616a;">stat</span><span>, </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">file</span><span>.</span><span style="color:#bf616a;">Stat</span><span>()
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
+</span><span>		</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">cannot stat file</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusInternalServerError</span><span>)
+</span><span>		</span><span style="color:#b48ead;">return
+</span><span>	}
+</span><span>	</span><span style="color:#bf616a;">size </span><span>:= </span><span style="color:#bf616a;">stat</span><span>.</span><span style="color:#bf616a;">Size</span><span>()
+</span><span>
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Accept-Ranges</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">bytes</span><span>&quot;)
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Content-Type</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">video/mp4</span><span>&quot;)
+</span><span>
+</span><span>	</span><span style="color:#bf616a;">rangeHdr </span><span>:= </span><span style="color:#bf616a;">r</span><span>.</span><span style="color:#bf616a;">Header</span><span>.</span><span style="color:#bf616a;">Get</span><span>(&quot;</span><span style="color:#a3be8c;">Range</span><span>&quot;)
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">rangeHdr </span><span>== &quot;&quot; {
+</span><span>		</span><span style="color:#65737e;">// No Range header: serve the whole file (200 OK)
+</span><span>		</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Content-Length</span><span>&quot;, </span><span style="color:#bf616a;">strconv</span><span>.</span><span style="color:#bf616a;">FormatInt</span><span>(</span><span style="color:#bf616a;">size</span><span>, </span><span style="color:#d08770;">10</span><span>))
+</span><span>		</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">_</span><span>, </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">io</span><span>.</span><span style="color:#bf616a;">Copy</span><span>(</span><span style="color:#bf616a;">w</span><span>, </span><span style="color:#bf616a;">file</span><span>); </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
+</span><span>			</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">copy full file: </span><span style="color:#d08770;">%v</span><span>&quot;, </span><span style="color:#bf616a;">err</span><span>)
+</span><span>		}
+</span><span>		</span><span style="color:#b48ead;">return
+</span><span>	}
+</span><span>
+</span><span>	</span><span style="color:#65737e;">// Expect formats like: &quot;bytes=START-&quot; or &quot;bytes=START-END&quot;
+</span><span>	</span><span style="color:#b48ead;">if </span><span>!</span><span style="color:#bf616a;">strings</span><span>.</span><span style="color:#bf616a;">HasPrefix</span><span>(</span><span style="color:#bf616a;">strings</span><span>.</span><span style="color:#bf616a;">ToLower</span><span>(</span><span style="color:#bf616a;">rangeHdr</span><span>), &quot;</span><span style="color:#a3be8c;">bytes=</span><span>&quot;) {
+</span><span>		</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">invalid range</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusRequestedRangeNotSatisfiable</span><span>)
+</span><span>		</span><span style="color:#b48ead;">return
+</span><span>	}
+</span><span>	</span><span style="color:#bf616a;">rangeSpec </span><span>:= </span><span style="color:#bf616a;">strings</span><span>.</span><span style="color:#bf616a;">TrimPrefix</span><span>(</span><span style="color:#bf616a;">rangeHdr</span><span>, &quot;</span><span style="color:#a3be8c;">bytes=</span><span>&quot;)
+</span><span>	</span><span style="color:#bf616a;">parts </span><span>:= </span><span style="color:#bf616a;">strings</span><span>.</span><span style="color:#bf616a;">Split</span><span>(</span><span style="color:#bf616a;">rangeSpec</span><span>, &quot;</span><span style="color:#a3be8c;">-</span><span>&quot;)
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#96b5b4;">len</span><span>(</span><span style="color:#bf616a;">parts</span><span>) != </span><span style="color:#d08770;">2 </span><span>|| </span><span style="color:#bf616a;">parts</span><span>[</span><span style="color:#d08770;">0</span><span>] == &quot;&quot; {
+</span><span>		</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">invalid range</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusRequestedRangeNotSatisfiable</span><span>)
+</span><span>		</span><span style="color:#b48ead;">return
+</span><span>	}
+</span><span>
+</span><span>	</span><span style="color:#bf616a;">start</span><span>, </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">strconv</span><span>.</span><span style="color:#bf616a;">ParseInt</span><span>(</span><span style="color:#bf616a;">parts</span><span>[</span><span style="color:#d08770;">0</span><span>], </span><span style="color:#d08770;">10</span><span>, </span><span style="color:#d08770;">64</span><span>)
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>|| </span><span style="color:#bf616a;">start </span><span>&lt; </span><span style="color:#d08770;">0 </span><span>{
+</span><span>		</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">invalid range start</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusRequestedRangeNotSatisfiable</span><span>)
+</span><span>		</span><span style="color:#b48ead;">return
+</span><span>	}
+</span><span>
+</span><span>	</span><span style="color:#65737e;">// Compute end (inclusive)
+</span><span>	</span><span style="color:#b48ead;">var </span><span style="color:#bf616a;">end </span><span style="color:#b48ead;">int64
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">parts</span><span>[</span><span style="color:#d08770;">1</span><span>] == &quot;&quot; {
+</span><span>		</span><span style="color:#65737e;">// No end provided: mimic the Python version&#39;s behavior (chunked)
+</span><span>		</span><span style="color:#bf616a;">end </span><span>= </span><span style="color:#bf616a;">start </span><span>+ </span><span style="color:#bf616a;">chunkSize </span><span>- </span><span style="color:#d08770;">1
+</span><span>	} </span><span style="color:#b48ead;">else </span><span>{
+</span><span>		</span><span style="color:#bf616a;">end</span><span>, </span><span style="color:#bf616a;">err </span><span>= </span><span style="color:#bf616a;">strconv</span><span>.</span><span style="color:#bf616a;">ParseInt</span><span>(</span><span style="color:#bf616a;">parts</span><span>[</span><span style="color:#d08770;">1</span><span>], </span><span style="color:#d08770;">10</span><span>, </span><span style="color:#d08770;">64</span><span>)
+</span><span>		</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>|| </span><span style="color:#bf616a;">end </span><span>&lt; </span><span style="color:#bf616a;">start </span><span>{
+</span><span>			</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">invalid range end</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusRequestedRangeNotSatisfiable</span><span>)
+</span><span>			</span><span style="color:#b48ead;">return
+</span><span>		}
+</span><span>	}
+</span><span>
+</span><span>	</span><span style="color:#65737e;">// Clamp to file size - 1
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">start </span><span>&gt;= </span><span style="color:#bf616a;">size </span><span>{
+</span><span>		</span><span style="color:#65737e;">// Invalid range: start beyond EOF
+</span><span>		</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Content-Range</span><span>&quot;, </span><span style="color:#bf616a;">fmt</span><span>.</span><span style="color:#bf616a;">Sprintf</span><span>(&quot;</span><span style="color:#a3be8c;">bytes */</span><span style="color:#d08770;">%d</span><span>&quot;, </span><span style="color:#bf616a;">size</span><span>))
+</span><span>		</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">range not satisfiable</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusRequestedRangeNotSatisfiable</span><span>)
+</span><span>		</span><span style="color:#b48ead;">return
+</span><span>	}
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">end </span><span>&gt;= </span><span style="color:#bf616a;">size </span><span>{
+</span><span>		</span><span style="color:#bf616a;">end </span><span>= </span><span style="color:#bf616a;">size </span><span>- </span><span style="color:#d08770;">1
+</span><span>	}
+</span><span>
+</span><span>	</span><span style="color:#bf616a;">length </span><span>:= </span><span style="color:#bf616a;">end </span><span>- </span><span style="color:#bf616a;">start </span><span>+ </span><span style="color:#d08770;">1
+</span><span>
+</span><span>	</span><span style="color:#65737e;">// Prepare headers for 206 Partial Content
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Content-Range</span><span>&quot;, </span><span style="color:#bf616a;">fmt</span><span>.</span><span style="color:#bf616a;">Sprintf</span><span>(&quot;</span><span style="color:#a3be8c;">bytes </span><span style="color:#d08770;">%d</span><span style="color:#a3be8c;">-</span><span style="color:#d08770;">%d</span><span style="color:#a3be8c;">/</span><span style="color:#d08770;">%d</span><span>&quot;, </span><span style="color:#bf616a;">start</span><span>, </span><span style="color:#bf616a;">end</span><span>, </span><span style="color:#bf616a;">size</span><span>))
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Content-Length</span><span>&quot;, </span><span style="color:#bf616a;">strconv</span><span>.</span><span style="color:#bf616a;">FormatInt</span><span>(</span><span style="color:#bf616a;">length</span><span>, </span><span style="color:#d08770;">10</span><span>))
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">WriteHeader</span><span>(</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusPartialContent</span><span>)
+</span><span>
+</span><span>	</span><span style="color:#65737e;">// Seek and write exactly the requested bytes
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">_</span><span>, </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">file</span><span>.</span><span style="color:#bf616a;">Seek</span><span>(</span><span style="color:#bf616a;">start</span><span>, </span><span style="color:#bf616a;">io</span><span>.</span><span style="color:#bf616a;">SeekStart</span><span>); </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
+</span><span>		</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">seek error: </span><span style="color:#d08770;">%v</span><span>&quot;, </span><span style="color:#bf616a;">err</span><span>)
+</span><span>		</span><span style="color:#b48ead;">return
+</span><span>	}
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">_</span><span>, </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">io</span><span>.</span><span style="color:#bf616a;">CopyN</span><span>(</span><span style="color:#bf616a;">w</span><span>, </span><span style="color:#bf616a;">file</span><span>, </span><span style="color:#bf616a;">length</span><span>); </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
+</span><span>		</span><span style="color:#65737e;">// Client may cancel early; just log
+</span><span>		</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">copyN error: </span><span style="color:#d08770;">%v</span><span>&quot;, </span><span style="color:#bf616a;">err</span><span>)
+</span><span>	}
+</span><span>}
+</span></code></pre>
+<p>In our Go server, we define two routes:</p>
+<ol>
+<li>The / route serves the HTML template that contains the <code>&lt;video&gt;</code> tag.</li>
+<li>The /video route handles the actual video streaming logic.</li>
+</ol>
+<p>When the browser requests the <code>/video</code> endpoint, it usually includes an HTTP Range header, something like <code>Range: bytes=0-</code>. This tells the server that the browser wants only a portion of the video file rather than the entire thing. The portion being requested is called a chunk.</p>
+<p>In our implementation, we use a default chunk size of 1 MB. If the browser’s request doesn’t specify an end range, we simply calculate it based on that chunk size. This ensures that the video is streamed in manageable segments instead of loading the entire file at once.</p>
+<p>Once we know the range to send, the server:</p>
+<ol>
+<li>Opens the video file using Go’s standard <code>os.Open()</code> function.</li>
+<li>Moves the file pointer to the correct starting byte using <code>file.Seek(start, io.SeekStart)</code>.</li>
+<li>Reads the requested portion with <code>io.CopyN(w, file, length)</code>; this efficiently copies only the required bytes directly to the response.</li>
+</ol>
+<p>After preparing the data, the server constructs a partial content response with the status code <code>206</code>, indicating that the response contains only part of the file. It also includes the necessary headers:</p>
+<ul>
+<li>Content-Range — shows which bytes are being sent and the total file size.</li>
+<li>Content-Length — specifies the size of the current chunk.</li>
+<li>Content-Type — tells the browser the video format (video/mp4).</li>
+<li>Accept-Ranges — signals that the server supports byte-range requests.</li>
+</ul>
+<p>When you run the server and open the page in your browser, the video will start playing immediately. Behind the scenes, the browser automatically requests additional 1 MB chunks as needed — allowing smooth playback and seamless seeking, just like on professional streaming platforms.</p>
+<p><img src="/resultgostream.png" alt="image" /></p>
+<h2 id="result">Result</h2>
+<div align="center">
+<img src="/gostreamongfinal.gif" width="70%"/>
+</div>
+<h2 id="github">Github</h2>
+<p><a href="https://github.com/malnossi/govideostream">Go Video Streaming</a></p>
+<h2 id="conclusion">Conclusion</h2>
+<p>In this tutorial, we built a simple yet powerful video streaming server in Go that leverages HTTP range requests to deliver smooth, efficient playback in any modern browser.
+We learned how browsers request partial video data through the Range header, how to respond with proper Content-Range and 206 Partial Content status, and how the <code>&lt;video&gt;</code> tag can automatically handle chunked playback without any complex frontend logic.</p>
+<p>While this example focused on basic local file streaming, the same principles apply to more advanced setups including authenticated streams, adaptive bitrate delivery, and even live broadcasting. Go’s strong concurrency model and efficient I/O make it an excellent choice for building fast, scalable streaming backends.</p>
+<p>If you’re looking to expand on this foundation, consider exploring; Integrating HLS or DASH for adaptive streaming.</p>
+<p>With just a few lines of Go code, you’ve built the foundation of a real-world streaming system; simple, robust, and ready to evolve</p>
+
+          </div>
+        </div>
+      </div>
+</div>
+
+    <footer class="footer">
+    <div class="has-text-centered">
+        Mohamed AL NOSSIRAT <span id="date"></span>
+    </div>
+</footer>
+<script lang="js">
+    window.onload = () => {
+        const date = new Date().getFullYear()
+        document.querySelector("#date").textContent = date;
+    }
+</script>
+    <script lang="js" src='https://malnossi.github.io/script.js'></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV" defer></script>
+    <script defer>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'G-8LBRDGLXJV');
+    </script>
+</body>
+
+</html>
