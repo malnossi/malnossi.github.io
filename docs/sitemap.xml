@@ -7,6 +7,10 @@
         <loc>https://malnossi.github.io/blog/</loc>
     </url>
     <url>
+        <loc>https://malnossi.github.io/blog/beyond-django-bulk-create/</loc>
+        <lastmod>2025-10-30</lastmod>
+    </url>
+    <url>
         <loc>https://malnossi.github.io/blog/django-drf-generic-user/</loc>
         <lastmod>2025-07-26</lastmod>
     </url>
@@ -56,6 +60,9 @@
         <loc>https://malnossi.github.io/tags/</loc>
     </url>
     <url>
+        <loc>https://malnossi.github.io/tags/data/</loc>
+    </url>
+    <url>
         <loc>https://malnossi.github.io/tags/django/</loc>
     </url>
     <url>
@@ -72,6 +79,9 @@
     </url>
     <url>
         <loc>https://malnossi.github.io/tags/javascript/</loc>
+    </url>
+    <url>
+        <loc>https://malnossi.github.io/tags/postgresql/</loc>
     </url>
     <url>
         <loc>https://malnossi.github.io/tags/python/</loc>
