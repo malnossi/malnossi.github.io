@@ -418,11 +418,14 @@ SESSION_COOKIE_SECURE = True
 For further readings about Django's session framework [see here](https://docs.djangoproject.com/en/5.1/ref/settings/#sessions)
 
 Now go to the login page in the front and enter the user name and the password and click on Login. If every thing went good you will see the `sessionid` and the `csrftoken` in the browser's `Devtools` -> `Application` -> `Cookies`:
+<div style="overflow-x: auto; max-width: 100%;">
+  
 |Name|Value|Domain|Path|Expire/Max-Age|Size|HttpOnly|Secure|Samesite|Patrition key Site|Cross Site|Priority|
 |-|-|-|-|-|-|-|-|-|-|-|-|
-|sessionid|p21pms0oohese5l5f77lx7vzhyi7vquk|django-session-app.localhost|/|2024-10-25T11:29:06.595Z|41|✓|✓|Lax|||Medium
-|csrftoken|TMOR7cOrEqLrGd3C3FjxX684yyjacu3v|django-session-app.localhost|/|2024-10-25T11:29:06.595Z|41|||Lax|||Medium
+|sessionid|p21pms0oohese5l5f77lx7vzhyi7vquk|django-session-app.localhost|/|2024-10-25T11:29:06.595Z|41|✓|✓|Lax|||Medium|
+|csrftoken|TMOR7cOrEqLrGd3C3FjxX684yyjacu3v|django-session-app.localhost|/|2024-10-25T11:29:06.595Z|41|||Lax|||Medium|
 
+</div>
 The user is correctly logged in and a session cookie named sessionid has been returned to our client. If we will persist that session cookie in each request, our user will be persistently authenticated.
 ## Django Rest Framework Logout endpoint
 Next, we'll wire up a few views that let us logout :

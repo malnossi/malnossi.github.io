@@ -3,109 +3,75 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://malnossi.github.io/bulma.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <link rel="stylesheet" href="https://malnossi.github.io/pico.min.css">
     <link rel="stylesheet" href="https://malnossi.github.io/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnapp.websitepolicies.net/widgets/cookies/mzad7vzz.js" defer></script>
     <title>
 Mohamed Nossirat | Django &amp; DRF Model Generic Auth Stuff
 </title>
 </head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+
+    :root {
+        --pico-font-family: "IBM Plex Serif", serif;
+    }
+</style>
 
 <body>
-    <nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-        </a>
-    </div>
-
-    <div class="navbar-menu" id="navbarBasicExample">
-        <div class="navbar-end">
-            <a class="navbar-item" href="/">Home</a>
-            
-            
-                
-                <a class="navbar-item" href="https://malnossi.github.io/blog/"> Blog</a>
-            
-        </div>
-    </div>
-    </div>
-
-    <div class="navbar-end">
-    </div>
-    </div>
+    <main class="container">
+        <nav>
+  <ul>
+    <li><strong>Mohamed Nossirat</strong></li>
+  </ul>
+  <ul>
+    <li><a href="/" class="contrast">Home</a></li>
+    <li><a href="/blog" class="contrast">Blog</a></li>
+  </ul>
 </nav>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-    
-      // Get all "navbar-burger" elements
-      const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-    
-      // Add a click event on each of them
-      $navbarBurgers.forEach( el => {
-        el.addEventListener('click', () => {
-    
-          // Get the target from the "data-target" attribute
-          const target = el.dataset.target;
-          const $target = document.getElementById(target);
-    
-          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-          el.classList.toggle('is-active');
-          $target.classList.toggle('is-active');
-    
-        });
+  document.addEventListener('DOMContentLoaded', () => {
+
+    // Get all "navbar-burger" elements
+    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+    // Add a click event on each of them
+    $navbarBurgers.forEach(el => {
+      el.addEventListener('click', () => {
+
+        // Get the target from the "data-target" attribute
+        const target = el.dataset.target;
+        const $target = document.getElementById(target);
+
+        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+        el.classList.toggle('is-active');
+        $target.classList.toggle('is-active');
+
       });
-    
     });
-      </script>
-    
-    
-<div class="section">
-    <div class="card">
-        <div class="card-image">
-          <figure class="image is-16by9">
-            <img
-              src="/djangodrf.png"
-              alt="Placeholder image"
-            />
-          </figure>
-        </div>
-        <div class="card-content">
-            <div class="level">
-                <div class="level-item has-text-centered">
-                    <div>
-                        <h1 class="heading is-size-5"><strong>Django &amp; DRF Model Generic Auth Stuff</strong></h1>
-                        <div class="tags is-flex is-justify-content-center">
-                            
-                            <a class="tag is-link is-hoverable" href="/tags/django">#Django</a>
-                            
-                            <a class="tag is-link is-hoverable" href="/tags/web">#Web</a>
-                            
-                            <a class="tag is-link is-hoverable" href="/tags/python">#Python</a>
-                            
-                            <a class="tag is-link is-hoverable" href="/tags/drf">#DRF</a>
-                            
-                        </div>
-                    </div>
-                </div>
-            </div>
-          <div class="media">
-            <div class="media-content">
-              <span class="title is-size-6">Mohamed AL NOSSIRAT</span> |
-              <time datetime="2025-07-26">26&#x2F;07&#x2F;2025</time>
-              <hr/>
-            </div>
-            
-          </div>
-          <div class="content has-text-justified">
-            <h2 id="introduction">Introduction</h2>
+
+  });
+</script>
+        
+<figure class="image is-16by9">
+  <img src="/djangodrf.png" alt="Placeholder image" style="border-radius: 0.5rem;" width="100%"/>
+</figure>
+<div style="text-align: center; align-content: center; margin-top: 40px;">
+  <h1>Django &amp; DRF Model Generic Auth Stuff</h1>
+  
+  <a class="tag is-link is-hoverable" href="/tags/django">#Django</a>
+  
+  <a class="tag is-link is-hoverable" href="/tags/web">#Web</a>
+  
+  <a class="tag is-link is-hoverable" href="/tags/python">#Python</a>
+  
+  <a class="tag is-link is-hoverable" href="/tags/drf">#DRF</a>
+  
+</div>
+<div>
+  <h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h2>
 <p>Recently, I worked on a project using Django and Django Rest Framework (DRF). One of the key functional requirements of the project was to track the history of model modifications by keeping information about the user who created each record and the user who last updated it.</p>
 <p>Specifically, we needed to implement a mechanism that would automatically record:</p>
 <ol>
@@ -114,8 +80,8 @@ Mohamed Nossirat | Django &amp; DRF Model Generic Auth Stuff
 </ol>
 <p>each time the data was updated.</p>
 <p>Very basic and classic requirement</p>
-<h2 id="alright-let-s-start-to-code">Alright, let's start to code</h2>
-<h3 id="core-audit-mixin">Core Audit Mixin</h3>
+<h2 id="alright-let-s-start-to-code"><a class="zola-anchor" href="#alright-let-s-start-to-code" aria-label="Anchor link for: alright-let-s-start-to-code">Alright, let's start to code</a></h2>
+<h3 id="core-audit-mixin"><a class="zola-anchor" href="#core-audit-mixin" aria-label="Anchor link for: core-audit-mixin">Core Audit Mixin</a></h3>
 <pre data-lang="py" style="background-color:#2b303b;color:#c0c5ce;" class="language-py "><code class="language-py" data-lang="py"><span style="color:#65737e;"># common/models.py
 </span><span style="color:#b48ead;">from </span><span>django.conf </span><span style="color:#b48ead;">import </span><span>settings
 </span><span style="color:#b48ead;">from </span><span>django.db </span><span style="color:#b48ead;">import </span><span>models
@@ -147,7 +113,7 @@ Mohamed Nossirat | Django &amp; DRF Model Generic Auth Stuff
 </span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Meta</span><span style="color:#eff1f5;">:
 </span><span>        abstract = </span><span style="color:#d08770;">True
 </span></code></pre>
-<h3 id="example-model">Example Model</h3>
+<h3 id="example-model"><a class="zola-anchor" href="#example-model" aria-label="Anchor link for: example-model">Example Model</a></h3>
 <pre data-lang="py" style="background-color:#2b303b;color:#c0c5ce;" class="language-py "><code class="language-py" data-lang="py"><span style="color:#65737e;"># todos/models.py
 </span><span style="color:#b48ead;">from </span><span>django.db </span><span style="color:#b48ead;">import </span><span>models
 </span><span>
@@ -165,12 +131,12 @@ Mohamed Nossirat | Django &amp; DRF Model Generic Auth Stuff
 </span><span>        </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">self</span><span>.title
 </span><span>
 </span></code></pre>
-<h3 id="migrations">Migrations</h3>
+<h3 id="migrations"><a class="zola-anchor" href="#migrations" aria-label="Anchor link for: migrations">Migrations</a></h3>
 <pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">python</span><span> manage.py makemigrations &amp;&amp; </span><span style="color:#bf616a;">python</span><span> manage.py mograte
 </span></code></pre>
-<h2 id="set-auth-user-to-the-model">Set Auth User to the Model</h2>
-<h3 id="first-solution">First Solution</h3>
-<h4 id="the-serializer">The serializer</h4>
+<h2 id="set-auth-user-to-the-model"><a class="zola-anchor" href="#set-auth-user-to-the-model" aria-label="Anchor link for: set-auth-user-to-the-model">Set Auth User to the Model</a></h2>
+<h3 id="first-solution"><a class="zola-anchor" href="#first-solution" aria-label="Anchor link for: first-solution">First Solution</a></h3>
+<h4 id="the-serializer"><a class="zola-anchor" href="#the-serializer" aria-label="Anchor link for: the-serializer">The serializer</a></h4>
 <pre data-lang="py" style="background-color:#2b303b;color:#c0c5ce;" class="language-py "><code class="language-py" data-lang="py"><span style="color:#65737e;"># todos/serializers.py
 </span><span style="color:#b48ead;">from </span><span>rest_framework </span><span style="color:#b48ead;">import </span><span>serializers
 </span><span style="color:#b48ead;">from .</span><span>models </span><span style="color:#b48ead;">import </span><span>Todo
@@ -187,7 +153,7 @@ Mohamed Nossirat | Django &amp; DRF Model Generic Auth Stuff
 </span><span>            &quot;</span><span style="color:#a3be8c;">updated_by</span><span>&quot;,
 </span><span>        )
 </span></code></pre>
-<h4 id="the-viewset">The ViewSet</h4>
+<h4 id="the-viewset"><a class="zola-anchor" href="#the-viewset" aria-label="Anchor link for: the-viewset">The ViewSet</a></h4>
 <pre data-lang="py" style="background-color:#2b303b;color:#c0c5ce;" class="language-py "><code class="language-py" data-lang="py"><span style="color:#65737e;"># todos/views.py
 </span><span style="color:#b48ead;">from </span><span>rest_framework </span><span style="color:#b48ead;">import </span><span>viewsets, permissions
 </span><span style="color:#b48ead;">from .</span><span>models </span><span style="color:#b48ead;">import </span><span>Todo
@@ -261,8 +227,8 @@ the response should be like this</p>
 <blockquote>
 <p>I don’t like this solution because I have to override every viewset. A better approach might be to create a parent viewset class that inherits from the other viewsets and overrides the perform_create and perform_update methods. However, I don’t like placing business logic in the view layer; I prefer handling these modifications in the serializer layer.</p>
 </blockquote>
-<h3 id="second-solution">Second solution</h3>
-<h4 id="the-serializers">The serializers</h4>
+<h3 id="second-solution"><a class="zola-anchor" href="#second-solution" aria-label="Anchor link for: second-solution">Second solution</a></h3>
+<h4 id="the-serializers"><a class="zola-anchor" href="#the-serializers" aria-label="Anchor link for: the-serializers">The serializers</a></h4>
 <pre data-lang="py" style="background-color:#2b303b;color:#c0c5ce;" class="language-py "><code class="language-py" data-lang="py"><span style="color:#65737e;"># common/serializers.py
 </span><span style="color:#b48ead;">from </span><span>rest_framework </span><span style="color:#b48ead;">import </span><span>serializers
 </span><span>
@@ -362,27 +328,314 @@ the response should be like this</p>
 </span><span>    &quot;</span><span style="color:#a3be8c;">updated_by</span><span>&quot;: </span><span style="color:#d08770;">2
 </span><span>}
 </span></code></pre>
-<h2 id="github-repository">Github Repository</h2>
+<h2 id="github-repository"><a class="zola-anchor" href="#github-repository" aria-label="Anchor link for: github-repository">Github Repository</a></h2>
 <p><a href="https://github.com/malnossi/djangodrfdryaudit">Django Drf Audit</a></p>
-<h2 id="conclusion">Conclusion</h2>
+<h2 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">Conclusion</a></h2>
 <p>The HiddenField approach in Django Rest Framework is a cleaner and more maintainable solution for automatically managing audit fields like created_by and updated_by. Unlike the traditional method of overriding perform_create and perform_update in each ViewSet, this approach moves the responsibility to the serialization layer, which is the natural place for handling data preparation and validation before it reaches the database. This not only reduces boilerplate code and keeps ViewSets focused solely on request handling and permissions, but also strengthens data integrity, as these fields are completely hidden from the client and cannot be tampered with. By leveraging CurrentUserDefault and CreateOnlyDefault, the serializer ensures that created_by is set only once during object creation while updated_by is updated on every modification, guaranteeing consistent behavior across all endpoints. Ultimately, this architecture aligns with DRF’s design philosophy by making the serializer the single source of truth for how data is processed, resulting in a more scalable, secure, and DRY codebase.</p>
 
+</div>
+<!-- <div class="section">
+  <div class="card">
+    <div class="card-image">
+
+    </div>
+    <div class="card-content">
+      <div class="level">
+        <div class="level-item has-text-centered">
+          <div>
+            <h1 class="heading is-size-5"><strong>Django &amp; DRF Model Generic Auth Stuff</strong></h1>
+            <div class="tags is-flex is-justify-content-center">
+              
+              <a class="tag is-link is-hoverable" href="/tags/django">#Django</a>
+              
+              <a class="tag is-link is-hoverable" href="/tags/web">#Web</a>
+              
+              <a class="tag is-link is-hoverable" href="/tags/python">#Python</a>
+              
+              <a class="tag is-link is-hoverable" href="/tags/drf">#DRF</a>
+              
+            </div>
           </div>
         </div>
       </div>
-</div>
+      <div class="media">
+        <div class="media-content">
+          <span class="title is-size-6">Mohamed AL NOSSIRAT</span> |
+          <time datetime="2025-07-26">26&#x2F;07&#x2F;2025</time>
+          <hr />
+        </div>
 
-    <footer class="footer">
-    <div class="has-text-centered">
-        Mohamed AL NOSSIRAT <span id="date"></span>
+      </div>
+      <div class="content has-text-justified">
+        <h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h2>
+<p>Recently, I worked on a project using Django and Django Rest Framework (DRF). One of the key functional requirements of the project was to track the history of model modifications by keeping information about the user who created each record and the user who last updated it.</p>
+<p>Specifically, we needed to implement a mechanism that would automatically record:</p>
+<ol>
+<li>The creator of the model (created_by).</li>
+<li>The user who performed the last modification (updated_by),</li>
+</ol>
+<p>each time the data was updated.</p>
+<p>Very basic and classic requirement</p>
+<h2 id="alright-let-s-start-to-code"><a class="zola-anchor" href="#alright-let-s-start-to-code" aria-label="Anchor link for: alright-let-s-start-to-code">Alright, let's start to code</a></h2>
+<h3 id="core-audit-mixin"><a class="zola-anchor" href="#core-audit-mixin" aria-label="Anchor link for: core-audit-mixin">Core Audit Mixin</a></h3>
+<pre data-lang="py" style="background-color:#2b303b;color:#c0c5ce;" class="language-py "><code class="language-py" data-lang="py"><span style="color:#65737e;"># common/models.py
+</span><span style="color:#b48ead;">from </span><span>django.conf </span><span style="color:#b48ead;">import </span><span>settings
+</span><span style="color:#b48ead;">from </span><span>django.db </span><span style="color:#b48ead;">import </span><span>models
+</span><span style="color:#b48ead;">from </span><span>django.utils </span><span style="color:#b48ead;">import </span><span>timezone
+</span><span>
+</span><span>User = settings.</span><span style="color:#bf616a;">AUTH_USER_MODEL
+</span><span>
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">AuditModelMixin</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">models.Model</span><span style="color:#eff1f5;">):
+</span><span>    created_at = models.</span><span style="color:#bf616a;">DateTimeField</span><span>(</span><span style="color:#bf616a;">default</span><span>=timezone.now, </span><span style="color:#bf616a;">editable</span><span>=</span><span style="color:#d08770;">False</span><span>)
+</span><span>    updated_at = models.</span><span style="color:#bf616a;">DateTimeField</span><span>(</span><span style="color:#bf616a;">auto_now</span><span>=</span><span style="color:#d08770;">True</span><span>)
+</span><span>
+</span><span>    created_by = models.</span><span style="color:#bf616a;">ForeignKey</span><span>(
+</span><span>        User,
+</span><span>        </span><span style="color:#bf616a;">related_name</span><span>=&quot;</span><span style="color:#d08770;">%(</span><span style="color:#bf616a;">class</span><span style="color:#d08770;">)s</span><span style="color:#a3be8c;">_created</span><span>&quot;,
+</span><span>        </span><span style="color:#bf616a;">on_delete</span><span>=models.</span><span style="color:#bf616a;">SET_NULL</span><span>,
+</span><span>        </span><span style="color:#bf616a;">null</span><span>=</span><span style="color:#d08770;">True</span><span>,
+</span><span>        </span><span style="color:#bf616a;">blank</span><span>=</span><span style="color:#d08770;">True</span><span>,
+</span><span>        </span><span style="color:#bf616a;">editable</span><span>=</span><span style="color:#d08770;">False</span><span>,
+</span><span>    )
+</span><span>    updated_by = models.</span><span style="color:#bf616a;">ForeignKey</span><span>(
+</span><span>        User,
+</span><span>        </span><span style="color:#bf616a;">related_name</span><span>=&quot;</span><span style="color:#d08770;">%(</span><span style="color:#bf616a;">class</span><span style="color:#d08770;">)s</span><span style="color:#a3be8c;">_updated</span><span>&quot;,
+</span><span>        </span><span style="color:#bf616a;">on_delete</span><span>=models.</span><span style="color:#bf616a;">SET_NULL</span><span>,
+</span><span>        </span><span style="color:#bf616a;">null</span><span>=</span><span style="color:#d08770;">True</span><span>,
+</span><span>        </span><span style="color:#bf616a;">blank</span><span>=</span><span style="color:#d08770;">True</span><span>,
+</span><span>        </span><span style="color:#bf616a;">editable</span><span>=</span><span style="color:#d08770;">False</span><span>,
+</span><span>    )
+</span><span>
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Meta</span><span style="color:#eff1f5;">:
+</span><span>        abstract = </span><span style="color:#d08770;">True
+</span></code></pre>
+<h3 id="example-model"><a class="zola-anchor" href="#example-model" aria-label="Anchor link for: example-model">Example Model</a></h3>
+<pre data-lang="py" style="background-color:#2b303b;color:#c0c5ce;" class="language-py "><code class="language-py" data-lang="py"><span style="color:#65737e;"># todos/models.py
+</span><span style="color:#b48ead;">from </span><span>django.db </span><span style="color:#b48ead;">import </span><span>models
+</span><span>
+</span><span style="color:#65737e;"># Create your models here.
+</span><span style="color:#65737e;"># apps/todos/models.py
+</span><span style="color:#b48ead;">from </span><span>django.db </span><span style="color:#b48ead;">import </span><span>models
+</span><span style="color:#b48ead;">from </span><span>common.models </span><span style="color:#b48ead;">import </span><span>AuditModelMixin
+</span><span>
+</span><span>
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Todo</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">AuditModelMixin</span><span style="color:#eff1f5;">):
+</span><span>    title = models.</span><span style="color:#bf616a;">CharField</span><span>(</span><span style="color:#bf616a;">max_length</span><span>=</span><span style="color:#d08770;">255</span><span>)
+</span><span>    done = models.</span><span style="color:#bf616a;">BooleanField</span><span>(</span><span style="color:#bf616a;">default</span><span>=</span><span style="color:#d08770;">False</span><span>)
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#96b5b4;">__str__</span><span>(</span><span style="color:#bf616a;">self</span><span>):
+</span><span>        </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">self</span><span>.title
+</span><span>
+</span></code></pre>
+<h3 id="migrations"><a class="zola-anchor" href="#migrations" aria-label="Anchor link for: migrations">Migrations</a></h3>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">python</span><span> manage.py makemigrations &amp;&amp; </span><span style="color:#bf616a;">python</span><span> manage.py mograte
+</span></code></pre>
+<h2 id="set-auth-user-to-the-model"><a class="zola-anchor" href="#set-auth-user-to-the-model" aria-label="Anchor link for: set-auth-user-to-the-model">Set Auth User to the Model</a></h2>
+<h3 id="first-solution"><a class="zola-anchor" href="#first-solution" aria-label="Anchor link for: first-solution">First Solution</a></h3>
+<h4 id="the-serializer"><a class="zola-anchor" href="#the-serializer" aria-label="Anchor link for: the-serializer">The serializer</a></h4>
+<pre data-lang="py" style="background-color:#2b303b;color:#c0c5ce;" class="language-py "><code class="language-py" data-lang="py"><span style="color:#65737e;"># todos/serializers.py
+</span><span style="color:#b48ead;">from </span><span>rest_framework </span><span style="color:#b48ead;">import </span><span>serializers
+</span><span style="color:#b48ead;">from .</span><span>models </span><span style="color:#b48ead;">import </span><span>Todo
+</span><span>
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">TodoSerializer</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">serializers.ModelSerializer</span><span style="color:#eff1f5;">):
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Meta</span><span style="color:#eff1f5;">:
+</span><span>        model = Todo
+</span><span>        fields = &quot;</span><span style="color:#a3be8c;">__all__</span><span>&quot;
+</span><span>        read_only_fields = (
+</span><span>            &quot;</span><span style="color:#a3be8c;">id</span><span>&quot;,
+</span><span>            &quot;</span><span style="color:#a3be8c;">created_at</span><span>&quot;,
+</span><span>            &quot;</span><span style="color:#a3be8c;">updated_at</span><span>&quot;,
+</span><span>            &quot;</span><span style="color:#a3be8c;">created_by</span><span>&quot;,
+</span><span>            &quot;</span><span style="color:#a3be8c;">updated_by</span><span>&quot;,
+</span><span>        )
+</span></code></pre>
+<h4 id="the-viewset"><a class="zola-anchor" href="#the-viewset" aria-label="Anchor link for: the-viewset">The ViewSet</a></h4>
+<pre data-lang="py" style="background-color:#2b303b;color:#c0c5ce;" class="language-py "><code class="language-py" data-lang="py"><span style="color:#65737e;"># todos/views.py
+</span><span style="color:#b48ead;">from </span><span>rest_framework </span><span style="color:#b48ead;">import </span><span>viewsets, permissions
+</span><span style="color:#b48ead;">from .</span><span>models </span><span style="color:#b48ead;">import </span><span>Todo
+</span><span style="color:#b48ead;">from .</span><span>serializers </span><span style="color:#b48ead;">import </span><span>TodoSerializer
+</span><span>
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">TodoViewSet</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">viewsets.ModelViewSet</span><span style="color:#eff1f5;">):
+</span><span>    queryset = Todo.objects.</span><span style="color:#bf616a;">all</span><span>()
+</span><span>    serializer_class = TodoSerializer
+</span><span>    permission_classes = [permissions.IsAuthenticated]
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">perform_create</span><span>(</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">serializer</span><span>):
+</span><span>        serializer.</span><span style="color:#bf616a;">save</span><span>(
+</span><span>            </span><span style="color:#bf616a;">created_by</span><span>=</span><span style="color:#bf616a;">self</span><span>.request.user,
+</span><span>            </span><span style="color:#bf616a;">updated_by</span><span>=</span><span style="color:#bf616a;">self</span><span>.request.user
+</span><span>        )
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">perform_update</span><span>(</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">serializer</span><span>):
+</span><span>        serializer.</span><span style="color:#bf616a;">save</span><span>(</span><span style="color:#bf616a;">updated_by</span><span>=</span><span style="color:#bf616a;">self</span><span>.request.user)
+</span></code></pre>
+<p>create two users or superuser; here for this example I created a adminuser and a classicuser for the test</p>
+<p>Set the urls in the todos app and in the main urls.py file</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#65737e;"># todos/urls.py
+</span><span style="color:#b48ead;">from </span><span>rest_framework </span><span style="color:#b48ead;">import </span><span>routers
+</span><span style="color:#b48ead;">from . import </span><span>views
+</span><span>
+</span><span>router = routers.</span><span style="color:#bf616a;">DefaultRouter</span><span>()
+</span><span>
+</span><span>router.</span><span style="color:#bf616a;">register</span><span>(</span><span style="color:#bf616a;">prefix</span><span>=</span><span style="color:#b48ead;">r</span><span>&quot;</span><span style="color:#a3be8c;">todos</span><span>&quot;, </span><span style="color:#bf616a;">viewset</span><span>=views.TodoViewSet, </span><span style="color:#bf616a;">basename</span><span>=&quot;</span><span style="color:#a3be8c;">todos</span><span>&quot;)
+</span><span>
+</span><span>
+</span><span>urlpatterns = router.urls
+</span><span>
+</span></code></pre>
+<pre data-lang="py" style="background-color:#2b303b;color:#c0c5ce;" class="language-py "><code class="language-py" data-lang="py"><span style="color:#65737e;"># config/urls.py
+</span><span style="color:#b48ead;">from </span><span>django.contrib </span><span style="color:#b48ead;">import </span><span>admin
+</span><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path, include
+</span><span>
+</span><span>urlpatterns = [</span><span style="color:#bf616a;">path</span><span>(&quot;</span><span style="color:#a3be8c;">admin/</span><span>&quot;, admin.site.urls), </span><span style="color:#bf616a;">path</span><span>(&quot;&quot;, </span><span style="color:#bf616a;">include</span><span>(&quot;</span><span style="color:#a3be8c;">todos.urls</span><span>&quot;))]
+</span></code></pre>
+<p>Run the dev server</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">python</span><span> manage.py runserver
+</span></code></pre>
+<blockquote>
+<p>Go to <a href="http://localhost:8000/admin/">http://localhost:8000/admin/</a> and login as adminuser then go to <a href="http://localhost:8000/todos/">http://localhost:8000/todos/</a> and add a Todo entry.[]</p>
+</blockquote>
+<p>The reponse should be something like this</p>
+<pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>{
+</span><span>    &quot;</span><span style="color:#a3be8c;">id</span><span>&quot;: </span><span style="color:#d08770;">1</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">created_at</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">2025-07-26T12:34:42.100587Z</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">updated_at</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">2025-07-26T12:34:42.100951Z</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">title</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">Do the code</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">done</span><span>&quot;: </span><span style="color:#d08770;">false</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">created_by</span><span>&quot;: </span><span style="color:#d08770;">2</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">updated_by</span><span>&quot;: </span><span style="color:#d08770;">2
+</span><span>}
+</span></code></pre>
+<p>Now Logout and re-login with another user; here I will log in with the classic user and modify the first todo to put done to true
+the response should be like this</p>
+<pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>{
+</span><span>    &quot;</span><span style="color:#a3be8c;">id</span><span>&quot;: </span><span style="color:#d08770;">1</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">created_at</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">2025-07-26T12:34:42.100587Z</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">updated_at</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">2025-07-26T12:38:34.335263Z</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">title</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">Do the code</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">done</span><span>&quot;: </span><span style="color:#d08770;">true</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">created_by</span><span>&quot;: </span><span style="color:#d08770;">2</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">updated_by</span><span>&quot;: </span><span style="color:#d08770;">3
+</span><span>}
+</span></code></pre>
+<p>So the To do was created by the user with the id 2 and modified by the user with the id 3</p>
+<p>Every thing works as expected</p>
+<blockquote>
+<p>I don’t like this solution because I have to override every viewset. A better approach might be to create a parent viewset class that inherits from the other viewsets and overrides the perform_create and perform_update methods. However, I don’t like placing business logic in the view layer; I prefer handling these modifications in the serializer layer.</p>
+</blockquote>
+<h3 id="second-solution"><a class="zola-anchor" href="#second-solution" aria-label="Anchor link for: second-solution">Second solution</a></h3>
+<h4 id="the-serializers"><a class="zola-anchor" href="#the-serializers" aria-label="Anchor link for: the-serializers">The serializers</a></h4>
+<pre data-lang="py" style="background-color:#2b303b;color:#c0c5ce;" class="language-py "><code class="language-py" data-lang="py"><span style="color:#65737e;"># common/serializers.py
+</span><span style="color:#b48ead;">from </span><span>rest_framework </span><span style="color:#b48ead;">import </span><span>serializers
+</span><span>
+</span><span>
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">AuditSerializerMixin</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">serializers.Serializer</span><span style="color:#eff1f5;">):
+</span><span>    created_by = serializers.</span><span style="color:#bf616a;">HiddenField</span><span>(
+</span><span>        </span><span style="color:#bf616a;">default</span><span>=serializers.</span><span style="color:#bf616a;">CreateOnlyDefault</span><span>(serializers.</span><span style="color:#bf616a;">CurrentUserDefault</span><span>())
+</span><span>    )
+</span><span>    updated_by = serializers.</span><span style="color:#bf616a;">HiddenField</span><span>(</span><span style="color:#bf616a;">default</span><span>=serializers.</span><span style="color:#bf616a;">CurrentUserDefault</span><span>())
+</span></code></pre>
+<pre data-lang="py" style="background-color:#2b303b;color:#c0c5ce;" class="language-py "><code class="language-py" data-lang="py"><span style="color:#65737e;"># todos/serializers.py
+</span><span style="color:#b48ead;">from </span><span>rest_framework </span><span style="color:#b48ead;">import </span><span>serializers
+</span><span style="color:#b48ead;">from </span><span>common.serializers </span><span style="color:#b48ead;">import </span><span>AuditSerializerMixin
+</span><span style="color:#b48ead;">from .</span><span>models </span><span style="color:#b48ead;">import </span><span>Todo
+</span><span>
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">TodoSerializer</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">AuditSerializerMixin</span><span style="color:#eff1f5;">, </span><span style="color:#a3be8c;">serializers.ModelSerializer</span><span style="color:#eff1f5;">):
+</span><span style="color:#eff1f5;">    </span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Meta</span><span style="color:#eff1f5;">:
+</span><span>        model = Todo
+</span><span>        fields = &quot;</span><span style="color:#a3be8c;">__all__</span><span>&quot;
+</span><span>        read_only_fields = (
+</span><span>            &quot;</span><span style="color:#a3be8c;">id</span><span>&quot;,
+</span><span>            &quot;</span><span style="color:#a3be8c;">created_at</span><span>&quot;,
+</span><span>            &quot;</span><span style="color:#a3be8c;">updated_at</span><span>&quot;,
+</span><span>            &quot;</span><span style="color:#a3be8c;">created_by</span><span>&quot;,
+</span><span>            &quot;</span><span style="color:#a3be8c;">updated_by</span><span>&quot;,
+</span><span>        )
+</span></code></pre>
+<pre data-lang="py" style="background-color:#2b303b;color:#c0c5ce;" class="language-py "><code class="language-py" data-lang="py"><span style="color:#65737e;"># todos/views.py
+</span><span style="color:#b48ead;">from </span><span>rest_framework </span><span style="color:#b48ead;">import </span><span>viewsets, permissions
+</span><span style="color:#b48ead;">from .</span><span>models </span><span style="color:#b48ead;">import </span><span>Todo
+</span><span style="color:#b48ead;">from .</span><span>serializers </span><span style="color:#b48ead;">import </span><span>TodoSerializer
+</span><span>
+</span><span>
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">TodoViewSet</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">viewsets.ModelViewSet</span><span style="color:#eff1f5;">):
+</span><span>    queryset = Todo.objects.</span><span style="color:#bf616a;">all</span><span>()
+</span><span>    serializer_class = TodoSerializer
+</span><span>    permission_classes = [permissions.IsAuthenticated]
+</span></code></pre>
+<p>No create another Todo entry the response should be like this</p>
+<pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>{
+</span><span>    &quot;</span><span style="color:#a3be8c;">id</span><span>&quot;: </span><span style="color:#d08770;">2</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">created_at</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">2025-07-26T12:52:47.821956Z</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">updated_at</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">2025-07-26T12:52:47.822179Z</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">title</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">This is the second Test</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">done</span><span>&quot;: </span><span style="color:#d08770;">false
+</span><span>}
+</span></code></pre>
+<blockquote>
+<p>We can notice that the created_at and the updated_at no longer presented in the respone;
+serializers.HiddenField is a DRF field that is never exposed to the client (it’s not required in request data and not shown in browsable API forms).
+Instead, it is filled automatically by a default value or function provided in its default argument.</p>
+</blockquote>
+<blockquote>
+<p>The Role of CurrentUserDefault and CreateOnlyDefault</p>
+<ul>
+<li>CurrentUserDefault(): A DRF default class that returns request.user automatically.</li>
+<li>CreateOnlyDefault(default): A wrapper that ensures the default value is only set when creating objects, and not overwritten during updates.</li>
+</ul>
+</blockquote>
+<p>So to solve this problem we can override the to_representation method on the AuditSerializerMixin like this</p>
+<pre data-lang="py" style="background-color:#2b303b;color:#c0c5ce;" class="language-py "><code class="language-py" data-lang="py"><span style="color:#65737e;"># common/serializers.py
+</span><span style="color:#b48ead;">from </span><span>rest_framework </span><span style="color:#b48ead;">import </span><span>serializers
+</span><span>
+</span><span>
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">AuditSerializerMixin</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">serializers.Serializer</span><span style="color:#eff1f5;">):
+</span><span>    created_by = serializers.</span><span style="color:#bf616a;">HiddenField</span><span>(
+</span><span>        </span><span style="color:#bf616a;">default</span><span>=serializers.</span><span style="color:#bf616a;">CreateOnlyDefault</span><span>(serializers.</span><span style="color:#bf616a;">CurrentUserDefault</span><span>())
+</span><span>    )
+</span><span>    updated_by = serializers.</span><span style="color:#bf616a;">HiddenField</span><span>(</span><span style="color:#bf616a;">default</span><span>=serializers.</span><span style="color:#bf616a;">CurrentUserDefault</span><span>())
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">to_representation</span><span>(</span><span style="color:#bf616a;">self</span><span>, </span><span style="color:#bf616a;">instance</span><span>):
+</span><span>        rep = </span><span style="color:#96b5b4;">super</span><span>().</span><span style="color:#bf616a;">to_representation</span><span>(instance)
+</span><span>        rep[&quot;</span><span style="color:#a3be8c;">created_by</span><span>&quot;] = instance.created_by.id
+</span><span>        rep[&quot;</span><span style="color:#a3be8c;">updated_by</span><span>&quot;] = instance.updated_by.id
+</span><span>        </span><span style="color:#b48ead;">return </span><span>rep
+</span></code></pre>
+<p>re create another Todo entry and every thing will work, the response should be something like this</p>
+<pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>{
+</span><span>    &quot;</span><span style="color:#a3be8c;">id</span><span>&quot;: </span><span style="color:#d08770;">3</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">created_at</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">2025-07-26T13:00:19.686324Z</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">updated_at</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">2025-07-26T13:00:19.686846Z</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">title</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">This will Work</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">done</span><span>&quot;: </span><span style="color:#d08770;">true</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">created_by</span><span>&quot;: </span><span style="color:#d08770;">3</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">updated_by</span><span>&quot;: </span><span style="color:#d08770;">3
+</span><span>}
+</span></code></pre>
+<p>Now login as the adminuser and modify the Todo with the id 3 and put the done to false
+the response should be like this</p>
+<pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>{
+</span><span>    &quot;</span><span style="color:#a3be8c;">id</span><span>&quot;: </span><span style="color:#d08770;">3</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">created_at</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">2025-07-26T13:00:19.686324Z</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">updated_at</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">2025-07-26T13:04:16.150382Z</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">title</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">This will Work</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">done</span><span>&quot;: </span><span style="color:#d08770;">false</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">created_by</span><span>&quot;: </span><span style="color:#d08770;">3</span><span>,
+</span><span>    &quot;</span><span style="color:#a3be8c;">updated_by</span><span>&quot;: </span><span style="color:#d08770;">2
+</span><span>}
+</span></code></pre>
+<h2 id="github-repository"><a class="zola-anchor" href="#github-repository" aria-label="Anchor link for: github-repository">Github Repository</a></h2>
+<p><a href="https://github.com/malnossi/djangodrfdryaudit">Django Drf Audit</a></p>
+<h2 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">Conclusion</a></h2>
+<p>The HiddenField approach in Django Rest Framework is a cleaner and more maintainable solution for automatically managing audit fields like created_by and updated_by. Unlike the traditional method of overriding perform_create and perform_update in each ViewSet, this approach moves the responsibility to the serialization layer, which is the natural place for handling data preparation and validation before it reaches the database. This not only reduces boilerplate code and keeps ViewSets focused solely on request handling and permissions, but also strengthens data integrity, as these fields are completely hidden from the client and cannot be tampered with. By leveraging CurrentUserDefault and CreateOnlyDefault, the serializer ensures that created_by is set only once during object creation while updated_by is updated on every modification, guaranteeing consistent behavior across all endpoints. Ultimately, this architecture aligns with DRF’s design philosophy by making the serializer the single source of truth for how data is processed, resulting in a more scalable, secure, and DRY codebase.</p>
+
+      </div>
     </div>
-</footer>
-<script lang="js">
-    window.onload = () => {
-        const date = new Date().getFullYear()
-        document.querySelector("#date").textContent = date;
-    }
-</script>
+  </div>
+</div> -->
+
+    </main>
+
     <script lang="js" src='https://malnossi.github.io/script.js'></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV" defer></script>

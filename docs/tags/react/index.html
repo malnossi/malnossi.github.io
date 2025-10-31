@@ -3,70 +3,58 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://malnossi.github.io/bulma.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <link rel="stylesheet" href="https://malnossi.github.io/pico.min.css">
     <link rel="stylesheet" href="https://malnossi.github.io/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnapp.websitepolicies.net/widgets/cookies/mzad7vzz.js" defer></script>
     <title>
 Mohamed AL NOSSIRAT | Tags
 </title>
 </head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+
+    :root {
+        --pico-font-family: "IBM Plex Serif", serif;
+    }
+</style>
 
 <body>
-    <nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-        </a>
-    </div>
-
-    <div class="navbar-menu" id="navbarBasicExample">
-        <div class="navbar-end">
-            <a class="navbar-item" href="/">Home</a>
-            
-            
-                
-                <a class="navbar-item" href="https://malnossi.github.io/blog/"> Blog</a>
-            
-        </div>
-    </div>
-    </div>
-
-    <div class="navbar-end">
-    </div>
-    </div>
+    <main class="container">
+        <nav>
+  <ul>
+    <li><strong>Mohamed Nossirat</strong></li>
+  </ul>
+  <ul>
+    <li><a href="/" class="contrast">Home</a></li>
+    <li><a href="/blog" class="contrast">Blog</a></li>
+  </ul>
 </nav>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-    
-      // Get all "navbar-burger" elements
-      const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-    
-      // Add a click event on each of them
-      $navbarBurgers.forEach( el => {
-        el.addEventListener('click', () => {
-    
-          // Get the target from the "data-target" attribute
-          const target = el.dataset.target;
-          const $target = document.getElementById(target);
-    
-          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-          el.classList.toggle('is-active');
-          $target.classList.toggle('is-active');
-    
-        });
+  document.addEventListener('DOMContentLoaded', () => {
+
+    // Get all "navbar-burger" elements
+    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+    // Add a click event on each of them
+    $navbarBurgers.forEach(el => {
+      el.addEventListener('click', () => {
+
+        // Get the target from the "data-target" attribute
+        const target = el.dataset.target;
+        const $target = document.getElementById(target);
+
+        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+        el.classList.toggle('is-active');
+        $target.classList.toggle('is-active');
+
       });
-    
     });
-      </script>
-    
-    
+
+  });
+</script>
+        
 <section class="section">
     <div class="level-item">
         <p class="subtitle is-size-4">Posts about React</p>
@@ -75,74 +63,16 @@ Mohamed AL NOSSIRAT | Tags
    <div class="columns is-desktop is-multiline">
       
          <div class="column is-3">
-            <div class="card">
-    <div class="card-image">
-        <figure class="image is-4by3">
-            <img src="/django+vite.webp" alt="Placeholder image" />
-        </figure>
-    </div>
-    <div class="card-content">
-        <div class="media">
-            <p class="title is-5 has-text-centered">Integrate Django and Vite based Frontend</p>
-        </div>
-        <nav class="level is-mobile">
-            <div class="level-left">
-                <div class="level-item has-text-centered">
-                    <div>
-                        <p class="heading">Reading time</p>
-                        <p class="">6 minutes</p>
-                    </div>
-                </div>
-            </div>
-            <div class="level-right">
-                <div class="level-item has-text-centered">
-                    <div>
-                        <p class="heading">Published at</p>
-                        <time class="" datetime="2025-06-02">02&#x2F;06&#x2F;2025</time>
-                    </div>
-                </div>
-            </div>
-        </nav>
-        <hr />
-        <div class="tags">
-            
-                <a class="tag is-link" href="/tags/django">#Django</a>
-            
-                <a class="tag is-link" href="/tags/web">#Web</a>
-            
-                <a class="tag is-link" href="/tags/python">#Python</a>
-            
-                <a class="tag is-link" href="/tags/vite">#vite</a>
-            
-                <a class="tag is-link" href="/tags/vue">#Vue</a>
-            
-                <a class="tag is-link" href="/tags/react">#React</a>
-            
-        </div>
-        <a class="button is-info is-light is-fullwidth" href="https://malnossi.github.io/blog/django-vite-integration/">
-            <span>Read</span>
-            <span class="icon mt-1">
-                <i class="fa-brands fa-readme"></i>
-            </span>
-        </a>
-    </div>
-</div>
+            <article>
+    <a href="https:&#x2F;&#x2F;malnossi.github.io&#x2F;blog&#x2F;django-vite-integration&#x2F;">Integrate Django and Vite based Frontend</a>
+</article>
          </div>
       
    </div>
 </section>
 
-    <footer class="footer">
-    <div class="has-text-centered">
-        Mohamed AL NOSSIRAT <span id="date"></span>
-    </div>
-</footer>
-<script lang="js">
-    window.onload = () => {
-        const date = new Date().getFullYear()
-        document.querySelector("#date").textContent = date;
-    }
-</script>
+    </main>
+
     <script lang="js" src='https://malnossi.github.io/script.js'></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV" defer></script>

@@ -3,109 +3,75 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://malnossi.github.io/bulma.min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <link rel="stylesheet" href="https://malnossi.github.io/pico.min.css">
     <link rel="stylesheet" href="https://malnossi.github.io/style.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css"
-        integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
     <script src="https://cdnapp.websitepolicies.net/widgets/cookies/mzad7vzz.js" defer></script>
     <title>
 Mohamed Nossirat | Vue &amp; Vuetify Composable Confirm Dialogs
 </title>
 </head>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+
+    :root {
+        --pico-font-family: "IBM Plex Serif", serif;
+    }
+</style>
 
 <body>
-    <nav class="navbar" role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
-        <a role="button" class="navbar-burger" aria-label="menu" aria-expanded="false" data-target="navbarBasicExample">
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-            <span aria-hidden="true"></span>
-        </a>
-    </div>
-
-    <div class="navbar-menu" id="navbarBasicExample">
-        <div class="navbar-end">
-            <a class="navbar-item" href="/">Home</a>
-            
-            
-                
-                <a class="navbar-item" href="https://malnossi.github.io/blog/"> Blog</a>
-            
-        </div>
-    </div>
-    </div>
-
-    <div class="navbar-end">
-    </div>
-    </div>
+    <main class="container">
+        <nav>
+  <ul>
+    <li><strong>Mohamed Nossirat</strong></li>
+  </ul>
+  <ul>
+    <li><a href="/" class="contrast">Home</a></li>
+    <li><a href="/blog" class="contrast">Blog</a></li>
+  </ul>
 </nav>
 <script>
-    document.addEventListener('DOMContentLoaded', () => {
-    
-      // Get all "navbar-burger" elements
-      const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-    
-      // Add a click event on each of them
-      $navbarBurgers.forEach( el => {
-        el.addEventListener('click', () => {
-    
-          // Get the target from the "data-target" attribute
-          const target = el.dataset.target;
-          const $target = document.getElementById(target);
-    
-          // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-          el.classList.toggle('is-active');
-          $target.classList.toggle('is-active');
-    
-        });
+  document.addEventListener('DOMContentLoaded', () => {
+
+    // Get all "navbar-burger" elements
+    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
+
+    // Add a click event on each of them
+    $navbarBurgers.forEach(el => {
+      el.addEventListener('click', () => {
+
+        // Get the target from the "data-target" attribute
+        const target = el.dataset.target;
+        const $target = document.getElementById(target);
+
+        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
+        el.classList.toggle('is-active');
+        $target.classList.toggle('is-active');
+
       });
-    
     });
-      </script>
-    
-    
-<div class="section">
-    <div class="card">
-        <div class="card-image">
-          <figure class="image is-16by9">
-            <img
-              src="/vuetify.avif"
-              alt="Placeholder image"
-            />
-          </figure>
-        </div>
-        <div class="card-content">
-            <div class="level">
-                <div class="level-item has-text-centered">
-                    <div>
-                        <h1 class="heading is-size-5"><strong>Vue &amp; Vuetify Composable Confirm Dialogs</strong></h1>
-                        <div class="tags is-flex is-justify-content-center">
-                            
-                            <a class="tag is-link is-hoverable" href="/tags/vuejs">#Vuejs</a>
-                            
-                            <a class="tag is-link is-hoverable" href="/tags/vuetify">#Vuetify</a>
-                            
-                            <a class="tag is-link is-hoverable" href="/tags/javascript">#Javascript</a>
-                            
-                        </div>
-                    </div>
-                </div>
-            </div>
-          <div class="media">
-            <div class="media-content">
-              <span class="title is-size-6">Mohamed AL NOSSIRAT</span> |
-              <time datetime="2024-08-28">28&#x2F;08&#x2F;2024</time>
-              <hr/>
-            </div>
-            
-          </div>
-          <div class="content has-text-justified">
-            <h2 id="introduction">Introduction</h2>
+
+  });
+</script>
+        
+<figure class="image is-16by9">
+  <img src="/vuetify.avif" alt="Placeholder image" style="border-radius: 0.5rem;" width="100%"/>
+</figure>
+<div style="text-align: center; align-content: center; margin-top: 40px;">
+  <h1>Vue &amp; Vuetify Composable Confirm Dialogs</h1>
+  
+  <a class="tag is-link is-hoverable" href="/tags/vuejs">#Vuejs</a>
+  
+  <a class="tag is-link is-hoverable" href="/tags/vuetify">#Vuetify</a>
+  
+  <a class="tag is-link is-hoverable" href="/tags/javascript">#Javascript</a>
+  
+</div>
+<div>
+  <h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h2>
 <p><a href="https://vuetifyjs.com/">Vuetify</a>, a popular Material Design framework for <a href="https://vuejs.org/">Vue</a>, provides a wide range of UI components, including highly customizable dialogs. This article will guide you through building composable programmatic dialogs using Vue and Vuetify, allowing you to manage dialogs efficiently and flexibly.Creating programmatic dialogs in Vue using Vuetify allows developers to dynamically generate dialogs that enhance the user experience without cluttering the template with numerous dialog components.</p>
-<h2 id="project-setup">Project Setup</h2>
+<h2 id="project-setup"><a class="zola-anchor" href="#project-setup" aria-label="Anchor link for: project-setup">Project Setup</a></h2>
 <pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#65737e;">## with npm
 </span><span style="color:#bf616a;">npm</span><span> create vuetify@latest
 </span><span style="color:#65737e;">## with yarn
@@ -116,7 +82,7 @@ Mohamed Nossirat | Vue &amp; Vuetify Composable Confirm Dialogs
 </span><span style="color:#bf616a;">bun</span><span> create vuetify
 </span><span>
 </span></code></pre>
-<h2 id="create-the-dialog-component">Create the Dialog component</h2>
+<h2 id="create-the-dialog-component"><a class="zola-anchor" href="#create-the-dialog-component" aria-label="Anchor link for: create-the-dialog-component">Create the Dialog component</a></h2>
 <p>Create a new dialog component in <code>src/components</code>, here I will create a file names <code>Dialog.vue</code></p>
 <pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">touch</span><span> src/dialogs/Dialog.vue
 </span></code></pre>
@@ -185,7 +151,7 @@ Mohamed Nossirat | Vue &amp; Vuetify Composable Confirm Dialogs
 </ul>
 </li>
 </ul>
-<h2 id="create-composable-file">Create Composable file</h2>
+<h2 id="create-composable-file"><a class="zola-anchor" href="#create-composable-file" aria-label="Anchor link for: create-composable-file">Create Composable file</a></h2>
 <pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">mkdir -p</span><span> src/composables &amp;&amp; </span><span style="color:#bf616a;">touch</span><span> /src/composable/useDialog.js
 </span></code></pre>
 <p>In the <code>useDialog.js</code> file copy and past this coce :</p>
@@ -217,7 +183,7 @@ Mohamed Nossirat | Vue &amp; Vuetify Composable Confirm Dialogs
 </span><span>    })
 </span><span>}
 </span></code></pre>
-<h2 id="usage">Usage</h2>
+<h2 id="usage"><a class="zola-anchor" href="#usage" aria-label="Anchor link for: usage">Usage</a></h2>
 <pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
 </span><span>  &lt;</span><span style="color:#bf616a;">v-container </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">fill-height</span><span>&quot;&gt;
 </span><span>    &lt;</span><span style="color:#bf616a;">v-btn </span><span style="color:#d08770;">@click</span><span>=&quot;</span><span style="color:#a3be8c;">clickedAsync</span><span>&quot;&gt;Click Async&lt;/</span><span style="color:#bf616a;">v-btn</span><span>&gt;
@@ -248,31 +214,208 @@ Mohamed Nossirat | Vue &amp; Vuetify Composable Confirm Dialogs
 </span><span>}
 </span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
 </span></code></pre>
-<h2 id="result">Result</h2>
+<h2 id="result"><a class="zola-anchor" href="#result" aria-label="Anchor link for: result">Result</a></h2>
 <div align="center">
 <img src="/dialog.gif" width="70%"/>
 </div>
-<h2 id="github-source">Github source</h2>
+<h2 id="github-source"><a class="zola-anchor" href="#github-source" aria-label="Anchor link for: github-source">Github source</a></h2>
 <p><a href="https://github.com/malnossi/vue-vuetify-composable-dialog">vue-vuetify-composable-dialog</a></p>
-<h2 id="final-words">Final Words</h2>
+<h2 id="final-words"><a class="zola-anchor" href="#final-words" aria-label="Anchor link for: final-words">Final Words</a></h2>
 <p>Dialogs are essential for displaying critical information, confirmations, or forms without leaving the current page. However, managing dialogs can become cumbersome, especially in large-scale applications. Programmatic dialogs help mitigate this by creating dialogs on the fly using JavaScript, making them more manageable and reducing template bloat. Composable dialogs are built using the Composition API in Vue, enabling the encapsulation of dialog-related logic in a reusable and maintainable way.</p>
 
+</div>
+<!-- <div class="section">
+  <div class="card">
+    <div class="card-image">
+
+    </div>
+    <div class="card-content">
+      <div class="level">
+        <div class="level-item has-text-centered">
+          <div>
+            <h1 class="heading is-size-5"><strong>Vue &amp; Vuetify Composable Confirm Dialogs</strong></h1>
+            <div class="tags is-flex is-justify-content-center">
+              
+              <a class="tag is-link is-hoverable" href="/tags/vuejs">#Vuejs</a>
+              
+              <a class="tag is-link is-hoverable" href="/tags/vuetify">#Vuetify</a>
+              
+              <a class="tag is-link is-hoverable" href="/tags/javascript">#Javascript</a>
+              
+            </div>
           </div>
         </div>
       </div>
-</div>
+      <div class="media">
+        <div class="media-content">
+          <span class="title is-size-6">Mohamed AL NOSSIRAT</span> |
+          <time datetime="2024-08-28">28&#x2F;08&#x2F;2024</time>
+          <hr />
+        </div>
 
-    <footer class="footer">
-    <div class="has-text-centered">
-        Mohamed AL NOSSIRAT <span id="date"></span>
+      </div>
+      <div class="content has-text-justified">
+        <h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h2>
+<p><a href="https://vuetifyjs.com/">Vuetify</a>, a popular Material Design framework for <a href="https://vuejs.org/">Vue</a>, provides a wide range of UI components, including highly customizable dialogs. This article will guide you through building composable programmatic dialogs using Vue and Vuetify, allowing you to manage dialogs efficiently and flexibly.Creating programmatic dialogs in Vue using Vuetify allows developers to dynamically generate dialogs that enhance the user experience without cluttering the template with numerous dialog components.</p>
+<h2 id="project-setup"><a class="zola-anchor" href="#project-setup" aria-label="Anchor link for: project-setup">Project Setup</a></h2>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#65737e;">## with npm
+</span><span style="color:#bf616a;">npm</span><span> create vuetify@latest
+</span><span style="color:#65737e;">## with yarn
+</span><span style="color:#bf616a;">yarn</span><span> create vuetify
+</span><span style="color:#65737e;">## with pnpm
+</span><span style="color:#bf616a;">pnpm</span><span> create vuetify
+</span><span style="color:#65737e;">## with bun
+</span><span style="color:#bf616a;">bun</span><span> create vuetify
+</span><span>
+</span></code></pre>
+<h2 id="create-the-dialog-component"><a class="zola-anchor" href="#create-the-dialog-component" aria-label="Anchor link for: create-the-dialog-component">Create the Dialog component</a></h2>
+<p>Create a new dialog component in <code>src/components</code>, here I will create a file names <code>Dialog.vue</code></p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">touch</span><span> src/dialogs/Dialog.vue
+</span></code></pre>
+<p>The content of this file is :</p>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">v-dialog </span><span style="color:#d08770;">v-model</span><span>=&quot;</span><span style="color:#a3be8c;">open</span><span>&quot; </span><span style="color:#d08770;">width</span><span>=&quot;</span><span style="color:#a3be8c;">50%</span><span>&quot; </span><span style="color:#d08770;">persistent max-width</span><span>=&quot;</span><span style="color:#a3be8c;">60%</span><span>&quot;&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">v-card </span><span style="color:#d08770;">:title</span><span>=&quot;</span><span style="color:#a3be8c;">title</span><span>&quot;&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">v-card-text</span><span>&gt;{{ message }}&lt;/</span><span style="color:#bf616a;">v-card-text</span><span>&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">v-card-actions</span><span>&gt;
+</span><span>                &lt;</span><span style="color:#bf616a;">v-btn </span><span style="color:#d08770;">color</span><span>=&quot;</span><span style="color:#a3be8c;">success</span><span>&quot; </span><span style="color:#d08770;">@click</span><span>=&quot;</span><span style="color:#a3be8c;">submitDialog</span><span>&quot;&gt;{{ submitText }}&lt;/</span><span style="color:#bf616a;">v-btn</span><span>&gt;
+</span><span>                &lt;</span><span style="color:#bf616a;">v-btn </span><span style="color:#d08770;">color</span><span>=&quot;</span><span style="color:#a3be8c;">error</span><span>&quot; </span><span style="color:#d08770;">@click</span><span>=&quot;</span><span style="color:#a3be8c;">cancelDialog</span><span>&quot;&gt;{{ cancelText }}&lt;/</span><span style="color:#bf616a;">v-btn</span><span>&gt;
+</span><span>            &lt;/</span><span style="color:#bf616a;">v-card-actions</span><span>&gt;
+</span><span>        &lt;/</span><span style="color:#bf616a;">v-card</span><span>&gt;
+</span><span>
+</span><span>    &lt;/</span><span style="color:#bf616a;">v-dialog</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
+</span><span>&lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">setup</span><span>&gt;
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">open </span><span>= </span><span style="color:#bf616a;">defineModel</span><span>({ default: </span><span style="color:#d08770;">false</span><span>, type: </span><span style="color:#ebcb8b;">Boolean </span><span>})
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">emits </span><span>= </span><span style="color:#bf616a;">defineEmits</span><span>([&quot;</span><span style="color:#a3be8c;">submit</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">cancel</span><span>&quot;])
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">props </span><span>= </span><span style="color:#bf616a;">defineProps</span><span>({
+</span><span>    title: {
+</span><span>        type: </span><span style="color:#ebcb8b;">String</span><span>,
+</span><span>        </span><span style="color:#8fa1b3;">default</span><span>: () </span><span style="color:#b48ead;">=&gt; </span><span>(&quot;</span><span style="color:#a3be8c;">Attention</span><span>&quot;),
+</span><span>    },
+</span><span>    message: {
+</span><span>        type: </span><span style="color:#ebcb8b;">String</span><span>,
+</span><span>        </span><span style="color:#8fa1b3;">default</span><span>: () </span><span style="color:#b48ead;">=&gt; </span><span>(</span><span style="color:#d08770;">null</span><span>),
+</span><span>    },
+</span><span>    submitText: {
+</span><span>        type: </span><span style="color:#ebcb8b;">String</span><span>,
+</span><span>        </span><span style="color:#8fa1b3;">default</span><span>: () </span><span style="color:#b48ead;">=&gt; </span><span>(&quot;</span><span style="color:#a3be8c;">Submit</span><span>&quot;),
+</span><span>    },
+</span><span>    cancelText: {
+</span><span>        type: </span><span style="color:#ebcb8b;">String</span><span>,
+</span><span>        </span><span style="color:#8fa1b3;">default</span><span>: () </span><span style="color:#b48ead;">=&gt; </span><span>(&quot;</span><span style="color:#a3be8c;">Cancel</span><span>&quot;),
+</span><span>    }
+</span><span>}
+</span><span>)
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">submitDialog </span><span>= () </span><span style="color:#b48ead;">=&gt; </span><span>{
+</span><span>    </span><span style="color:#bf616a;">emits</span><span>(&#39;</span><span style="color:#a3be8c;">submit</span><span>&#39;)
+</span><span>    </span><span style="color:#bf616a;">open</span><span>.value=</span><span style="color:#d08770;">false
+</span><span>}
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">cancelDialog </span><span>= () </span><span style="color:#b48ead;">=&gt; </span><span>{
+</span><span>    </span><span style="color:#bf616a;">emits</span><span>(&#39;</span><span style="color:#a3be8c;">cancel</span><span>&#39;)
+</span><span>    </span><span style="color:#bf616a;">open</span><span>.value=</span><span style="color:#d08770;">false
+</span><span>}
+</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
+</span></code></pre>
+<ul>
+<li><strong><code>&lt;v-dialog&gt;</code></strong>: A Vuetify component that creates a modal dialog box.</li>
+<li><code>persistent</code>: Prevents the user from closing the dialog by clicking outside of it.</li>
+<li><code>:title="title"</code>: Binds the <code>title</code> prop to the card title.</li>
+<li><strong><code>&lt;v-btn color="success"&gt;</code></strong>: A button with a green color labeled with the <code>submitText</code> prop (default is "Submit").</li>
+<li><strong><code>&lt;v-btn color="error"&gt;</code></strong>: A button with a red color labeled with the <code>cancelText</code> prop (default is "Cancel").</li>
+</ul>
+<p>And in the script section</p>
+<ul>
+<li><strong><code>const open = defineModel({ default: false, type: Boolean })</code></strong>: This line creates a reactive <code>open</code> property with a default value of <code>false</code> and specifies that it should be of type <code>Boolean</code>. This property controls whether the dialog is visible.</li>
+<li><strong><code>const emits = defineEmits(["submit", "cancel"])</code></strong>: Defines events that the component can emit, namely "submit" and "cancel". These events would typically be triggered when the corresponding buttons are clicked, but they are not explicitly emitted in the current code.</li>
+<li><strong><code>const props = defineProps({ ... })</code></strong>: Defines the properties (<code>props</code>) that the component accepts:
+<ul>
+<li><code>title</code>: A <code>String</code> prop with a default value of "Attention".</li>
+<li><code>message</code>: A <code>String</code> prop that defaults to <code>null</code>.</li>
+<li><code>submitText</code>: A <code>String</code> prop with a default value of "Submit".</li>
+<li><code>cancelText</code>: A <code>String</code> prop with a default value of "Cancel".</li>
+</ul>
+</li>
+</ul>
+<h2 id="create-composable-file"><a class="zola-anchor" href="#create-composable-file" aria-label="Anchor link for: create-composable-file">Create Composable file</a></h2>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">mkdir -p</span><span> src/composables &amp;&amp; </span><span style="color:#bf616a;">touch</span><span> /src/composable/useDialog.js
+</span></code></pre>
+<p>In the <code>useDialog.js</code> file copy and past this coce :</p>
+<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">createApp</span><span>, </span><span style="color:#bf616a;">mergeProps </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vue</span><span>&#39;
+</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">Dialog </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">@/components/Dialog.vue</span><span>&#39;
+</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">vuetify </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">@/plugins/vuetify</span><span>&#39;
+</span><span>
+</span><span style="color:#b48ead;">export const </span><span style="color:#8fa1b3;">getVAppRoot </span><span>= () </span><span style="color:#b48ead;">=&gt; </span><span>document.body
+</span><span style="color:#b48ead;">export const </span><span style="color:#8fa1b3;">createContainer </span><span>= () </span><span style="color:#b48ead;">=&gt; </span><span>document.</span><span style="color:#96b5b4;">createElement</span><span>(&#39;</span><span style="color:#a3be8c;">div</span><span>&#39;)
+</span><span>
+</span><span style="color:#b48ead;">export const </span><span style="color:#8fa1b3;">useDialog </span><span>= (</span><span style="color:#bf616a;">props</span><span>) </span><span style="color:#b48ead;">=&gt; </span><span>{    
+</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">rootElement </span><span>= </span><span style="color:#8fa1b3;">getVAppRoot</span><span>()
+</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">container </span><span>= </span><span style="color:#8fa1b3;">createContainer</span><span>()
+</span><span>    </span><span style="color:#b48ead;">return </span><span>new Promise((</span><span style="color:#bf616a;">resolve</span><span>) </span><span style="color:#b48ead;">=&gt; </span><span>{
+</span><span>        </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">componentApp </span><span>= </span><span style="color:#8fa1b3;">createApp</span><span>(</span><span style="color:#bf616a;">Dialog</span><span>, </span><span style="color:#8fa1b3;">mergeProps</span><span>(
+</span><span>            </span><span style="color:#bf616a;">props</span><span>,
+</span><span>            { modelValue: </span><span style="color:#d08770;">true </span><span>},
+</span><span>            {
+</span><span>                </span><span style="color:#8fa1b3;">onSubmit</span><span>() {
+</span><span>                    </span><span style="color:#8fa1b3;">resolve</span><span>(</span><span style="color:#d08770;">true</span><span>)
+</span><span>                },
+</span><span>                </span><span style="color:#8fa1b3;">onCancel</span><span>() {
+</span><span>                    </span><span style="color:#8fa1b3;">resolve</span><span>(</span><span style="color:#d08770;">false</span><span>)
+</span><span>                }
+</span><span>            }
+</span><span>        ))
+</span><span>        </span><span style="color:#bf616a;">rootElement</span><span>.</span><span style="color:#96b5b4;">appendChild</span><span>(</span><span style="color:#bf616a;">container</span><span>)
+</span><span>        </span><span style="color:#bf616a;">componentApp</span><span>.</span><span style="color:#8fa1b3;">use</span><span>(</span><span style="color:#bf616a;">vuetify</span><span>).</span><span style="color:#8fa1b3;">mount</span><span>(</span><span style="color:#bf616a;">container</span><span>)
+</span><span>    })
+</span><span>}
+</span></code></pre>
+<h2 id="usage"><a class="zola-anchor" href="#usage" aria-label="Anchor link for: usage">Usage</a></h2>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
+</span><span>  &lt;</span><span style="color:#bf616a;">v-container </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">fill-height</span><span>&quot;&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">v-btn </span><span style="color:#d08770;">@click</span><span>=&quot;</span><span style="color:#a3be8c;">clickedAsync</span><span>&quot;&gt;Click Async&lt;/</span><span style="color:#bf616a;">v-btn</span><span>&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">v-btn </span><span style="color:#d08770;">@click</span><span>=&quot;</span><span style="color:#a3be8c;">clickedThen</span><span>&quot;&gt;Click Then&lt;/</span><span style="color:#bf616a;">v-btn</span><span>&gt;
+</span><span>  &lt;/</span><span style="color:#bf616a;">v-container</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
+</span><span>
+</span><span>&lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">setup</span><span>&gt;
+</span><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">useDialog </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">@/composable/useDialog</span><span>&#39;;
+</span><span>
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">clickedAsync </span><span>= </span><span style="color:#b48ead;">async </span><span>() </span><span style="color:#b48ead;">=&gt; </span><span>{
+</span><span>  </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">response </span><span>= </span><span style="color:#b48ead;">await </span><span style="color:#bf616a;">useDialog</span><span>({ message: &quot;</span><span style="color:#a3be8c;">this works very nice !</span><span>&quot; });
+</span><span>  </span><span style="color:#b48ead;">if </span><span>(</span><span style="color:#bf616a;">response</span><span>) {
+</span><span>    </span><span style="color:#bf616a;">alert</span><span>(&quot;</span><span style="color:#a3be8c;">Dialog confirmed </span><span>&quot; + </span><span style="color:#bf616a;">response</span><span>,)
+</span><span>  } </span><span style="color:#b48ead;">else </span><span>{
+</span><span>    </span><span style="color:#bf616a;">alert</span><span>(&quot;</span><span style="color:#a3be8c;">Dialog canceled </span><span>&quot; + </span><span style="color:#bf616a;">response</span><span>, </span><span style="color:#bf616a;">response</span><span>)
+</span><span>  }
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">clickedThen </span><span>= () </span><span style="color:#b48ead;">=&gt; </span><span>{
+</span><span>  </span><span style="color:#bf616a;">useDialog</span><span>({ message: &quot;</span><span style="color:#a3be8c;">this works very nice !</span><span>&quot; }).</span><span style="color:#bf616a;">then</span><span>(response</span><span style="color:#b48ead;">=&gt;</span><span>{
+</span><span>    </span><span style="color:#b48ead;">if </span><span>(</span><span style="color:#bf616a;">response</span><span>) {
+</span><span>    </span><span style="color:#bf616a;">alert</span><span>(&quot;</span><span style="color:#a3be8c;">Dialog confirmed </span><span>&quot; + </span><span style="color:#bf616a;">response</span><span>,)
+</span><span>  } </span><span style="color:#b48ead;">else </span><span>{
+</span><span>    </span><span style="color:#bf616a;">alert</span><span>(&quot;</span><span style="color:#a3be8c;">Dialog canceled </span><span>&quot; + </span><span style="color:#bf616a;">response</span><span>, </span><span style="color:#bf616a;">response</span><span>)
+</span><span>  }
+</span><span>  })
+</span><span>}
+</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
+</span></code></pre>
+<h2 id="result"><a class="zola-anchor" href="#result" aria-label="Anchor link for: result">Result</a></h2>
+<div align="center">
+<img src="/dialog.gif" width="70%"/>
+</div>
+<h2 id="github-source"><a class="zola-anchor" href="#github-source" aria-label="Anchor link for: github-source">Github source</a></h2>
+<p><a href="https://github.com/malnossi/vue-vuetify-composable-dialog">vue-vuetify-composable-dialog</a></p>
+<h2 id="final-words"><a class="zola-anchor" href="#final-words" aria-label="Anchor link for: final-words">Final Words</a></h2>
+<p>Dialogs are essential for displaying critical information, confirmations, or forms without leaving the current page. However, managing dialogs can become cumbersome, especially in large-scale applications. Programmatic dialogs help mitigate this by creating dialogs on the fly using JavaScript, making them more manageable and reducing template bloat. Composable dialogs are built using the Composition API in Vue, enabling the encapsulation of dialog-related logic in a reusable and maintainable way.</p>
+
+      </div>
     </div>
-</footer>
-<script lang="js">
-    window.onload = () => {
-        const date = new Date().getFullYear()
-        document.querySelector("#date").textContent = date;
-    }
-</script>
+  </div>
+</div> -->
+
+    </main>
+
     <script lang="js" src='https://malnossi.github.io/script.js'></script>
     <!-- Google tag (gtag.js) -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV" defer></script>

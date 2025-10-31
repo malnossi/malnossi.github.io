@@ -5,44 +5,19 @@ Mohamed Nossirat | Home
 {% endblock title %}
 
 {% block content %}
-<section class="section is-medium">
-  <div class="container">
-    <div class="level-item">
-      <div class="column is-4 has-text-centered">
-        <div class="img-profile-wrapper">
-          <div class="circle"></div>
-          <img src="{{ get_url(path="photo.jpeg", trailing_slash=false) }}" />
-        </div>
-        <div class="mt-6">
-          <h2 class="title is-size-4">Mohamed AL NOSSIRAT</h2>
-          <h3 class="subtitle is-size-6">Software Engineer <span><a class="has-text-success"
-                href="https://www.munityapps.com/" target="_blank">@Munity</a></span></h3>
-        </div>
-        <br/>
-        <div class="">
-          <a id="homeicon" class="button is-large is-responsive" href="{{config.extra.github_link|safe}}" target="_blank">
-            <span class="icon is-large">
-              <i class="fa-brands fa-github"></i>
-            </span>
-          </a>
-          <a id="homeicon" class="button is-large is-responsive" href="{{config.extra.gitlab_link|safe}}" target="_blank">
-            <span class="icon">
-              <i class="fa-brands fa-gitlab"></i>
-            </span>
-          </a>
-          <a id="homeicon" class="button is-large is-responsive" href="{{config.extra.linkedin_link|safe}}" target="_blank">
-            <span class="icon">
-              <i class="fa-brands fa-linkedin"></i>
-            </span>
-          </a>
-          <a id="homeicon" class="button is-large is-responsive" href="mailto:{{config.extra.email}}" target="_blank">
-            <span class="icon">
-              <i class="fa-solid fa-envelope"></i>
-            </span>
-          </a>
-        </div>
-      </div>
-    </div>
+<div class="img-profile-wrapper">
+  <div class="circle"></div>
+  <img src="{{ get_url(path="photo.jpeg", trailing_slash=false) }}" />
+</div>
+
+<div style="text-align: center;
+	align-content: center; margin-top: 40px;">
+  <h1>Mohamed Nossirat</h1>
+  <h6>Software ingeneer <a href="https://munityapps.com">@Munity</a></h6>
+  <div>
+    <a href="https://github.com/malnossi">Github</a>
+    <a href="https://gitlab.com/mohamed.w.nossirat">Gitlab</a>
+    <a href="www.linkedin.com/in/mohamed-waheeb-al-nossirat">Linkedin</a>
   </div>
-</section>
+</div>
 {% endblock content %}

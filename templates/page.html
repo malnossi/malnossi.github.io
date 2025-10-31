@@ -4,41 +4,48 @@
 Mohamed Nossirat | {{ page.title }}
 {% endblock title %}
 {% block content %}
-<div class="section">
-    <div class="card">
-        <div class="card-image">
-          <figure class="image is-16by9">
-            <img
-              src="/{{page.extra.cover}}"
-              alt="Placeholder image"
-            />
-          </figure>
-        </div>
-        <div class="card-content">
-            <div class="level">
-                <div class="level-item has-text-centered">
-                    <div>
-                        <h1 class="heading is-size-5"><strong>{{page.title}}</strong></h1>
-                        <div class="tags is-flex is-justify-content-center">
-                            {%for tag in page.taxonomies.tags%}
-                            <a class="tag is-link is-hoverable" href="/tags/{{tag|lower}}">#{{tag}}</a>
-                            {%endfor%}
-                        </div>
-                    </div>
-                </div>
+<figure class="image is-16by9">
+  <img src="/{{page.extra.cover}}" alt="Placeholder image" style="border-radius: 0.5rem;" width="100%"/>
+</figure>
+<div style="text-align: center; align-content: center; margin-top: 40px;">
+  <h1>{{page.title}}</h1>
+  {%for tag in page.taxonomies.tags%}
+  <a class="tag is-link is-hoverable" href="/tags/{{tag|lower}}">#{{tag}}</a>
+  {%endfor%}
+</div>
+<div>
+  {{page.content | safe}}
+</div>
+<!-- <div class="section">
+  <div class="card">
+    <div class="card-image">
+
+    </div>
+    <div class="card-content">
+      <div class="level">
+        <div class="level-item has-text-centered">
+          <div>
+            <h1 class="heading is-size-5"><strong>{{page.title}}</strong></h1>
+            <div class="tags is-flex is-justify-content-center">
+              {%for tag in page.taxonomies.tags%}
+              <a class="tag is-link is-hoverable" href="/tags/{{tag|lower}}">#{{tag}}</a>
+              {%endfor%}
             </div>
-          <div class="media">
-            <div class="media-content">
-              <span class="title is-size-6">{{page.authors[0]}}</span> |
-              <time datetime="{{page.date}}">{{page.date |date(format="%d/%m/%Y")}}</time>
-              <hr/>
-            </div>
-            
-          </div>
-          <div class="content has-text-justified">
-            {{page.content | safe}}
           </div>
         </div>
       </div>
-</div>
+      <div class="media">
+        <div class="media-content">
+          <span class="title is-size-6">{{page.authors[0]}}</span> |
+          <time datetime="{{page.date}}">{{page.date |date(format="%d/%m/%Y")}}</time>
+          <hr />
+        </div>
+
+      </div>
+      <div class="content has-text-justified">
+        {{page.content | safe}}
+      </div>
+    </div>
+  </div>
+</div> -->
 {% endblock content %}

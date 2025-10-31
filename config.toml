@@ -14,6 +14,7 @@ taxonomies = [
 # Whether to do syntax highlighting
 # Theme can be customised by setting the `highlight_theme` variable to a theme supported by Zola
 highlight_code = true
+insert_anchor_links = "heading"
 [extra]
 github_link="https://github.com/malnossi"
 gitlab_link="https://gitlab.com/mohamed.w.nossirat"

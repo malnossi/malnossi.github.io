@@ -5,15 +5,9 @@ Mohamed Nossirat | {{ section.title }}
 {% endblock title %}
 
 {% block content %}
-<section class="section">
-   {%include 'layout/paginator.html'%}
-   <div class="columns is-desktop is-multiline">
-      {% for page in paginator.pages %}
-      <div class="column is-3">
-         {% include "components/card.html" %}
-      </div>
-      {% endfor %}
-   </div>
-   {%include 'layout/paginator.html'%}
-</section>
+<div>
+   {% for post in section.pages %}
+   {% include "components/card.html" %}
+{% endfor %}
+</div>
 {% endblock content %}
