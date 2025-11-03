@@ -6,8 +6,8 @@ description="Django REST framework is a powerful and flexible toolkit for buildi
 [taxonomies]
 tags=["Django","DRF","Python"]
 [extra]
-cover="pro_django.avif"
-cover_source="Unsplash"
+[extra.cover]
+image="pro_django.avif"
 +++
 ## Introduction
 [Django REST Framework](https://www.django-rest-framework.org/) is an amazing librairy built on top of Python's most powerful web framework [Django](https://docs.djangoproject.com/). It is one of the best features to add to Django. But as always, nothing is perfect and to get the best out of this framework, you have to tinker with a few things around it.

@@ -1,1163 +1,789 @@
-<!DOCTYPE html>
-<html lang="fr">
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="color-scheme" content="light dark">
-    <link rel="stylesheet" href="https://malnossi.github.io/pico.min.css">
-    <link rel="stylesheet" href="https://malnossi.github.io/style.css">
-    <script src="https://cdnapp.websitepolicies.net/widgets/cookies/mzad7vzz.js" defer></script>
-    <title>
-Mohamed Nossirat | Integrate Django and Vite based Frontend
-</title>
-</head>
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Integrate Django and Vite based Frontend</title>
+  <meta property="og:title" content="Integrate Django and Vite based Frontend" />
+  <meta name="description" content="Django is one of the most popular backend web application frameworks that exists and it&apos;s written in Python. Vue.js is one of the most popular JavaScript tools for adding dynamic features to a web app…" />
+  <meta property="og:description" content="Django is one of the most popular backend web application frameworks that exists and it&apos;s written in Python. Vue.js is one of the most popular JavaScript tools for adding dynamic features to a web application.Django doesn&apos;t need Vue to run. Vue doesn&apos;t need Django to run. The combination gives devel…" />
+  <meta property="og:url" content="https://malnossi.github.io/blog/django-vite-integration/" />
+  <link rel="canonical" href="https://malnossi.github.io/blog/django-vite-integration/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2025-06-02T00:00:00+00:00" />
+  <meta property="article:tag" content="Django" />
+  <meta property="article:tag" content="Web" />
+  <meta property="article:tag" content="Python" />
+  <meta property="article:tag" content="vite" />
+  <meta property="article:tag" content="Vue" />
+  <meta property="article:tag" content="React" />
+  <meta property="og:image" content="https://malnossi.github.io/django+vite.webp" />
+  <meta property="og:image:alt" content="" />
+  <meta property="og:image:width" content="1536" />
+  <meta property="og:image:height" content="1024" />
+  <meta property="og:image:type" content="image/webp" />
+  <link rel="alternate" type="application/atom+xml" href="https://malnossi.github.io/atom.xml" title="Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://malnossi.github.io/main.min.css?h=a74dd0c65eed2d85f55f" />
+  <link rel="stylesheet" href="https://malnossi.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #f4f4f5; --header: #e4e4e7;} :root.dark{--bg: #18181b; --header: #27272a;}</style>
+  <meta name="theme-color" data-light="#e4e4e7" data-dark="#27272a" content="#e4e4e7" />
+  <link rel="icon" type="image/x-icon" href="https://malnossi.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" type="image/png" href="https://malnossi.github.io/apple-touch-icon.png?h=58bee300054c5308feb3" />
+  <link rel="icon" type="image/png" href="https://malnossi.github.io/android-icon.png?h=8d80ec95446bd2c36826" />
+  <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
 
-    :root {
-        --pico-font-family: "IBM Plex Serif", serif;
-    }
-</style>
-
-<body>
-    <main class="container">
-        <nav>
-  <ul>
-    <li><strong>Mohamed Nossirat</strong></li>
-  </ul>
-  <ul>
-    <li><a href="/" class="contrast">Home</a></li>
-    <li><a href="/blog" class="contrast">Blog</a></li>
-  </ul>
-</nav>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-
-    // Get all "navbar-burger" elements
-    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-
-    // Add a click event on each of them
-    $navbarBurgers.forEach(el => {
-      el.addEventListener('click', () => {
-
-        // Get the target from the "data-target" attribute
-        const target = el.dataset.target;
-        const $target = document.getElementById(target);
-
-        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-        el.classList.toggle('is-active');
-        $target.classList.toggle('is-active');
-
-      });
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+  <script>
+    // (Optional) default deny until consent tool flips it to granted
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { analytics_storage: 'denied' });
+    gtag('js', new Date());
+    gtag('config', 'G-8LBRDGLXJV', {
+      anonymize_ip: true
     });
+  </script>
 
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <button type="button" title="Go to home page [Alt + !]" accesskey="!"
+          onclick="window.location.href='https://malnossi.github.io/';"
+          class="btn-home h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-home,url(icons/home.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Open search [Alt + /]" accesskey="/"
+          onclick="window.zolaTheme.search.toggle();"
+          class="btn-search ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-search,url(icons/search.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/blog/"
+          >Blog</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/tags/"
+          >Tags</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+      <!-- Search -->
+<div id="linkita-search-wrapper" class="hidden">
+  <ul id="linkita-search-results"></ul>
+</div>
+<script>window.zolaTheme.search.init({ scripts: ["https://malnossi.github.io/elasticlunr.min.js", "https://malnossi.github.io/search_index.en.js"], arg: { w: "#linkita-search-wrapper", r: "#linkita-search-results" } });</script>
+
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Integrate Django and Vite based Frontend</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2025-06-02T00:00:00+00:00">2025-06-02</time><span
+        class="middot"></span><time
+    datetime="PT0H6M0S">6&nbsp;min</time><span
+      class="middot"></span><span>Mohamed AL NOSSIRAT</span>
+</div>
+
+  </header>
+  <figure class="mt-0 mb-12">
+    <img
+      class="h-auto w-full rounded-lg"
+      src="https://malnossi.github.io/django+vite.webp"
+      width="1536"
+      height="1024"
+    />
+  </figure>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/django-vite-integration/#introduction">Introduction</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/django-vite-integration/#alright-let-s-start-to-code">Alright, let&#x27;s start to code</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/django-vite-integration/#create-a-vue-js-project">Create a Vue JS project</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/django-vite-integration/#set-the-dynamic-path-to-fetch-js-and-css-files">Set the dynamic path to fetch js and css files</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/django-vite-integration/#mount-the-vue-app-in-a-django-template">Mount the Vue app in a django template</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/django-vite-integration/#vue-router-and-django-urlpatterns">Vue Router and Django urlpatterns</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/django-vite-integration/#result">Result</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/django-vite-integration/#github-repo">Github Repo</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/django-vite-integration/#conclusion">Conclusion</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h2>
+<p>What's the best way to add JavaScript to a Django project? Well, it really comes down to how much JavaScript you’re planning to use. On one end of the spectrum, you can just stick with plain old Vanilla JavaScript—drop it into your Django templates and call it a day. If you start writing a lot of boilerplate for basic interactions, jQuery might feel like a natural step up.</p>
+<p>These days though, there’s growing interest in low-JavaScript approaches. Tools like htmx let you make HTTP requests without writing a single line of JavaScript. Pair that with Alpine.js, and you can sprinkle in some interactivity without the bloat.</p>
+<p>Speaking of Alpine, ultra-lightweight frameworks are having a moment. Alpine.js comes in at just 7.1kb. Even leaner is Preact at 3kb. And if you like Vue, check out petite-vue—it’s built for progressive enhancement without going full SPA.</p>
+<p>Of course, the big players like Vue, React, and Svelte are still widely used, but they typically live in a fully decoupled frontend setup.</p>
+<p>But here’s the thing—you don’t have to go fully decoupled to use a modern JS framework. You can absolutely keep the Django monolith and just enhance your templates with JavaScript where it makes sense.</p>
+<p>That said, you’ll need a reliable way to manage and bundle your JavaScript—both in development and for production.</p>
+<h2 id="alright-let-s-start-to-code"><a class="zola-anchor" href="#alright-let-s-start-to-code" aria-label="Anchor link for: alright-let-s-start-to-code">Alright, let's start to code</a></h2>
+<p>Here in this example I will use <a href="https://vuejs.org">Vue</a>; feel free to use <a href="http://react.dev">React</a>, <a href="https://svelte.dev">Svelte</a> or whatever <a href="https://vite.dev/">Vite</a> based framework, so open a terminal and type as follow :</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">mkdir</span><span> django-vite &amp;&amp; </span><span style="color:#96b5b4;">cd</span><span> django-vite
+</span><span style="color:#bf616a;">uv</span><span> init .
+</span><span style="color:#bf616a;">uv</span><span> add django
+</span><span style="color:#96b5b4;">source</span><span> . ./.venv/bin activate
+</span><span style="color:#bf616a;">django-admin</span><span> startproject config .
+</span></code></pre>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#96b5b4;">.
+</span><span style="color:#bf616a;">├──</span><span> config
+</span><span style="color:#bf616a;">│</span><span>   ├── asgi.py
+</span><span style="color:#bf616a;">│</span><span>   ├── __init__.py
+</span><span style="color:#bf616a;">│</span><span>   ├── settings.py
+</span><span style="color:#bf616a;">│</span><span>   ├── urls.py
+</span><span style="color:#bf616a;">│</span><span>   └── wsgi.py
+</span><span style="color:#bf616a;">├──</span><span> manage.py
+</span><span style="color:#bf616a;">├──</span><span> pyproject.toml
+</span><span style="color:#bf616a;">├──</span><span> README.md
+</span><span style="color:#bf616a;">└──</span><span> uv.lock
+</span><span>
+</span><span style="color:#bf616a;">2</span><span> directories, 9 files
+</span></code></pre>
+<h2 id="create-a-vue-js-project"><a class="zola-anchor" href="#create-a-vue-js-project" aria-label="Anchor link for: create-a-vue-js-project">Create a Vue JS project</a></h2>
+<p>In the terminal create a new Vue project in the root folder of our Django project, here I choosed to call it webui</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">pnpm</span><span> create vue@latest
+</span><span>
+</span><span style="color:#bf616a;">┌</span><span>  Vue.js - The Progressive JavaScript Framework
+</span><span style="color:#bf616a;">│
+</span><span style="color:#bf616a;">◇</span><span>  Project name (target directory)</span><span style="color:#96b5b4;">:
+</span><span style="color:#bf616a;">│</span><span>  webui
+</span><span style="color:#bf616a;">│
+</span><span style="color:#bf616a;">◇</span><span>  Select features to include in your project: (↑/↓ to navigate, space to select, a to toggle all, enter to confirm)
+</span><span style="color:#bf616a;">│</span><span>  none
+</span><span>
+</span><span style="color:#bf616a;">Scaffolding</span><span> project in /home/malnossirat/Desktop/projects/mohamed/django-vite/webui...
+</span><span style="color:#bf616a;">│
+</span><span style="color:#bf616a;">└</span><span>  Done. Now run:
+</span><span>
+</span><span>   </span><span style="color:#96b5b4;">cd</span><span> webui
+</span><span>   </span><span style="color:#bf616a;">pnpm</span><span> install
+</span><span>   </span><span style="color:#bf616a;">pnpm</span><span> dev
+</span></code></pre>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#96b5b4;">.
+</span><span style="color:#bf616a;">├──</span><span> config
+</span><span style="color:#bf616a;">│</span><span>   ├── asgi.py
+</span><span style="color:#bf616a;">│</span><span>   ├── __init__.py
+</span><span style="color:#bf616a;">│</span><span>   ├── settings.py
+</span><span style="color:#bf616a;">│</span><span>   ├── urls.py
+</span><span style="color:#bf616a;">│</span><span>   └── wsgi.py
+</span><span style="color:#bf616a;">├──</span><span> manage.py
+</span><span style="color:#bf616a;">├──</span><span> pyproject.toml
+</span><span style="color:#bf616a;">├──</span><span> README.md
+</span><span style="color:#bf616a;">├──</span><span> uv.lock
+</span><span style="color:#bf616a;">└──</span><span> webui
+</span><span>    </span><span style="color:#bf616a;">├──</span><span> index.html
+</span><span>    </span><span style="color:#bf616a;">├──</span><span> jsconfig.json
+</span><span>    </span><span style="color:#bf616a;">├──</span><span> package.json
+</span><span>    </span><span style="color:#bf616a;">├──</span><span> public
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   └── favicon.ico
+</span><span>    </span><span style="color:#bf616a;">├──</span><span> README.md
+</span><span>    </span><span style="color:#bf616a;">├──</span><span> src
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   ├── App.vue
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   ├── assets
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   ├── base.css
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   ├── logo.svg
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   └── main.css
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   ├── components
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   ├── HelloWorld.vue
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   ├── icons
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   │   ├── IconCommunity.vue
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   │   ├── IconDocumentation.vue
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   │   ├── IconEcosystem.vue
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   │   ├── IconSupport.vue
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   │   └── IconTooling.vue
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   ├── TheWelcome.vue
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   └── WelcomeItem.vue
+</span><span>    </span><span style="color:#bf616a;">│</span><span>   └── main.js
+</span><span>    </span><span style="color:#bf616a;">└──</span><span> vite.config.js
+</span><span>
+</span><span style="color:#bf616a;">8</span><span> directories, 28 files
+</span></code></pre>
+<p>create two folders in the root folder of the project templates folder and static folder
+change settings to be like this</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#bf616a;">TEMPLATES </span><span>= [
+</span><span>    {
+</span><span>        &#39;</span><span style="color:#a3be8c;">BACKEND</span><span>&#39;: &#39;</span><span style="color:#a3be8c;">django.template.backends.django.DjangoTemplates</span><span>&#39;,
+</span><span>        &#39;</span><span style="color:#a3be8c;">DIRS</span><span>&#39;: [BASE_DIR.</span><span style="color:#bf616a;">joinpath</span><span>(&quot;</span><span style="color:#a3be8c;">templates</span><span>&quot;)],
+</span><span>        &#39;</span><span style="color:#a3be8c;">APP_DIRS</span><span>&#39;: </span><span style="color:#d08770;">True</span><span>,
+</span><span>        &#39;</span><span style="color:#a3be8c;">OPTIONS</span><span>&#39;: {
+</span><span>            &#39;</span><span style="color:#a3be8c;">context_processors</span><span>&#39;: [
+</span><span>                &#39;</span><span style="color:#a3be8c;">django.template.context_processors.request</span><span>&#39;,
+</span><span>                &#39;</span><span style="color:#a3be8c;">django.contrib.auth.context_processors.auth</span><span>&#39;,
+</span><span>                &#39;</span><span style="color:#a3be8c;">django.contrib.messages.context_processors.messages</span><span>&#39;,
+</span><span>            ],
+</span><span>        },
+</span><span>    },
+</span><span>]
+</span><span>//
+</span><span style="color:#bf616a;">STATIC_URL </span><span>= &#39;</span><span style="color:#a3be8c;">/static/</span><span>&#39;
+</span><span style="color:#bf616a;">STATICFILES_DIRS </span><span>= [
+</span><span>    BASE_DIR.</span><span style="color:#bf616a;">joinpath</span><span>(&quot;</span><span style="color:#a3be8c;">static</span><span>&quot;)
+</span><span>]
+</span><span>
+</span></code></pre>
+<p>Now in vite.config.js, modify src under defineConfig to frontend</p>
+<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">fileURLToPath</span><span>, </span><span style="color:#bf616a;">URL </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">node:url</span><span>&#39;
+</span><span>
+</span><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">defineConfig </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vite</span><span>&#39;
+</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">vue </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">@vitejs/plugin-vue</span><span>&#39;
+</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">vueDevTools </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vite-plugin-vue-devtools</span><span>&#39;
+</span><span>
+</span><span style="color:#65737e;">// https://vite.dev/config/
+</span><span style="color:#b48ead;">export default </span><span style="color:#8fa1b3;">defineConfig</span><span>({
+</span><span>  build: { </span><span style="color:#65737e;">// new
+</span><span>    emptyOutDir: </span><span style="color:#d08770;">true</span><span>, </span><span style="color:#65737e;">// We clear the output dir every build
+</span><span>    outDir:&quot;</span><span style="color:#a3be8c;">../static/webui</span><span>&quot;, </span><span style="color:#65737e;">// we change the output dir to match django settings
+</span><span>    assetsDir:&quot;</span><span style="color:#a3be8c;">.</span><span>&quot;, </span><span style="color:#65737e;">// we put all assets in the webui folder in the static folder
+</span><span>    rollupOptions: {
+</span><span>      input: &quot;</span><span style="color:#a3be8c;">./src/main.js</span><span>&quot; </span><span style="color:#65737e;">// the entry point here is no longer the index.html but the main.js
+</span><span>    }
+</span><span>  },
+</span><span>  plugins: [
+</span><span>    </span><span style="color:#8fa1b3;">vue</span><span>(),
+</span><span>    </span><span style="color:#8fa1b3;">vueDevTools</span><span>(),
+</span><span>  ],
+</span><span>  resolve: {
+</span><span>    alias: {
+</span><span>      &#39;</span><span style="color:#a3be8c;">@</span><span>&#39;: </span><span style="color:#8fa1b3;">fileURLToPath</span><span>(new URL(&#39;</span><span style="color:#a3be8c;">./src</span><span>&#39;, </span><span style="color:#b48ead;">import</span><span>.meta.</span><span style="color:#bf616a;">url</span><span>))
+</span><span>    },
+</span><span>  },
+</span><span>})
+</span><span>
+</span></code></pre>
+<blockquote>
+<p>For further information about vite build system you can see the documentation <a href="https://vite.dev/guide/backend-integration">here</a>.</p>
+</blockquote>
+<p>In our package.json, we add a few parameters to dev and build under scripts. This is what it looks like after adding them</p>
+<pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>{
+</span><span>  &quot;</span><span style="color:#a3be8c;">name</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">webui</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">version</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">0.0.0</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">private</span><span>&quot;: </span><span style="color:#d08770;">true</span><span>,
+</span><span>  &quot;</span><span style="color:#a3be8c;">type</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">module</span><span>&quot;,
+</span><span>  &quot;</span><span style="color:#a3be8c;">scripts</span><span>&quot;: {
+</span><span>    &quot;</span><span style="color:#a3be8c;">dev</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">vite build --mode development -w</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">build</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">vite build --mode production</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">preview</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">vite preview</span><span>&quot;
+</span><span>  },
+</span><span>  &quot;</span><span style="color:#a3be8c;">dependencies</span><span>&quot;: {
+</span><span>    &quot;</span><span style="color:#a3be8c;">vue</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">^3.5.13</span><span>&quot;
+</span><span>  },
+</span><span>  &quot;</span><span style="color:#a3be8c;">devDependencies</span><span>&quot;: {
+</span><span>    &quot;</span><span style="color:#a3be8c;">@vitejs/plugin-vue</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">^5.2.3</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">vite</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">^6.2.4</span><span>&quot;,
+</span><span>    &quot;</span><span style="color:#a3be8c;">vite-plugin-vue-devtools</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">^7.7.2</span><span>&quot;
+</span><span>  }
+</span><span>}
+</span></code></pre>
+<p>add <code>base.html</code> in the templates folder =&gt; keep it simple:</p>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;!</span><span style="color:#b48ead;">DOCTYPE </span><span style="color:#d08770;">html</span><span>&gt;
+</span><span>&lt;</span><span style="color:#bf616a;">html </span><span style="color:#d08770;">lang</span><span>=&quot;</span><span style="color:#a3be8c;">en</span><span>&quot;&gt;
+</span><span>
+</span><span>&lt;</span><span style="color:#bf616a;">head</span><span>&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">charset</span><span>=&quot;</span><span style="color:#a3be8c;">UTF-8</span><span>&quot;&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">viewport</span><span>&quot; </span><span style="color:#d08770;">content</span><span>=&quot;</span><span style="color:#a3be8c;">width=device-width, initial-scale=1.0</span><span>&quot;&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">head</span><span>&gt;
+</span><span>
+</span><span>&lt;</span><span style="color:#bf616a;">body</span><span>&gt;
+</span><span>    {%block content%}
+</span><span>    {%endblock content%}
+</span><span>&lt;/</span><span style="color:#bf616a;">body</span><span>&gt;
+</span><span>
+</span><span>&lt;/</span><span style="color:#bf616a;">html</span><span>&gt;
+</span></code></pre>
+<p>then add <code>index.html</code> file in the templates folder like this</p>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>{%extends &#39;base.html&#39;%}
+</span><span>
+</span><span>{%block content%}
+</span><span>// html code goes here 
+</span><span>{%endblock content%}
+</span></code></pre>
+<h3 id="set-the-dynamic-path-to-fetch-js-and-css-files"><a class="zola-anchor" href="#set-the-dynamic-path-to-fetch-js-and-css-files" aria-label="Anchor link for: set-the-dynamic-path-to-fetch-js-and-css-files">Set the dynamic path to fetch js and css files</a></h3>
+<p>Let’s start with a quick refresher: <strong>context processors</strong> in Django are just functions that inject variables into the context of every template rendered. They're a great way to avoid repeating yourself—especially when you want certain data (like user info, app settings, or environment flags) to be available across all templates without explicitly passing them in each view.</p>
+<p>Now, with that in mind, let’s build a custom context processor that helps us dynamically load our JavaScript and CSS files from an assets folder—handy when working with tools like Vite or managing Vue components.</p>
+<p>Create <code>context_processors.py</code> in the config folder</p>
+<p>This is where we’ll define a function that inspects the <code>static/webui</code> directory and returns the names of JS/CSS files we want to include in our templates.</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.conf </span><span style="color:#b48ead;">import </span><span>settings
+</span><span>
+</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">webui_files</span><span>(</span><span style="color:#bf616a;">request</span><span>):
+</span><span>    webui_assets_dir = settings.BASE_DIR.</span><span style="color:#bf616a;">joinpath</span><span>(&quot;</span><span style="color:#a3be8c;">static</span><span>&quot;)
+</span><span>    js_files = [file.</span><span style="color:#bf616a;">relative_to</span><span>(webui_assets_dir) </span><span style="color:#b48ead;">for </span><span>file </span><span style="color:#b48ead;">in </span><span>webui_assets_dir.</span><span style="color:#bf616a;">glob</span><span>(&quot;</span><span style="color:#a3be8c;">**/*.js</span><span>&quot;)]
+</span><span>    css_files = [file.</span><span style="color:#bf616a;">relative_to</span><span>(webui_assets_dir) </span><span style="color:#b48ead;">for </span><span>file </span><span style="color:#b48ead;">in </span><span>webui_assets_dir.</span><span style="color:#bf616a;">glob</span><span>(&quot;</span><span style="color:#a3be8c;">**/*.css</span><span>&quot;)]
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">return </span><span>{
+</span><span>        &quot;</span><span style="color:#a3be8c;">js_files</span><span>&quot;:</span><span style="color:#bf616a;">list</span><span>(js_files),
+</span><span>        &quot;</span><span style="color:#a3be8c;">css_files</span><span>&quot;:</span><span style="color:#bf616a;">list</span><span>(css_files)
+</span><span>    }
+</span></code></pre>
+<p>Make sure to add the entry <code>context_processors.webui_files</code> under TEMPLATES - OPTIONS - context_processors in settings.py.
+Below is what it looks like</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#bf616a;">TEMPLATES </span><span>= [
+</span><span>    {
+</span><span>        &#39;</span><span style="color:#a3be8c;">BACKEND</span><span>&#39;: &#39;</span><span style="color:#a3be8c;">django.template.backends.django.DjangoTemplates</span><span>&#39;,
+</span><span>        &#39;</span><span style="color:#a3be8c;">DIRS</span><span>&#39;: [BASE_DIR.</span><span style="color:#bf616a;">joinpath</span><span>(&quot;</span><span style="color:#a3be8c;">templates</span><span>&quot;)],
+</span><span>        &#39;</span><span style="color:#a3be8c;">APP_DIRS</span><span>&#39;: </span><span style="color:#d08770;">True</span><span>,
+</span><span>        &#39;</span><span style="color:#a3be8c;">OPTIONS</span><span>&#39;: {
+</span><span>            &#39;</span><span style="color:#a3be8c;">context_processors</span><span>&#39;: [
+</span><span>                &#39;</span><span style="color:#a3be8c;">django.template.context_processors.request</span><span>&#39;,
+</span><span>                &#39;</span><span style="color:#a3be8c;">django.contrib.auth.context_processors.auth</span><span>&#39;,
+</span><span>                &#39;</span><span style="color:#a3be8c;">django.contrib.messages.context_processors.messages</span><span>&#39;,
+</span><span>                &#39;</span><span style="color:#a3be8c;">config.context_processors.webui_files</span><span>&#39;,
+</span><span>            ],
+</span><span>        },
+</span><span>    },
+</span><span>]
+</span></code></pre>
+<p>The next step is to reference these variables in base.html so that they are available in every single template that is used. In the <code>&lt;head&gt;</code> section we iterate css_files template variable and load all the css files. Likewise in <code>&lt;body&gt;</code> section we iterate js_files and load all js files as <code>&lt;script&gt;</code> tags.</p>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>{% load static %}
+</span><span>
+</span><span>&lt;!</span><span style="color:#b48ead;">DOCTYPE </span><span style="color:#d08770;">html</span><span>&gt;
+</span><span>&lt;</span><span style="color:#bf616a;">html </span><span style="color:#d08770;">lang</span><span>=&quot;</span><span style="color:#a3be8c;">en</span><span>&quot;&gt;
+</span><span>
+</span><span>&lt;</span><span style="color:#bf616a;">head</span><span>&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">charset</span><span>=&quot;</span><span style="color:#a3be8c;">UTF-8</span><span>&quot;&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">viewport</span><span>&quot; </span><span style="color:#d08770;">content</span><span>=&quot;</span><span style="color:#a3be8c;">width=device-width, initial-scale=1.0</span><span>&quot;&gt;
+</span><span>    {% for file in css_files %}
+</span><span>    &lt;</span><span style="color:#bf616a;">link </span><span style="color:#d08770;">rel</span><span>=&quot;</span><span style="color:#a3be8c;">stylesheet</span><span>&quot; </span><span style="color:#d08770;">href</span><span>=&quot;</span><span style="color:#a3be8c;">{% static file %}</span><span>&quot; /&gt;
+</span><span>    {% endfor %}
+</span><span>&lt;/</span><span style="color:#bf616a;">head</span><span>&gt;
+</span><span>
+</span><span>&lt;</span><span style="color:#bf616a;">body</span><span>&gt;
+</span><span>    {%block content%}
+</span><span>    {%endblock content%}
+</span><span>    {% for file in js_files %}
+</span><span>    &lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">src</span><span>=&quot;</span><span style="color:#a3be8c;">{% static file %}</span><span>&quot;&gt;&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
+</span><span>    {% endfor %}
+</span><span>&lt;/</span><span style="color:#bf616a;">body</span><span>&gt;
+</span><span>
+</span><span>&lt;/</span><span style="color:#bf616a;">html</span><span>&gt;
+</span></code></pre>
+<p>Then we should add the <code>path</code> to the <code>index.html</code> page in <code>config/urls.py</code></p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path
+</span><span style="color:#b48ead;">from </span><span>django.views.generic </span><span style="color:#b48ead;">import </span><span>TemplateView
+</span><span>
+</span><span>urlpatterns = [
+</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">admin/</span><span>&#39;, admin.site.urls),
+</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;&#39;,TemplateView.</span><span style="color:#bf616a;">as_view</span><span>(</span><span style="color:#bf616a;">template_name</span><span>=&quot;</span><span style="color:#a3be8c;">index.html</span><span>&quot;)),
+</span><span>]
+</span></code></pre>
+<p>after running django devserver. On inspecting the page, we should now see the following</p>
+<div align="center">
+<img src="/inspect.png" width="100%"/>
+</div>
+<h2 id="mount-the-vue-app-in-a-django-template"><a class="zola-anchor" href="#mount-the-vue-app-in-a-django-template" aria-label="Anchor link for: mount-the-vue-app-in-a-django-template">Mount the Vue app in a django template</a></h2>
+<p>It’s that simple—just call a Vue component directly inside a Django template using an id attribute. In our frontend folder, we’ve got a main.js file where the Vue app gets mounted like this:</p>
+<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span>&#39;</span><span style="color:#a3be8c;">./assets/main.css</span><span>&#39;
+</span><span>
+</span><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">createApp </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vue</span><span>&#39;
+</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">App </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">./App.vue</span><span>&#39;
+</span><span>
+</span><span style="color:#8fa1b3;">createApp</span><span>(</span><span style="color:#bf616a;">App</span><span>).</span><span style="color:#8fa1b3;">mount</span><span>(&#39;</span><span style="color:#a3be8c;">#app</span><span>&#39;)
+</span></code></pre>
+<p>This tells Vue to hook into any element with the id="app". By default, this loads the App.vue component.</p>
+<p>Now here’s where it gets fun. We simply drop a div with that ID into Django’s home.html template, right inside the {% block content %} section.</p>
+<p>Here’s what the template looks like now</p>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>{%extends &#39;base.html&#39;%}
+</span><span>
+</span><span>{% block content %}
+</span><span>
+</span><span>&lt;</span><span style="color:#bf616a;">div </span><span style="color:#8fa1b3;">id</span><span>=&quot;</span><span style="color:#a3be8c;">app</span><span>&quot;&gt;&lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
+</span><span>
+</span><span>{% endblock content %}
+</span></code></pre>
+<p>When we refresh the page we see</p>
+<div align="center">
+<img src="/django-vite-results-static.png" width="100%"/>
+</div>
+<h2 id="vue-router-and-django-urlpatterns"><a class="zola-anchor" href="#vue-router-and-django-urlpatterns" aria-label="Anchor link for: vue-router-and-django-urlpatterns">Vue Router and Django <code>urlpatterns</code></a></h2>
+<p>Now we will add vue router to our application to manage navigation in the frontend</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">pnpm</span><span> add vue-router@4
+</span></code></pre>
+<p>Then we will create two views <code>Home.vue</code> and <code>About.vue</code></p>
+<p><strong>Home page</strong></p>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">h1 </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">title</span><span>&quot;&gt;Home Page&lt;/</span><span style="color:#bf616a;">h1</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
+</span><span>
+</span><span>&lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">setup</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
+</span></code></pre>
+<p><strong>About page</strong></p>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">h1 </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">title</span><span>&quot;&gt;About Page&lt;/</span><span style="color:#bf616a;">h1</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
+</span><span>
+</span><span>&lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">setup</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
+</span></code></pre>
+<p><strong>App.vue component</strong></p>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">setup</span><span>&gt;
+</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">NavBar </span><span style="color:#b48ead;">from </span><span>&quot;</span><span style="color:#a3be8c;">@/components/NavBar.vue</span><span>&quot;
+</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
+</span><span>
+</span><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
+</span><span>  &lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">container is-fluid</span><span>&quot;&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">NavBar</span><span>/&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">main</span><span>&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">RouterView </span><span>/&gt;
+</span><span>  &lt;/</span><span style="color:#bf616a;">main</span><span>&gt;
+</span><span>  &lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
+</span></code></pre>
+<p>In the sre folder add another folder called router ans create a file index.js with this content</p>
+<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">createRouter</span><span>, </span><span style="color:#bf616a;">createWebHistory </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vue-router</span><span>&#39;
+</span><span>
+</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">HomeView </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">../views/Home.vue</span><span>&#39;
+</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">AboutView </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">../views/About.vue</span><span>&#39;
+</span><span>
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">routes </span><span>= [
+</span><span>  { path: &#39;</span><span style="color:#a3be8c;">/</span><span>&#39;, component: </span><span style="color:#bf616a;">HomeView </span><span>},
+</span><span>  { path: &#39;</span><span style="color:#a3be8c;">/about</span><span>&#39;, component: </span><span style="color:#bf616a;">AboutView </span><span>},
+</span><span>]
+</span><span>
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">router </span><span>= </span><span style="color:#8fa1b3;">createRouter</span><span>({
+</span><span>    history: </span><span style="color:#8fa1b3;">createWebHistory</span><span>(),
+</span><span>    </span><span style="color:#bf616a;">routes
+</span><span>  })
+</span><span>
+</span><span>
+</span><span style="color:#b48ead;">export default </span><span style="color:#bf616a;">router</span><span>;
+</span></code></pre>
+<p>Finally main.js will look like this</p>
+<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">createApp </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vue</span><span>&#39;
+</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">App </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">./App.vue</span><span>&#39;
+</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">router </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">./router</span><span>&#39;
+</span><span style="color:#b48ead;">import </span><span>&#39;</span><span style="color:#a3be8c;">bulma</span><span>&#39;
+</span><span style="color:#8fa1b3;">createApp</span><span>(</span><span style="color:#bf616a;">App</span><span>).</span><span style="color:#8fa1b3;">use</span><span>(</span><span style="color:#bf616a;">router</span><span>).</span><span style="color:#8fa1b3;">mount</span><span>(&#39;</span><span style="color:#a3be8c;">#app</span><span>&#39;)
+</span></code></pre>
+<blockquote>
+<p>Please note that I use <a href="https://bulma.io">Bulma</a> for the some styling.</p>
+</blockquote>
+<p><strong>catch-all URL pattern</strong></p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.contrib </span><span style="color:#b48ead;">import </span><span>admin
+</span><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path, re_path
+</span><span style="color:#b48ead;">from </span><span>django.views.generic </span><span style="color:#b48ead;">import </span><span>TemplateView
+</span><span>
+</span><span>urlpatterns = [
+</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">admin/</span><span>&#39;, admin.site.urls),
+</span><span>    </span><span style="color:#bf616a;">re_path</span><span>(</span><span style="color:#b48ead;">r</span><span>&#39;</span><span style="color:#b48ead;">^</span><span style="color:#a3be8c;">(?P&lt;path&gt;</span><span style="color:#d08770;">.</span><span>*</span><span style="color:#a3be8c;">)</span><span style="color:#b48ead;">$</span><span>&#39;,TemplateView.</span><span style="color:#bf616a;">as_view</span><span>(</span><span style="color:#bf616a;">template_name</span><span>=&quot;</span><span style="color:#a3be8c;">index.html</span><span>&quot;)),
+</span><span>]
+</span></code></pre>
+<blockquote>
+<p><strong>⚠️ Important : Ensure the catch-all route is the last pattern; Django matches URLs in order and stops at the first match.</strong></p>
+</blockquote>
+<p>Now we will add a simple Todo app in our Django:</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">python</span><span> manage.py startapp todos
+</span></code></pre>
+<p><strong>models.py</strong></p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.db </span><span style="color:#b48ead;">import </span><span>models
+</span><span>
+</span><span style="color:#65737e;"># Create your models here.
+</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Todo</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">models.Model</span><span style="color:#eff1f5;">):
+</span><span>    task = models.</span><span style="color:#bf616a;">CharField</span><span>(</span><span style="color:#bf616a;">max_length</span><span>=</span><span style="color:#d08770;">100</span><span>)
+</span><span>    status = models.</span><span style="color:#bf616a;">BooleanField</span><span>(</span><span style="color:#bf616a;">default</span><span>=</span><span style="color:#d08770;">False</span><span>)
+</span><span>
+</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#96b5b4;">__str__</span><span>(</span><span style="color:#bf616a;">self</span><span>) -&gt; str:
+</span><span>        </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">self</span><span>.task
+</span></code></pre>
+<p>Add the todos app to INSTALLED_APPS in settings.py</p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#bf616a;">INSTALLED_APPS </span><span>= [
+</span><span>    //
+</span><span>    &#39;</span><span style="color:#a3be8c;">todos</span><span>&#39;,
+</span><span>]
+</span></code></pre>
+<p>In the terminal</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">python</span><span> manage.py makemigration &amp;&amp; </span><span style="color:#bf616a;">python</span><span> manage.py migrate
+</span></code></pre>
+<p><strong>admin.py</strong></p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.contrib </span><span style="color:#b48ead;">import </span><span>admin
+</span><span style="color:#b48ead;">from . </span><span>models </span><span style="color:#b48ead;">import </span><span>Todo
+</span><span>
+</span><span>
+</span><span>admin.site.</span><span style="color:#bf616a;">register</span><span>(Todo)
+</span></code></pre>
+<p><strong>views.py</strong></p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">import </span><span>json
+</span><span style="color:#b48ead;">from </span><span>django.http </span><span style="color:#b48ead;">import </span><span>JsonResponse
+</span><span style="color:#b48ead;">from </span><span>django.views.decorators.http </span><span style="color:#b48ead;">import </span><span>require_GET, require_POST
+</span><span>
+</span><span style="color:#b48ead;">from . import </span><span>models
+</span><span>
+</span><span>@</span><span style="color:#bf616a;">require_GET
+</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">todos_list</span><span>(</span><span style="color:#bf616a;">request</span><span>):
+</span><span>    todos_qs = models.Todo.objects.</span><span style="color:#bf616a;">all</span><span>()
+</span><span>    todos = [{&quot;</span><span style="color:#a3be8c;">id</span><span>&quot;:todo.id,&quot;</span><span style="color:#a3be8c;">task</span><span>&quot;:todo.task,&quot;</span><span style="color:#a3be8c;">status</span><span>&quot;:todo.status} </span><span style="color:#b48ead;">for </span><span>todo </span><span style="color:#b48ead;">in </span><span>todos_qs]
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">JsonResponse</span><span>(todos, </span><span style="color:#bf616a;">safe</span><span>=</span><span style="color:#d08770;">False</span><span>)
+</span><span>
+</span><span>@</span><span style="color:#bf616a;">require_POST
+</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">add_todo</span><span>(</span><span style="color:#bf616a;">request</span><span>):
+</span><span>    data = json.</span><span style="color:#bf616a;">loads</span><span>(request.body)
+</span><span>    todo_ins = models.</span><span style="color:#bf616a;">Todo</span><span>(</span><span style="color:#bf616a;">task</span><span>=data[&#39;</span><span style="color:#a3be8c;">todo</span><span>&#39;][&#39;</span><span style="color:#a3be8c;">task</span><span>&#39;])
+</span><span>    todo_ins.</span><span style="color:#bf616a;">save</span><span>()
+</span><span>    todo = </span><span style="color:#bf616a;">dict</span><span>(</span><span style="color:#bf616a;">id</span><span>=todo_ins.id, </span><span style="color:#bf616a;">task</span><span>=todo_ins.task, </span><span style="color:#bf616a;">status</span><span>=todo_ins.status)
+</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">JsonResponse</span><span>(todo, </span><span style="color:#bf616a;">safe</span><span>=</span><span style="color:#d08770;">False</span><span>)
+</span></code></pre>
+<p><strong>todos/urls.py</strong></p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path
+</span><span>
+</span><span style="color:#b48ead;">from . import </span><span>views
+</span><span>
+</span><span>urlpatterns = [
+</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;&#39;, </span><span style="color:#bf616a;">view</span><span>=views.todos_list),
+</span><span>    </span><span style="color:#bf616a;">path</span><span>(&quot;</span><span style="color:#a3be8c;">create/</span><span>&quot;, </span><span style="color:#bf616a;">view</span><span>=views.add_todo)
+</span><span>]
+</span></code></pre>
+<p><strong>config/urls.py</strong></p>
+<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.contrib </span><span style="color:#b48ead;">import </span><span>admin
+</span><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path, re_path, include
+</span><span style="color:#b48ead;">from </span><span>django.views.generic </span><span style="color:#b48ead;">import </span><span>TemplateView
+</span><span>
+</span><span style="color:#b48ead;">from . import </span><span>views
+</span><span>
+</span><span>urlpatterns = [
+</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">admin/</span><span>&#39;, admin.site.urls),
+</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">api/</span><span>&#39;, </span><span style="color:#bf616a;">include</span><span>([
+</span><span>        </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">todos/</span><span>&#39;, </span><span style="color:#bf616a;">include</span><span>(&#39;</span><span style="color:#a3be8c;">todos.urls</span><span>&#39;))
+</span><span>    ])),
+</span><span>    </span><span style="color:#bf616a;">re_path</span><span>(</span><span style="color:#b48ead;">r</span><span>&#39;</span><span style="color:#b48ead;">^</span><span style="color:#a3be8c;">(?P&lt;path&gt;</span><span style="color:#d08770;">.</span><span>*</span><span style="color:#a3be8c;">)</span><span style="color:#b48ead;">$</span><span>&#39;,TemplateView.</span><span style="color:#bf616a;">as_view</span><span>(</span><span style="color:#bf616a;">template_name</span><span>=&quot;</span><span style="color:#a3be8c;">index.html</span><span>&quot;)),
+</span><span>]
+</span></code></pre>
+<p><strong>Axios</strong></p>
+<p>Now we will install axios in the fronend</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">pnpm</span><span> add axios
+</span></code></pre>
+<p><strong>webui/http/index.js</strong></p>
+<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span style="color:#bf616a;">axios </span><span style="color:#b48ead;">from </span><span>&quot;</span><span style="color:#a3be8c;">axios</span><span>&quot;;
+</span><span>
+</span><span style="color:#b48ead;">export default </span><span style="color:#bf616a;">axios</span><span>.</span><span style="color:#8fa1b3;">create</span><span>({
+</span><span>    baseURL:&quot;</span><span style="color:#a3be8c;">/api</span><span>&quot;,
+</span><span>    withCredentials:</span><span style="color:#d08770;">true</span><span>,
+</span><span>    xsrfCookieName:&#39;</span><span style="color:#a3be8c;">csrftoken</span><span>&#39;,
+</span><span>    xsrfHeaderName:&quot;</span><span style="color:#a3be8c;">X-CSRFToken</span><span>&quot;,
+</span><span>})
+</span></code></pre>
+<p>Finally in the Home page we will add a simple form and table to list all our Todos:</p>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">container</span><span>&quot;&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">columns is-centered</span><span>&quot;&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">column is-6</span><span>&quot;&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">form </span><span style="color:#d08770;">@submit.prevent </span><span>= </span><span style="color:#a3be8c;">submitForm</span><span>&gt;
+</span><span>                &lt;</span><span style="color:#bf616a;">input </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">input is-primary</span><span>&quot; </span><span style="color:#d08770;">v-model</span><span>=&quot;</span><span style="color:#a3be8c;">todo.task</span><span>&quot;/&gt;
+</span><span>                &lt;</span><span style="color:#bf616a;">input </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">button is-success mt-3</span><span>&quot; </span><span style="color:#d08770;">type</span><span>=&quot;</span><span style="color:#a3be8c;">submit</span><span>&quot; </span><span style="color:#d08770;">value</span><span>=&quot;</span><span style="color:#a3be8c;">Add</span><span>&quot;/&gt;
+</span><span>            &lt;/</span><span style="color:#bf616a;">form</span><span>&gt;
+</span><span>            &lt;</span><span style="color:#bf616a;">table </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">table is-fullwidth</span><span>&quot;&gt;
+</span><span>                &lt;</span><span style="color:#bf616a;">thead</span><span>&gt;
+</span><span>                    &lt;</span><span style="color:#bf616a;">tr</span><span>&gt;
+</span><span>                        &lt;</span><span style="color:#bf616a;">th</span><span>&gt;#&lt;/</span><span style="color:#bf616a;">th</span><span>&gt;
+</span><span>                        &lt;</span><span style="color:#bf616a;">th</span><span>&gt;Task&lt;/</span><span style="color:#bf616a;">th</span><span>&gt;
+</span><span>                        &lt;</span><span style="color:#bf616a;">th</span><span>&gt;Status&lt;/</span><span style="color:#bf616a;">th</span><span>&gt;
+</span><span>                    &lt;/</span><span style="color:#bf616a;">tr</span><span>&gt;
+</span><span>                &lt;/</span><span style="color:#bf616a;">thead</span><span>&gt;
+</span><span>                &lt;</span><span style="color:#bf616a;">tbody</span><span>&gt;
+</span><span>                    &lt;</span><span style="color:#bf616a;">tr </span><span style="color:#d08770;">v-for</span><span>=&quot;</span><span style="color:#a3be8c;">todo in todos</span><span>&quot; </span><span style="color:#d08770;">:key</span><span>=&quot;</span><span style="color:#a3be8c;">todo.id</span><span>&quot;&gt;
+</span><span>                        &lt;</span><span style="color:#bf616a;">td</span><span>&gt;{{ todo.id }}&lt;/</span><span style="color:#bf616a;">td</span><span>&gt;
+</span><span>                        &lt;</span><span style="color:#bf616a;">td</span><span>&gt;{{ todo.task }}&lt;/</span><span style="color:#bf616a;">td</span><span>&gt;
+</span><span>                        &lt;</span><span style="color:#bf616a;">td</span><span>&gt;
+</span><span>                            &lt;</span><span style="color:#bf616a;">span </span><span style="color:#d08770;">v-if</span><span>=&quot;</span><span style="color:#a3be8c;">todo.status</span><span>&quot; </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">tag is-success</span><span>&quot;&gt;Done&lt;/</span><span style="color:#bf616a;">span</span><span>&gt;
+</span><span>                            &lt;</span><span style="color:#bf616a;">span </span><span style="color:#d08770;">v-else class</span><span>=&quot;</span><span style="color:#a3be8c;">tag is-warning</span><span>&quot;&gt;Waiting&lt;/</span><span style="color:#bf616a;">span</span><span>&gt;
+</span><span>                        &lt;/</span><span style="color:#bf616a;">td</span><span>&gt;
+</span><span>                    &lt;/</span><span style="color:#bf616a;">tr</span><span>&gt;
+</span><span>                &lt;/</span><span style="color:#bf616a;">tbody</span><span>&gt;
+</span><span>            &lt;/</span><span style="color:#bf616a;">table</span><span>&gt;
+</span><span>        &lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
+</span><span>    &lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
+</span><span>    &lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
+</span><span>
+</span><span>&lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">setup</span><span>&gt;
+</span><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">ref</span><span>, </span><span style="color:#bf616a;">reactive </span><span>} </span><span style="color:#b48ead;">from </span><span>&quot;</span><span style="color:#a3be8c;">vue</span><span>&quot;;
+</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">http </span><span style="color:#b48ead;">from </span><span>&quot;</span><span style="color:#a3be8c;">@/http</span><span>&quot;
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">todos </span><span>= </span><span style="color:#bf616a;">ref</span><span>([])
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">todo </span><span>= </span><span style="color:#bf616a;">reactive</span><span>({task:&quot;&quot;})
+</span><span>
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">submitForm </span><span>= </span><span style="color:#b48ead;">async </span><span>() </span><span style="color:#b48ead;">=&gt; </span><span>{
+</span><span>   </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">res </span><span>= </span><span style="color:#b48ead;">await </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">post</span><span>(&quot;</span><span style="color:#a3be8c;">todos/create/</span><span>&quot;, {</span><span style="color:#bf616a;">todo</span><span>})
+</span><span>   </span><span style="color:#bf616a;">todos</span><span>.value.</span><span style="color:#bf616a;">push</span><span>(</span><span style="color:#bf616a;">res</span><span>.data)
+</span><span>   
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">getTodos </span><span>= </span><span style="color:#b48ead;">async </span><span>() </span><span style="color:#b48ead;">=&gt; </span><span>{
+</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">res </span><span>= </span><span style="color:#b48ead;">await </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">get</span><span>(&quot;</span><span style="color:#a3be8c;">/todos/</span><span>&quot;)
+</span><span>    </span><span style="color:#bf616a;">todos</span><span>.value = </span><span style="color:#bf616a;">res</span><span>.data
+</span><span>}
+</span><span style="color:#bf616a;">getTodos</span><span>();
+</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
+</span></code></pre>
+<h2 id="result"><a class="zola-anchor" href="#result" aria-label="Anchor link for: result">Result</a></h2>
+<div align="center">
+<img src="/django-vite-final.gif" width="100%"/>
+</div>
+<h2 id="github-repo"><a class="zola-anchor" href="#github-repo" aria-label="Anchor link for: github-repo">Github Repo</a></h2>
+<p><a href="https://github.com/malnossi/django-vite">Django + Vite Integration</a></p>
+<h2 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">Conclusion</a></h2>
+<p>Integrating Django with a modern frontend powered by Vite and Vue (or any other Vite-compatible framework like React or Svelte) provides the best of both worlds: Django’s robust backend capabilities and modern JavaScript’s dynamic, component-based UIs. This hybrid approach keeps the development stack maintainable while allowing for progressive enhancement.</p>
+<p>By using Vite’s fast build tooling and Django’s templating and routing flexibility, you can avoid the overhead of a fully decoupled architecture while still delivering a responsive, interactive frontend. Context processors and static file handling allow for seamless asset management, and tools like Vue Router and Axios make frontend interaction and API communication simple and scalable.</p>
+<p>This workflow empowers developers to build powerful, modern web apps without sacrificing performance, flexibility, or developer experience. Whether you're enhancing existing Django templates or building more complex SPA-like interfaces, the Django + Vite combo is a future-proof foundation for modern web development.</p>
+<p>Here I tried to this without the need of third party packages, you can see how <a href="https://github.com/MrBin99/django-vite">Django Vite Package</a> do thins if you need the HMR in the front end dev mode, Also <a href="https://www.django-rest-framework.org">Django Rest Framework</a> or <a href="https://django-ninja.dev">Django Ninja</a> for all the serialization and the validation.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+<footer class="mt-12 flex flex-col" tabindex="-1" accesskey="_">
+  <div class="mb-2 flex flex-wrap">
+    <span class="block-bg mr-1.5 mb-1.5 rounded-lg px-5 py-1.5">Tags</span>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/django/">Django</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/web/">Web</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/python/">Python</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/vite/">vite</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/vue/">Vue</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/react/">React</a>
+    
+  </div>
+</footer>
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/django-drf-generic-user/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Django &amp; DRF Model Generic Auth Stuff</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/server-side-events/" accesskey="."
+    ><span>Pushing real-time updates to clients with Server-Sent Events (SSEs)</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2025">2025</time>
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+
+  <!-- Begin Body End inject -->
+  
+
+  <script src="https:&#x2F;&#x2F;cdnapp.websitepolicies.net&#x2F;widgets&#x2F;cookies&#x2F;mzad7vzz.js" defer></script>
+
+
+
+<script>
+  // If your cookie widget exposes callbacks, flip GA consent when accepted.
+  // Adjust to your provider’s API.
+  window.addEventListener('CookieConsentAccepted', function () {
+    if (window.gtag) {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
   });
 </script>
-        
-<figure class="image is-16by9">
-  <img src="/django+vite.webp" alt="Placeholder image" style="border-radius: 0.5rem;" width="100%"/>
-</figure>
-<div style="text-align: center; align-content: center; margin-top: 40px;">
-  <h1>Integrate Django and Vite based Frontend</h1>
-  
-  <a class="tag is-link is-hoverable" href="/tags/django">#Django</a>
-  
-  <a class="tag is-link is-hoverable" href="/tags/web">#Web</a>
-  
-  <a class="tag is-link is-hoverable" href="/tags/python">#Python</a>
-  
-  <a class="tag is-link is-hoverable" href="/tags/vite">#vite</a>
-  
-  <a class="tag is-link is-hoverable" href="/tags/vue">#Vue</a>
-  
-  <a class="tag is-link is-hoverable" href="/tags/react">#React</a>
-  
-</div>
-<div>
-  <h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h2>
-<p>What's the best way to add JavaScript to a Django project? Well, it really comes down to how much JavaScript you’re planning to use. On one end of the spectrum, you can just stick with plain old Vanilla JavaScript—drop it into your Django templates and call it a day. If you start writing a lot of boilerplate for basic interactions, jQuery might feel like a natural step up.</p>
-<p>These days though, there’s growing interest in low-JavaScript approaches. Tools like htmx let you make HTTP requests without writing a single line of JavaScript. Pair that with Alpine.js, and you can sprinkle in some interactivity without the bloat.</p>
-<p>Speaking of Alpine, ultra-lightweight frameworks are having a moment. Alpine.js comes in at just 7.1kb. Even leaner is Preact at 3kb. And if you like Vue, check out petite-vue—it’s built for progressive enhancement without going full SPA.</p>
-<p>Of course, the big players like Vue, React, and Svelte are still widely used, but they typically live in a fully decoupled frontend setup.</p>
-<p>But here’s the thing—you don’t have to go fully decoupled to use a modern JS framework. You can absolutely keep the Django monolith and just enhance your templates with JavaScript where it makes sense.</p>
-<p>That said, you’ll need a reliable way to manage and bundle your JavaScript—both in development and for production.</p>
-<h2 id="alright-let-s-start-to-code"><a class="zola-anchor" href="#alright-let-s-start-to-code" aria-label="Anchor link for: alright-let-s-start-to-code">Alright, let's start to code</a></h2>
-<p>Here in this example I will use <a href="https://vuejs.org">Vue</a>; feel free to use <a href="http://react.dev">React</a>, <a href="https://svelte.dev">Svelte</a> or whatever <a href="https://vite.dev/">Vite</a> based framework, so open a terminal and type as follow :</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">mkdir</span><span> django-vite &amp;&amp; </span><span style="color:#96b5b4;">cd</span><span> django-vite
-</span><span style="color:#bf616a;">uv</span><span> init .
-</span><span style="color:#bf616a;">uv</span><span> add django
-</span><span style="color:#96b5b4;">source</span><span> . ./.venv/bin activate
-</span><span style="color:#bf616a;">django-admin</span><span> startproject config .
-</span></code></pre>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#96b5b4;">.
-</span><span style="color:#bf616a;">├──</span><span> config
-</span><span style="color:#bf616a;">│</span><span>   ├── asgi.py
-</span><span style="color:#bf616a;">│</span><span>   ├── __init__.py
-</span><span style="color:#bf616a;">│</span><span>   ├── settings.py
-</span><span style="color:#bf616a;">│</span><span>   ├── urls.py
-</span><span style="color:#bf616a;">│</span><span>   └── wsgi.py
-</span><span style="color:#bf616a;">├──</span><span> manage.py
-</span><span style="color:#bf616a;">├──</span><span> pyproject.toml
-</span><span style="color:#bf616a;">├──</span><span> README.md
-</span><span style="color:#bf616a;">└──</span><span> uv.lock
-</span><span>
-</span><span style="color:#bf616a;">2</span><span> directories, 9 files
-</span></code></pre>
-<h2 id="create-a-vue-js-project"><a class="zola-anchor" href="#create-a-vue-js-project" aria-label="Anchor link for: create-a-vue-js-project">Create a Vue JS project</a></h2>
-<p>In the terminal create a new Vue project in the root folder of our Django project, here I choosed to call it webui</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">pnpm</span><span> create vue@latest
-</span><span>
-</span><span style="color:#bf616a;">┌</span><span>  Vue.js - The Progressive JavaScript Framework
-</span><span style="color:#bf616a;">│
-</span><span style="color:#bf616a;">◇</span><span>  Project name (target directory)</span><span style="color:#96b5b4;">:
-</span><span style="color:#bf616a;">│</span><span>  webui
-</span><span style="color:#bf616a;">│
-</span><span style="color:#bf616a;">◇</span><span>  Select features to include in your project: (↑/↓ to navigate, space to select, a to toggle all, enter to confirm)
-</span><span style="color:#bf616a;">│</span><span>  none
-</span><span>
-</span><span style="color:#bf616a;">Scaffolding</span><span> project in /home/malnossirat/Desktop/projects/mohamed/django-vite/webui...
-</span><span style="color:#bf616a;">│
-</span><span style="color:#bf616a;">└</span><span>  Done. Now run:
-</span><span>
-</span><span>   </span><span style="color:#96b5b4;">cd</span><span> webui
-</span><span>   </span><span style="color:#bf616a;">pnpm</span><span> install
-</span><span>   </span><span style="color:#bf616a;">pnpm</span><span> dev
-</span></code></pre>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#96b5b4;">.
-</span><span style="color:#bf616a;">├──</span><span> config
-</span><span style="color:#bf616a;">│</span><span>   ├── asgi.py
-</span><span style="color:#bf616a;">│</span><span>   ├── __init__.py
-</span><span style="color:#bf616a;">│</span><span>   ├── settings.py
-</span><span style="color:#bf616a;">│</span><span>   ├── urls.py
-</span><span style="color:#bf616a;">│</span><span>   └── wsgi.py
-</span><span style="color:#bf616a;">├──</span><span> manage.py
-</span><span style="color:#bf616a;">├──</span><span> pyproject.toml
-</span><span style="color:#bf616a;">├──</span><span> README.md
-</span><span style="color:#bf616a;">├──</span><span> uv.lock
-</span><span style="color:#bf616a;">└──</span><span> webui
-</span><span>    </span><span style="color:#bf616a;">├──</span><span> index.html
-</span><span>    </span><span style="color:#bf616a;">├──</span><span> jsconfig.json
-</span><span>    </span><span style="color:#bf616a;">├──</span><span> package.json
-</span><span>    </span><span style="color:#bf616a;">├──</span><span> public
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   └── favicon.ico
-</span><span>    </span><span style="color:#bf616a;">├──</span><span> README.md
-</span><span>    </span><span style="color:#bf616a;">├──</span><span> src
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   ├── App.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   ├── assets
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   ├── base.css
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   ├── logo.svg
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   └── main.css
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   ├── components
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   ├── HelloWorld.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   ├── icons
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   │   ├── IconCommunity.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   │   ├── IconDocumentation.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   │   ├── IconEcosystem.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   │   ├── IconSupport.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   │   └── IconTooling.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   ├── TheWelcome.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   └── WelcomeItem.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   └── main.js
-</span><span>    </span><span style="color:#bf616a;">└──</span><span> vite.config.js
-</span><span>
-</span><span style="color:#bf616a;">8</span><span> directories, 28 files
-</span></code></pre>
-<p>create two folders in the root folder of the project templates folder and static folder
-change settings to be like this</p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#bf616a;">TEMPLATES </span><span>= [
-</span><span>    {
-</span><span>        &#39;</span><span style="color:#a3be8c;">BACKEND</span><span>&#39;: &#39;</span><span style="color:#a3be8c;">django.template.backends.django.DjangoTemplates</span><span>&#39;,
-</span><span>        &#39;</span><span style="color:#a3be8c;">DIRS</span><span>&#39;: [BASE_DIR.</span><span style="color:#bf616a;">joinpath</span><span>(&quot;</span><span style="color:#a3be8c;">templates</span><span>&quot;)],
-</span><span>        &#39;</span><span style="color:#a3be8c;">APP_DIRS</span><span>&#39;: </span><span style="color:#d08770;">True</span><span>,
-</span><span>        &#39;</span><span style="color:#a3be8c;">OPTIONS</span><span>&#39;: {
-</span><span>            &#39;</span><span style="color:#a3be8c;">context_processors</span><span>&#39;: [
-</span><span>                &#39;</span><span style="color:#a3be8c;">django.template.context_processors.request</span><span>&#39;,
-</span><span>                &#39;</span><span style="color:#a3be8c;">django.contrib.auth.context_processors.auth</span><span>&#39;,
-</span><span>                &#39;</span><span style="color:#a3be8c;">django.contrib.messages.context_processors.messages</span><span>&#39;,
-</span><span>            ],
-</span><span>        },
-</span><span>    },
-</span><span>]
-</span><span>//
-</span><span style="color:#bf616a;">STATIC_URL </span><span>= &#39;</span><span style="color:#a3be8c;">/static/</span><span>&#39;
-</span><span style="color:#bf616a;">STATICFILES_DIRS </span><span>= [
-</span><span>    BASE_DIR.</span><span style="color:#bf616a;">joinpath</span><span>(&quot;</span><span style="color:#a3be8c;">static</span><span>&quot;)
-</span><span>]
-</span><span>
-</span></code></pre>
-<p>Now in vite.config.js, modify src under defineConfig to frontend</p>
-<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">fileURLToPath</span><span>, </span><span style="color:#bf616a;">URL </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">node:url</span><span>&#39;
-</span><span>
-</span><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">defineConfig </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vite</span><span>&#39;
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">vue </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">@vitejs/plugin-vue</span><span>&#39;
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">vueDevTools </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vite-plugin-vue-devtools</span><span>&#39;
-</span><span>
-</span><span style="color:#65737e;">// https://vite.dev/config/
-</span><span style="color:#b48ead;">export default </span><span style="color:#8fa1b3;">defineConfig</span><span>({
-</span><span>  build: { </span><span style="color:#65737e;">// new
-</span><span>    emptyOutDir: </span><span style="color:#d08770;">true</span><span>, </span><span style="color:#65737e;">// We clear the output dir every build
-</span><span>    outDir:&quot;</span><span style="color:#a3be8c;">../static/webui</span><span>&quot;, </span><span style="color:#65737e;">// we change the output dir to match django settings
-</span><span>    assetsDir:&quot;</span><span style="color:#a3be8c;">.</span><span>&quot;, </span><span style="color:#65737e;">// we put all assets in the webui folder in the static folder
-</span><span>    rollupOptions: {
-</span><span>      input: &quot;</span><span style="color:#a3be8c;">./src/main.js</span><span>&quot; </span><span style="color:#65737e;">// the entry point here is no longer the index.html but the main.js
-</span><span>    }
-</span><span>  },
-</span><span>  plugins: [
-</span><span>    </span><span style="color:#8fa1b3;">vue</span><span>(),
-</span><span>    </span><span style="color:#8fa1b3;">vueDevTools</span><span>(),
-</span><span>  ],
-</span><span>  resolve: {
-</span><span>    alias: {
-</span><span>      &#39;</span><span style="color:#a3be8c;">@</span><span>&#39;: </span><span style="color:#8fa1b3;">fileURLToPath</span><span>(new URL(&#39;</span><span style="color:#a3be8c;">./src</span><span>&#39;, </span><span style="color:#b48ead;">import</span><span>.meta.</span><span style="color:#bf616a;">url</span><span>))
-</span><span>    },
-</span><span>  },
-</span><span>})
-</span><span>
-</span></code></pre>
-<blockquote>
-<p>For further information about vite build system you can see the documentation <a href="https://vite.dev/guide/backend-integration">here</a>.</p>
-</blockquote>
-<p>In our package.json, we add a few parameters to dev and build under scripts. This is what it looks like after adding them</p>
-<pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>{
-</span><span>  &quot;</span><span style="color:#a3be8c;">name</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">webui</span><span>&quot;,
-</span><span>  &quot;</span><span style="color:#a3be8c;">version</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">0.0.0</span><span>&quot;,
-</span><span>  &quot;</span><span style="color:#a3be8c;">private</span><span>&quot;: </span><span style="color:#d08770;">true</span><span>,
-</span><span>  &quot;</span><span style="color:#a3be8c;">type</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">module</span><span>&quot;,
-</span><span>  &quot;</span><span style="color:#a3be8c;">scripts</span><span>&quot;: {
-</span><span>    &quot;</span><span style="color:#a3be8c;">dev</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">vite build --mode development -w</span><span>&quot;,
-</span><span>    &quot;</span><span style="color:#a3be8c;">build</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">vite build --mode production</span><span>&quot;,
-</span><span>    &quot;</span><span style="color:#a3be8c;">preview</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">vite preview</span><span>&quot;
-</span><span>  },
-</span><span>  &quot;</span><span style="color:#a3be8c;">dependencies</span><span>&quot;: {
-</span><span>    &quot;</span><span style="color:#a3be8c;">vue</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">^3.5.13</span><span>&quot;
-</span><span>  },
-</span><span>  &quot;</span><span style="color:#a3be8c;">devDependencies</span><span>&quot;: {
-</span><span>    &quot;</span><span style="color:#a3be8c;">@vitejs/plugin-vue</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">^5.2.3</span><span>&quot;,
-</span><span>    &quot;</span><span style="color:#a3be8c;">vite</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">^6.2.4</span><span>&quot;,
-</span><span>    &quot;</span><span style="color:#a3be8c;">vite-plugin-vue-devtools</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">^7.7.2</span><span>&quot;
-</span><span>  }
-</span><span>}
-</span></code></pre>
-<p>add <code>base.html</code> in the templates folder =&gt; keep it simple:</p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;!</span><span style="color:#b48ead;">DOCTYPE </span><span style="color:#d08770;">html</span><span>&gt;
-</span><span>&lt;</span><span style="color:#bf616a;">html </span><span style="color:#d08770;">lang</span><span>=&quot;</span><span style="color:#a3be8c;">en</span><span>&quot;&gt;
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">head</span><span>&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">charset</span><span>=&quot;</span><span style="color:#a3be8c;">UTF-8</span><span>&quot;&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">viewport</span><span>&quot; </span><span style="color:#d08770;">content</span><span>=&quot;</span><span style="color:#a3be8c;">width=device-width, initial-scale=1.0</span><span>&quot;&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">head</span><span>&gt;
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">body</span><span>&gt;
-</span><span>    {%block content%}
-</span><span>    {%endblock content%}
-</span><span>&lt;/</span><span style="color:#bf616a;">body</span><span>&gt;
-</span><span>
-</span><span>&lt;/</span><span style="color:#bf616a;">html</span><span>&gt;
-</span></code></pre>
-<p>then add <code>index.html</code> file in the templates folder like this</p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>{%extends &#39;base.html&#39;%}
-</span><span>
-</span><span>{%block content%}
-</span><span>// html code goes here 
-</span><span>{%endblock content%}
-</span></code></pre>
-<h3 id="set-the-dynamic-path-to-fetch-js-and-css-files"><a class="zola-anchor" href="#set-the-dynamic-path-to-fetch-js-and-css-files" aria-label="Anchor link for: set-the-dynamic-path-to-fetch-js-and-css-files">Set the dynamic path to fetch js and css files</a></h3>
-<p>Let’s start with a quick refresher: <strong>context processors</strong> in Django are just functions that inject variables into the context of every template rendered. They're a great way to avoid repeating yourself—especially when you want certain data (like user info, app settings, or environment flags) to be available across all templates without explicitly passing them in each view.</p>
-<p>Now, with that in mind, let’s build a custom context processor that helps us dynamically load our JavaScript and CSS files from an assets folder—handy when working with tools like Vite or managing Vue components.</p>
-<p>Create <code>context_processors.py</code> in the config folder</p>
-<p>This is where we’ll define a function that inspects the <code>static/webui</code> directory and returns the names of JS/CSS files we want to include in our templates.</p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.conf </span><span style="color:#b48ead;">import </span><span>settings
-</span><span>
-</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">webui_files</span><span>(</span><span style="color:#bf616a;">request</span><span>):
-</span><span>    webui_assets_dir = settings.BASE_DIR.</span><span style="color:#bf616a;">joinpath</span><span>(&quot;</span><span style="color:#a3be8c;">static</span><span>&quot;)
-</span><span>    js_files = [file.</span><span style="color:#bf616a;">relative_to</span><span>(webui_assets_dir) </span><span style="color:#b48ead;">for </span><span>file </span><span style="color:#b48ead;">in </span><span>webui_assets_dir.</span><span style="color:#bf616a;">glob</span><span>(&quot;</span><span style="color:#a3be8c;">**/*.js</span><span>&quot;)]
-</span><span>    css_files = [file.</span><span style="color:#bf616a;">relative_to</span><span>(webui_assets_dir) </span><span style="color:#b48ead;">for </span><span>file </span><span style="color:#b48ead;">in </span><span>webui_assets_dir.</span><span style="color:#bf616a;">glob</span><span>(&quot;</span><span style="color:#a3be8c;">**/*.css</span><span>&quot;)]
-</span><span>
-</span><span>    </span><span style="color:#b48ead;">return </span><span>{
-</span><span>        &quot;</span><span style="color:#a3be8c;">js_files</span><span>&quot;:</span><span style="color:#bf616a;">list</span><span>(js_files),
-</span><span>        &quot;</span><span style="color:#a3be8c;">css_files</span><span>&quot;:</span><span style="color:#bf616a;">list</span><span>(css_files)
-</span><span>    }
-</span></code></pre>
-<p>Make sure to add the entry <code>context_processors.webui_files</code> under TEMPLATES - OPTIONS - context_processors in settings.py.
-Below is what it looks like</p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#bf616a;">TEMPLATES </span><span>= [
-</span><span>    {
-</span><span>        &#39;</span><span style="color:#a3be8c;">BACKEND</span><span>&#39;: &#39;</span><span style="color:#a3be8c;">django.template.backends.django.DjangoTemplates</span><span>&#39;,
-</span><span>        &#39;</span><span style="color:#a3be8c;">DIRS</span><span>&#39;: [BASE_DIR.</span><span style="color:#bf616a;">joinpath</span><span>(&quot;</span><span style="color:#a3be8c;">templates</span><span>&quot;)],
-</span><span>        &#39;</span><span style="color:#a3be8c;">APP_DIRS</span><span>&#39;: </span><span style="color:#d08770;">True</span><span>,
-</span><span>        &#39;</span><span style="color:#a3be8c;">OPTIONS</span><span>&#39;: {
-</span><span>            &#39;</span><span style="color:#a3be8c;">context_processors</span><span>&#39;: [
-</span><span>                &#39;</span><span style="color:#a3be8c;">django.template.context_processors.request</span><span>&#39;,
-</span><span>                &#39;</span><span style="color:#a3be8c;">django.contrib.auth.context_processors.auth</span><span>&#39;,
-</span><span>                &#39;</span><span style="color:#a3be8c;">django.contrib.messages.context_processors.messages</span><span>&#39;,
-</span><span>                &#39;</span><span style="color:#a3be8c;">config.context_processors.webui_files</span><span>&#39;,
-</span><span>            ],
-</span><span>        },
-</span><span>    },
-</span><span>]
-</span></code></pre>
-<p>The next step is to reference these variables in base.html so that they are available in every single template that is used. In the <code>&lt;head&gt;</code> section we iterate css_files template variable and load all the css files. Likewise in <code>&lt;body&gt;</code> section we iterate js_files and load all js files as <code>&lt;script&gt;</code> tags.</p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>{% load static %}
-</span><span>
-</span><span>&lt;!</span><span style="color:#b48ead;">DOCTYPE </span><span style="color:#d08770;">html</span><span>&gt;
-</span><span>&lt;</span><span style="color:#bf616a;">html </span><span style="color:#d08770;">lang</span><span>=&quot;</span><span style="color:#a3be8c;">en</span><span>&quot;&gt;
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">head</span><span>&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">charset</span><span>=&quot;</span><span style="color:#a3be8c;">UTF-8</span><span>&quot;&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">viewport</span><span>&quot; </span><span style="color:#d08770;">content</span><span>=&quot;</span><span style="color:#a3be8c;">width=device-width, initial-scale=1.0</span><span>&quot;&gt;
-</span><span>    {% for file in css_files %}
-</span><span>    &lt;</span><span style="color:#bf616a;">link </span><span style="color:#d08770;">rel</span><span>=&quot;</span><span style="color:#a3be8c;">stylesheet</span><span>&quot; </span><span style="color:#d08770;">href</span><span>=&quot;</span><span style="color:#a3be8c;">{% static file %}</span><span>&quot; /&gt;
-</span><span>    {% endfor %}
-</span><span>&lt;/</span><span style="color:#bf616a;">head</span><span>&gt;
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">body</span><span>&gt;
-</span><span>    {%block content%}
-</span><span>    {%endblock content%}
-</span><span>    {% for file in js_files %}
-</span><span>    &lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">src</span><span>=&quot;</span><span style="color:#a3be8c;">{% static file %}</span><span>&quot;&gt;&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
-</span><span>    {% endfor %}
-</span><span>&lt;/</span><span style="color:#bf616a;">body</span><span>&gt;
-</span><span>
-</span><span>&lt;/</span><span style="color:#bf616a;">html</span><span>&gt;
-</span></code></pre>
-<p>Then we should add the <code>path</code> to the <code>index.html</code> page in <code>config/urls.py</code></p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path
-</span><span style="color:#b48ead;">from </span><span>django.views.generic </span><span style="color:#b48ead;">import </span><span>TemplateView
-</span><span>
-</span><span>urlpatterns = [
-</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">admin/</span><span>&#39;, admin.site.urls),
-</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;&#39;,TemplateView.</span><span style="color:#bf616a;">as_view</span><span>(</span><span style="color:#bf616a;">template_name</span><span>=&quot;</span><span style="color:#a3be8c;">index.html</span><span>&quot;)),
-</span><span>]
-</span></code></pre>
-<p>after running django devserver. On inspecting the page, we should now see the following</p>
-<div align="center">
-<img src="/inspect.png" width="100%"/>
-</div>
-<h2 id="mount-the-vue-app-in-a-django-template"><a class="zola-anchor" href="#mount-the-vue-app-in-a-django-template" aria-label="Anchor link for: mount-the-vue-app-in-a-django-template">Mount the Vue app in a django template</a></h2>
-<p>It’s that simple—just call a Vue component directly inside a Django template using an id attribute. In our frontend folder, we’ve got a main.js file where the Vue app gets mounted like this:</p>
-<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span>&#39;</span><span style="color:#a3be8c;">./assets/main.css</span><span>&#39;
-</span><span>
-</span><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">createApp </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vue</span><span>&#39;
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">App </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">./App.vue</span><span>&#39;
-</span><span>
-</span><span style="color:#8fa1b3;">createApp</span><span>(</span><span style="color:#bf616a;">App</span><span>).</span><span style="color:#8fa1b3;">mount</span><span>(&#39;</span><span style="color:#a3be8c;">#app</span><span>&#39;)
-</span></code></pre>
-<p>This tells Vue to hook into any element with the id="app". By default, this loads the App.vue component.</p>
-<p>Now here’s where it gets fun. We simply drop a div with that ID into Django’s home.html template, right inside the {% block content %} section.</p>
-<p>Here’s what the template looks like now</p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>{%extends &#39;base.html&#39;%}
-</span><span>
-</span><span>{% block content %}
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">div </span><span style="color:#8fa1b3;">id</span><span>=&quot;</span><span style="color:#a3be8c;">app</span><span>&quot;&gt;&lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
-</span><span>
-</span><span>{% endblock content %}
-</span></code></pre>
-<p>When we refresh the page we see</p>
-<div align="center">
-<img src="/django-vite-results-static.png" width="100%"/>
-</div>
-<h2 id="vue-router-and-django-urlpatterns"><a class="zola-anchor" href="#vue-router-and-django-urlpatterns" aria-label="Anchor link for: vue-router-and-django-urlpatterns">Vue Router and Django <code>urlpatterns</code></a></h2>
-<p>Now we will add vue router to our application to manage navigation in the frontend</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">pnpm</span><span> add vue-router@4
-</span></code></pre>
-<p>Then we will create two views <code>Home.vue</code> and <code>About.vue</code></p>
-<p><strong>Home page</strong></p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">h1 </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">title</span><span>&quot;&gt;Home Page&lt;/</span><span style="color:#bf616a;">h1</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">setup</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
-</span></code></pre>
-<p><strong>About page</strong></p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">h1 </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">title</span><span>&quot;&gt;About Page&lt;/</span><span style="color:#bf616a;">h1</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">setup</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
-</span></code></pre>
-<p><strong>App.vue component</strong></p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">setup</span><span>&gt;
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">NavBar </span><span style="color:#b48ead;">from </span><span>&quot;</span><span style="color:#a3be8c;">@/components/NavBar.vue</span><span>&quot;
-</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
-</span><span>  &lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">container is-fluid</span><span>&quot;&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">NavBar</span><span>/&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">main</span><span>&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">RouterView </span><span>/&gt;
-</span><span>  &lt;/</span><span style="color:#bf616a;">main</span><span>&gt;
-</span><span>  &lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
-</span></code></pre>
-<p>In the sre folder add another folder called router ans create a file index.js with this content</p>
-<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">createRouter</span><span>, </span><span style="color:#bf616a;">createWebHistory </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vue-router</span><span>&#39;
-</span><span>
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">HomeView </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">../views/Home.vue</span><span>&#39;
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">AboutView </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">../views/About.vue</span><span>&#39;
-</span><span>
-</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">routes </span><span>= [
-</span><span>  { path: &#39;</span><span style="color:#a3be8c;">/</span><span>&#39;, component: </span><span style="color:#bf616a;">HomeView </span><span>},
-</span><span>  { path: &#39;</span><span style="color:#a3be8c;">/about</span><span>&#39;, component: </span><span style="color:#bf616a;">AboutView </span><span>},
-</span><span>]
-</span><span>
-</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">router </span><span>= </span><span style="color:#8fa1b3;">createRouter</span><span>({
-</span><span>    history: </span><span style="color:#8fa1b3;">createWebHistory</span><span>(),
-</span><span>    </span><span style="color:#bf616a;">routes
-</span><span>  })
-</span><span>
-</span><span>
-</span><span style="color:#b48ead;">export default </span><span style="color:#bf616a;">router</span><span>;
-</span></code></pre>
-<p>Finally main.js will look like this</p>
-<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">createApp </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vue</span><span>&#39;
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">App </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">./App.vue</span><span>&#39;
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">router </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">./router</span><span>&#39;
-</span><span style="color:#b48ead;">import </span><span>&#39;</span><span style="color:#a3be8c;">bulma</span><span>&#39;
-</span><span style="color:#8fa1b3;">createApp</span><span>(</span><span style="color:#bf616a;">App</span><span>).</span><span style="color:#8fa1b3;">use</span><span>(</span><span style="color:#bf616a;">router</span><span>).</span><span style="color:#8fa1b3;">mount</span><span>(&#39;</span><span style="color:#a3be8c;">#app</span><span>&#39;)
-</span></code></pre>
-<blockquote>
-<p>Please note that I use <a href="https://bulma.io">Bulma</a> for the some styling.</p>
-</blockquote>
-<p><strong>catch-all URL pattern</strong></p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.contrib </span><span style="color:#b48ead;">import </span><span>admin
-</span><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path, re_path
-</span><span style="color:#b48ead;">from </span><span>django.views.generic </span><span style="color:#b48ead;">import </span><span>TemplateView
-</span><span>
-</span><span>urlpatterns = [
-</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">admin/</span><span>&#39;, admin.site.urls),
-</span><span>    </span><span style="color:#bf616a;">re_path</span><span>(</span><span style="color:#b48ead;">r</span><span>&#39;</span><span style="color:#b48ead;">^</span><span style="color:#a3be8c;">(?P&lt;path&gt;</span><span style="color:#d08770;">.</span><span>*</span><span style="color:#a3be8c;">)</span><span style="color:#b48ead;">$</span><span>&#39;,TemplateView.</span><span style="color:#bf616a;">as_view</span><span>(</span><span style="color:#bf616a;">template_name</span><span>=&quot;</span><span style="color:#a3be8c;">index.html</span><span>&quot;)),
-</span><span>]
-</span></code></pre>
-<blockquote>
-<p><strong>⚠️ Important : Ensure the catch-all route is the last pattern; Django matches URLs in order and stops at the first match.</strong></p>
-</blockquote>
-<p>Now we will add a simple Todo app in our Django:</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">python</span><span> manage.py startapp todos
-</span></code></pre>
-<p><strong>models.py</strong></p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.db </span><span style="color:#b48ead;">import </span><span>models
-</span><span>
-</span><span style="color:#65737e;"># Create your models here.
-</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Todo</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">models.Model</span><span style="color:#eff1f5;">):
-</span><span>    task = models.</span><span style="color:#bf616a;">CharField</span><span>(</span><span style="color:#bf616a;">max_length</span><span>=</span><span style="color:#d08770;">100</span><span>)
-</span><span>    status = models.</span><span style="color:#bf616a;">BooleanField</span><span>(</span><span style="color:#bf616a;">default</span><span>=</span><span style="color:#d08770;">False</span><span>)
-</span><span>
-</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#96b5b4;">__str__</span><span>(</span><span style="color:#bf616a;">self</span><span>) -&gt; str:
-</span><span>        </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">self</span><span>.task
-</span></code></pre>
-<p>Add the todos app to INSTALLED_APPS in settings.py</p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#bf616a;">INSTALLED_APPS </span><span>= [
-</span><span>    //
-</span><span>    &#39;</span><span style="color:#a3be8c;">todos</span><span>&#39;,
-</span><span>]
-</span></code></pre>
-<p>In the terminal</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">python</span><span> manage.py makemigration &amp;&amp; </span><span style="color:#bf616a;">python</span><span> manage.py migrate
-</span></code></pre>
-<p><strong>admin.py</strong></p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.contrib </span><span style="color:#b48ead;">import </span><span>admin
-</span><span style="color:#b48ead;">from . </span><span>models </span><span style="color:#b48ead;">import </span><span>Todo
-</span><span>
-</span><span>
-</span><span>admin.site.</span><span style="color:#bf616a;">register</span><span>(Todo)
-</span></code></pre>
-<p><strong>views.py</strong></p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">import </span><span>json
-</span><span style="color:#b48ead;">from </span><span>django.http </span><span style="color:#b48ead;">import </span><span>JsonResponse
-</span><span style="color:#b48ead;">from </span><span>django.views.decorators.http </span><span style="color:#b48ead;">import </span><span>require_GET, require_POST
-</span><span>
-</span><span style="color:#b48ead;">from . import </span><span>models
-</span><span>
-</span><span>@</span><span style="color:#bf616a;">require_GET
-</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">todos_list</span><span>(</span><span style="color:#bf616a;">request</span><span>):
-</span><span>    todos_qs = models.Todo.objects.</span><span style="color:#bf616a;">all</span><span>()
-</span><span>    todos = [{&quot;</span><span style="color:#a3be8c;">id</span><span>&quot;:todo.id,&quot;</span><span style="color:#a3be8c;">task</span><span>&quot;:todo.task,&quot;</span><span style="color:#a3be8c;">status</span><span>&quot;:todo.status} </span><span style="color:#b48ead;">for </span><span>todo </span><span style="color:#b48ead;">in </span><span>todos_qs]
-</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">JsonResponse</span><span>(todos, </span><span style="color:#bf616a;">safe</span><span>=</span><span style="color:#d08770;">False</span><span>)
-</span><span>
-</span><span>@</span><span style="color:#bf616a;">require_POST
-</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">add_todo</span><span>(</span><span style="color:#bf616a;">request</span><span>):
-</span><span>    data = json.</span><span style="color:#bf616a;">loads</span><span>(request.body)
-</span><span>    todo_ins = models.</span><span style="color:#bf616a;">Todo</span><span>(</span><span style="color:#bf616a;">task</span><span>=data[&#39;</span><span style="color:#a3be8c;">todo</span><span>&#39;][&#39;</span><span style="color:#a3be8c;">task</span><span>&#39;])
-</span><span>    todo_ins.</span><span style="color:#bf616a;">save</span><span>()
-</span><span>    todo = </span><span style="color:#bf616a;">dict</span><span>(</span><span style="color:#bf616a;">id</span><span>=todo_ins.id, </span><span style="color:#bf616a;">task</span><span>=todo_ins.task, </span><span style="color:#bf616a;">status</span><span>=todo_ins.status)
-</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">JsonResponse</span><span>(todo, </span><span style="color:#bf616a;">safe</span><span>=</span><span style="color:#d08770;">False</span><span>)
-</span></code></pre>
-<p><strong>todos/urls.py</strong></p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path
-</span><span>
-</span><span style="color:#b48ead;">from . import </span><span>views
-</span><span>
-</span><span>urlpatterns = [
-</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;&#39;, </span><span style="color:#bf616a;">view</span><span>=views.todos_list),
-</span><span>    </span><span style="color:#bf616a;">path</span><span>(&quot;</span><span style="color:#a3be8c;">create/</span><span>&quot;, </span><span style="color:#bf616a;">view</span><span>=views.add_todo)
-</span><span>]
-</span></code></pre>
-<p><strong>config/urls.py</strong></p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.contrib </span><span style="color:#b48ead;">import </span><span>admin
-</span><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path, re_path, include
-</span><span style="color:#b48ead;">from </span><span>django.views.generic </span><span style="color:#b48ead;">import </span><span>TemplateView
-</span><span>
-</span><span style="color:#b48ead;">from . import </span><span>views
-</span><span>
-</span><span>urlpatterns = [
-</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">admin/</span><span>&#39;, admin.site.urls),
-</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">api/</span><span>&#39;, </span><span style="color:#bf616a;">include</span><span>([
-</span><span>        </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">todos/</span><span>&#39;, </span><span style="color:#bf616a;">include</span><span>(&#39;</span><span style="color:#a3be8c;">todos.urls</span><span>&#39;))
-</span><span>    ])),
-</span><span>    </span><span style="color:#bf616a;">re_path</span><span>(</span><span style="color:#b48ead;">r</span><span>&#39;</span><span style="color:#b48ead;">^</span><span style="color:#a3be8c;">(?P&lt;path&gt;</span><span style="color:#d08770;">.</span><span>*</span><span style="color:#a3be8c;">)</span><span style="color:#b48ead;">$</span><span>&#39;,TemplateView.</span><span style="color:#bf616a;">as_view</span><span>(</span><span style="color:#bf616a;">template_name</span><span>=&quot;</span><span style="color:#a3be8c;">index.html</span><span>&quot;)),
-</span><span>]
-</span></code></pre>
-<p><strong>Axios</strong></p>
-<p>Now we will install axios in the fronend</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">pnpm</span><span> add axios
-</span></code></pre>
-<p><strong>webui/http/index.js</strong></p>
-<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span style="color:#bf616a;">axios </span><span style="color:#b48ead;">from </span><span>&quot;</span><span style="color:#a3be8c;">axios</span><span>&quot;;
-</span><span>
-</span><span style="color:#b48ead;">export default </span><span style="color:#bf616a;">axios</span><span>.</span><span style="color:#8fa1b3;">create</span><span>({
-</span><span>    baseURL:&quot;</span><span style="color:#a3be8c;">/api</span><span>&quot;,
-</span><span>    withCredentials:</span><span style="color:#d08770;">true</span><span>,
-</span><span>    xsrfCookieName:&#39;</span><span style="color:#a3be8c;">csrftoken</span><span>&#39;,
-</span><span>    xsrfHeaderName:&quot;</span><span style="color:#a3be8c;">X-CSRFToken</span><span>&quot;,
-</span><span>})
-</span></code></pre>
-<p>Finally in the Home page we will add a simple form and table to list all our Todos:</p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">container</span><span>&quot;&gt;
-</span><span>        &lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">columns is-centered</span><span>&quot;&gt;
-</span><span>        &lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">column is-6</span><span>&quot;&gt;
-</span><span>            &lt;</span><span style="color:#bf616a;">form </span><span style="color:#d08770;">@submit.prevent </span><span>= </span><span style="color:#a3be8c;">submitForm</span><span>&gt;
-</span><span>                &lt;</span><span style="color:#bf616a;">input </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">input is-primary</span><span>&quot; </span><span style="color:#d08770;">v-model</span><span>=&quot;</span><span style="color:#a3be8c;">todo.task</span><span>&quot;/&gt;
-</span><span>                &lt;</span><span style="color:#bf616a;">input </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">button is-success mt-3</span><span>&quot; </span><span style="color:#d08770;">type</span><span>=&quot;</span><span style="color:#a3be8c;">submit</span><span>&quot; </span><span style="color:#d08770;">value</span><span>=&quot;</span><span style="color:#a3be8c;">Add</span><span>&quot;/&gt;
-</span><span>            &lt;/</span><span style="color:#bf616a;">form</span><span>&gt;
-</span><span>            &lt;</span><span style="color:#bf616a;">table </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">table is-fullwidth</span><span>&quot;&gt;
-</span><span>                &lt;</span><span style="color:#bf616a;">thead</span><span>&gt;
-</span><span>                    &lt;</span><span style="color:#bf616a;">tr</span><span>&gt;
-</span><span>                        &lt;</span><span style="color:#bf616a;">th</span><span>&gt;#&lt;/</span><span style="color:#bf616a;">th</span><span>&gt;
-</span><span>                        &lt;</span><span style="color:#bf616a;">th</span><span>&gt;Task&lt;/</span><span style="color:#bf616a;">th</span><span>&gt;
-</span><span>                        &lt;</span><span style="color:#bf616a;">th</span><span>&gt;Status&lt;/</span><span style="color:#bf616a;">th</span><span>&gt;
-</span><span>                    &lt;/</span><span style="color:#bf616a;">tr</span><span>&gt;
-</span><span>                &lt;/</span><span style="color:#bf616a;">thead</span><span>&gt;
-</span><span>                &lt;</span><span style="color:#bf616a;">tbody</span><span>&gt;
-</span><span>                    &lt;</span><span style="color:#bf616a;">tr </span><span style="color:#d08770;">v-for</span><span>=&quot;</span><span style="color:#a3be8c;">todo in todos</span><span>&quot; </span><span style="color:#d08770;">:key</span><span>=&quot;</span><span style="color:#a3be8c;">todo.id</span><span>&quot;&gt;
-</span><span>                        &lt;</span><span style="color:#bf616a;">td</span><span>&gt;{{ todo.id }}&lt;/</span><span style="color:#bf616a;">td</span><span>&gt;
-</span><span>                        &lt;</span><span style="color:#bf616a;">td</span><span>&gt;{{ todo.task }}&lt;/</span><span style="color:#bf616a;">td</span><span>&gt;
-</span><span>                        &lt;</span><span style="color:#bf616a;">td</span><span>&gt;
-</span><span>                            &lt;</span><span style="color:#bf616a;">span </span><span style="color:#d08770;">v-if</span><span>=&quot;</span><span style="color:#a3be8c;">todo.status</span><span>&quot; </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">tag is-success</span><span>&quot;&gt;Done&lt;/</span><span style="color:#bf616a;">span</span><span>&gt;
-</span><span>                            &lt;</span><span style="color:#bf616a;">span </span><span style="color:#d08770;">v-else class</span><span>=&quot;</span><span style="color:#a3be8c;">tag is-warning</span><span>&quot;&gt;Waiting&lt;/</span><span style="color:#bf616a;">span</span><span>&gt;
-</span><span>                        &lt;/</span><span style="color:#bf616a;">td</span><span>&gt;
-</span><span>                    &lt;/</span><span style="color:#bf616a;">tr</span><span>&gt;
-</span><span>                &lt;/</span><span style="color:#bf616a;">tbody</span><span>&gt;
-</span><span>            &lt;/</span><span style="color:#bf616a;">table</span><span>&gt;
-</span><span>        &lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
-</span><span>    &lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
-</span><span>    &lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">setup</span><span>&gt;
-</span><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">ref</span><span>, </span><span style="color:#bf616a;">reactive </span><span>} </span><span style="color:#b48ead;">from </span><span>&quot;</span><span style="color:#a3be8c;">vue</span><span>&quot;;
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">http </span><span style="color:#b48ead;">from </span><span>&quot;</span><span style="color:#a3be8c;">@/http</span><span>&quot;
-</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">todos </span><span>= </span><span style="color:#bf616a;">ref</span><span>([])
-</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">todo </span><span>= </span><span style="color:#bf616a;">reactive</span><span>({task:&quot;&quot;})
-</span><span>
-</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">submitForm </span><span>= </span><span style="color:#b48ead;">async </span><span>() </span><span style="color:#b48ead;">=&gt; </span><span>{
-</span><span>   </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">res </span><span>= </span><span style="color:#b48ead;">await </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">post</span><span>(&quot;</span><span style="color:#a3be8c;">todos/create/</span><span>&quot;, {</span><span style="color:#bf616a;">todo</span><span>})
-</span><span>   </span><span style="color:#bf616a;">todos</span><span>.value.</span><span style="color:#bf616a;">push</span><span>(</span><span style="color:#bf616a;">res</span><span>.data)
-</span><span>   
-</span><span>}
-</span><span>
-</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">getTodos </span><span>= </span><span style="color:#b48ead;">async </span><span>() </span><span style="color:#b48ead;">=&gt; </span><span>{
-</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">res </span><span>= </span><span style="color:#b48ead;">await </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">get</span><span>(&quot;</span><span style="color:#a3be8c;">/todos/</span><span>&quot;)
-</span><span>    </span><span style="color:#bf616a;">todos</span><span>.value = </span><span style="color:#bf616a;">res</span><span>.data
-</span><span>}
-</span><span style="color:#bf616a;">getTodos</span><span>();
-</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
-</span></code></pre>
-<h2 id="result"><a class="zola-anchor" href="#result" aria-label="Anchor link for: result">Result</a></h2>
-<div align="center">
-<img src="/django-vite-final.gif" width="100%"/>
-</div>
-<h2 id="github-repo"><a class="zola-anchor" href="#github-repo" aria-label="Anchor link for: github-repo">Github Repo</a></h2>
-<p><a href="https://github.com/malnossi/django-vite">Django + Vite Integration</a></p>
-<h2 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">Conclusion</a></h2>
-<p>Integrating Django with a modern frontend powered by Vite and Vue (or any other Vite-compatible framework like React or Svelte) provides the best of both worlds: Django’s robust backend capabilities and modern JavaScript’s dynamic, component-based UIs. This hybrid approach keeps the development stack maintainable while allowing for progressive enhancement.</p>
-<p>By using Vite’s fast build tooling and Django’s templating and routing flexibility, you can avoid the overhead of a fully decoupled architecture while still delivering a responsive, interactive frontend. Context processors and static file handling allow for seamless asset management, and tools like Vue Router and Axios make frontend interaction and API communication simple and scalable.</p>
-<p>This workflow empowers developers to build powerful, modern web apps without sacrificing performance, flexibility, or developer experience. Whether you're enhancing existing Django templates or building more complex SPA-like interfaces, the Django + Vite combo is a future-proof foundation for modern web development.</p>
-<p>Here I tried to this without the need of third party packages, you can see how <a href="https://github.com/MrBin99/django-vite">Django Vite Package</a> do thins if you need the HMR in the front end dev mode, Also <a href="https://www.django-rest-framework.org">Django Rest Framework</a> or <a href="https://django-ninja.dev">Django Ninja</a> for all the serialization and the validation.</p>
-
-</div>
-<!-- <div class="section">
-  <div class="card">
-    <div class="card-image">
-
-    </div>
-    <div class="card-content">
-      <div class="level">
-        <div class="level-item has-text-centered">
-          <div>
-            <h1 class="heading is-size-5"><strong>Integrate Django and Vite based Frontend</strong></h1>
-            <div class="tags is-flex is-justify-content-center">
-              
-              <a class="tag is-link is-hoverable" href="/tags/django">#Django</a>
-              
-              <a class="tag is-link is-hoverable" href="/tags/web">#Web</a>
-              
-              <a class="tag is-link is-hoverable" href="/tags/python">#Python</a>
-              
-              <a class="tag is-link is-hoverable" href="/tags/vite">#vite</a>
-              
-              <a class="tag is-link is-hoverable" href="/tags/vue">#Vue</a>
-              
-              <a class="tag is-link is-hoverable" href="/tags/react">#React</a>
-              
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="media">
-        <div class="media-content">
-          <span class="title is-size-6">Mohamed AL NOSSIRAT</span> |
-          <time datetime="2025-06-02">02&#x2F;06&#x2F;2025</time>
-          <hr />
-        </div>
-
-      </div>
-      <div class="content has-text-justified">
-        <h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h2>
-<p>What's the best way to add JavaScript to a Django project? Well, it really comes down to how much JavaScript you’re planning to use. On one end of the spectrum, you can just stick with plain old Vanilla JavaScript—drop it into your Django templates and call it a day. If you start writing a lot of boilerplate for basic interactions, jQuery might feel like a natural step up.</p>
-<p>These days though, there’s growing interest in low-JavaScript approaches. Tools like htmx let you make HTTP requests without writing a single line of JavaScript. Pair that with Alpine.js, and you can sprinkle in some interactivity without the bloat.</p>
-<p>Speaking of Alpine, ultra-lightweight frameworks are having a moment. Alpine.js comes in at just 7.1kb. Even leaner is Preact at 3kb. And if you like Vue, check out petite-vue—it’s built for progressive enhancement without going full SPA.</p>
-<p>Of course, the big players like Vue, React, and Svelte are still widely used, but they typically live in a fully decoupled frontend setup.</p>
-<p>But here’s the thing—you don’t have to go fully decoupled to use a modern JS framework. You can absolutely keep the Django monolith and just enhance your templates with JavaScript where it makes sense.</p>
-<p>That said, you’ll need a reliable way to manage and bundle your JavaScript—both in development and for production.</p>
-<h2 id="alright-let-s-start-to-code"><a class="zola-anchor" href="#alright-let-s-start-to-code" aria-label="Anchor link for: alright-let-s-start-to-code">Alright, let's start to code</a></h2>
-<p>Here in this example I will use <a href="https://vuejs.org">Vue</a>; feel free to use <a href="http://react.dev">React</a>, <a href="https://svelte.dev">Svelte</a> or whatever <a href="https://vite.dev/">Vite</a> based framework, so open a terminal and type as follow :</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">mkdir</span><span> django-vite &amp;&amp; </span><span style="color:#96b5b4;">cd</span><span> django-vite
-</span><span style="color:#bf616a;">uv</span><span> init .
-</span><span style="color:#bf616a;">uv</span><span> add django
-</span><span style="color:#96b5b4;">source</span><span> . ./.venv/bin activate
-</span><span style="color:#bf616a;">django-admin</span><span> startproject config .
-</span></code></pre>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#96b5b4;">.
-</span><span style="color:#bf616a;">├──</span><span> config
-</span><span style="color:#bf616a;">│</span><span>   ├── asgi.py
-</span><span style="color:#bf616a;">│</span><span>   ├── __init__.py
-</span><span style="color:#bf616a;">│</span><span>   ├── settings.py
-</span><span style="color:#bf616a;">│</span><span>   ├── urls.py
-</span><span style="color:#bf616a;">│</span><span>   └── wsgi.py
-</span><span style="color:#bf616a;">├──</span><span> manage.py
-</span><span style="color:#bf616a;">├──</span><span> pyproject.toml
-</span><span style="color:#bf616a;">├──</span><span> README.md
-</span><span style="color:#bf616a;">└──</span><span> uv.lock
-</span><span>
-</span><span style="color:#bf616a;">2</span><span> directories, 9 files
-</span></code></pre>
-<h2 id="create-a-vue-js-project"><a class="zola-anchor" href="#create-a-vue-js-project" aria-label="Anchor link for: create-a-vue-js-project">Create a Vue JS project</a></h2>
-<p>In the terminal create a new Vue project in the root folder of our Django project, here I choosed to call it webui</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">pnpm</span><span> create vue@latest
-</span><span>
-</span><span style="color:#bf616a;">┌</span><span>  Vue.js - The Progressive JavaScript Framework
-</span><span style="color:#bf616a;">│
-</span><span style="color:#bf616a;">◇</span><span>  Project name (target directory)</span><span style="color:#96b5b4;">:
-</span><span style="color:#bf616a;">│</span><span>  webui
-</span><span style="color:#bf616a;">│
-</span><span style="color:#bf616a;">◇</span><span>  Select features to include in your project: (↑/↓ to navigate, space to select, a to toggle all, enter to confirm)
-</span><span style="color:#bf616a;">│</span><span>  none
-</span><span>
-</span><span style="color:#bf616a;">Scaffolding</span><span> project in /home/malnossirat/Desktop/projects/mohamed/django-vite/webui...
-</span><span style="color:#bf616a;">│
-</span><span style="color:#bf616a;">└</span><span>  Done. Now run:
-</span><span>
-</span><span>   </span><span style="color:#96b5b4;">cd</span><span> webui
-</span><span>   </span><span style="color:#bf616a;">pnpm</span><span> install
-</span><span>   </span><span style="color:#bf616a;">pnpm</span><span> dev
-</span></code></pre>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#96b5b4;">.
-</span><span style="color:#bf616a;">├──</span><span> config
-</span><span style="color:#bf616a;">│</span><span>   ├── asgi.py
-</span><span style="color:#bf616a;">│</span><span>   ├── __init__.py
-</span><span style="color:#bf616a;">│</span><span>   ├── settings.py
-</span><span style="color:#bf616a;">│</span><span>   ├── urls.py
-</span><span style="color:#bf616a;">│</span><span>   └── wsgi.py
-</span><span style="color:#bf616a;">├──</span><span> manage.py
-</span><span style="color:#bf616a;">├──</span><span> pyproject.toml
-</span><span style="color:#bf616a;">├──</span><span> README.md
-</span><span style="color:#bf616a;">├──</span><span> uv.lock
-</span><span style="color:#bf616a;">└──</span><span> webui
-</span><span>    </span><span style="color:#bf616a;">├──</span><span> index.html
-</span><span>    </span><span style="color:#bf616a;">├──</span><span> jsconfig.json
-</span><span>    </span><span style="color:#bf616a;">├──</span><span> package.json
-</span><span>    </span><span style="color:#bf616a;">├──</span><span> public
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   └── favicon.ico
-</span><span>    </span><span style="color:#bf616a;">├──</span><span> README.md
-</span><span>    </span><span style="color:#bf616a;">├──</span><span> src
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   ├── App.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   ├── assets
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   ├── base.css
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   ├── logo.svg
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   └── main.css
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   ├── components
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   ├── HelloWorld.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   ├── icons
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   │   ├── IconCommunity.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   │   ├── IconDocumentation.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   │   ├── IconEcosystem.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   │   ├── IconSupport.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   │   └── IconTooling.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   ├── TheWelcome.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   │   └── WelcomeItem.vue
-</span><span>    </span><span style="color:#bf616a;">│</span><span>   └── main.js
-</span><span>    </span><span style="color:#bf616a;">└──</span><span> vite.config.js
-</span><span>
-</span><span style="color:#bf616a;">8</span><span> directories, 28 files
-</span></code></pre>
-<p>create two folders in the root folder of the project templates folder and static folder
-change settings to be like this</p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#bf616a;">TEMPLATES </span><span>= [
-</span><span>    {
-</span><span>        &#39;</span><span style="color:#a3be8c;">BACKEND</span><span>&#39;: &#39;</span><span style="color:#a3be8c;">django.template.backends.django.DjangoTemplates</span><span>&#39;,
-</span><span>        &#39;</span><span style="color:#a3be8c;">DIRS</span><span>&#39;: [BASE_DIR.</span><span style="color:#bf616a;">joinpath</span><span>(&quot;</span><span style="color:#a3be8c;">templates</span><span>&quot;)],
-</span><span>        &#39;</span><span style="color:#a3be8c;">APP_DIRS</span><span>&#39;: </span><span style="color:#d08770;">True</span><span>,
-</span><span>        &#39;</span><span style="color:#a3be8c;">OPTIONS</span><span>&#39;: {
-</span><span>            &#39;</span><span style="color:#a3be8c;">context_processors</span><span>&#39;: [
-</span><span>                &#39;</span><span style="color:#a3be8c;">django.template.context_processors.request</span><span>&#39;,
-</span><span>                &#39;</span><span style="color:#a3be8c;">django.contrib.auth.context_processors.auth</span><span>&#39;,
-</span><span>                &#39;</span><span style="color:#a3be8c;">django.contrib.messages.context_processors.messages</span><span>&#39;,
-</span><span>            ],
-</span><span>        },
-</span><span>    },
-</span><span>]
-</span><span>//
-</span><span style="color:#bf616a;">STATIC_URL </span><span>= &#39;</span><span style="color:#a3be8c;">/static/</span><span>&#39;
-</span><span style="color:#bf616a;">STATICFILES_DIRS </span><span>= [
-</span><span>    BASE_DIR.</span><span style="color:#bf616a;">joinpath</span><span>(&quot;</span><span style="color:#a3be8c;">static</span><span>&quot;)
-</span><span>]
-</span><span>
-</span></code></pre>
-<p>Now in vite.config.js, modify src under defineConfig to frontend</p>
-<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">fileURLToPath</span><span>, </span><span style="color:#bf616a;">URL </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">node:url</span><span>&#39;
-</span><span>
-</span><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">defineConfig </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vite</span><span>&#39;
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">vue </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">@vitejs/plugin-vue</span><span>&#39;
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">vueDevTools </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vite-plugin-vue-devtools</span><span>&#39;
-</span><span>
-</span><span style="color:#65737e;">// https://vite.dev/config/
-</span><span style="color:#b48ead;">export default </span><span style="color:#8fa1b3;">defineConfig</span><span>({
-</span><span>  build: { </span><span style="color:#65737e;">// new
-</span><span>    emptyOutDir: </span><span style="color:#d08770;">true</span><span>, </span><span style="color:#65737e;">// We clear the output dir every build
-</span><span>    outDir:&quot;</span><span style="color:#a3be8c;">../static/webui</span><span>&quot;, </span><span style="color:#65737e;">// we change the output dir to match django settings
-</span><span>    assetsDir:&quot;</span><span style="color:#a3be8c;">.</span><span>&quot;, </span><span style="color:#65737e;">// we put all assets in the webui folder in the static folder
-</span><span>    rollupOptions: {
-</span><span>      input: &quot;</span><span style="color:#a3be8c;">./src/main.js</span><span>&quot; </span><span style="color:#65737e;">// the entry point here is no longer the index.html but the main.js
-</span><span>    }
-</span><span>  },
-</span><span>  plugins: [
-</span><span>    </span><span style="color:#8fa1b3;">vue</span><span>(),
-</span><span>    </span><span style="color:#8fa1b3;">vueDevTools</span><span>(),
-</span><span>  ],
-</span><span>  resolve: {
-</span><span>    alias: {
-</span><span>      &#39;</span><span style="color:#a3be8c;">@</span><span>&#39;: </span><span style="color:#8fa1b3;">fileURLToPath</span><span>(new URL(&#39;</span><span style="color:#a3be8c;">./src</span><span>&#39;, </span><span style="color:#b48ead;">import</span><span>.meta.</span><span style="color:#bf616a;">url</span><span>))
-</span><span>    },
-</span><span>  },
-</span><span>})
-</span><span>
-</span></code></pre>
-<blockquote>
-<p>For further information about vite build system you can see the documentation <a href="https://vite.dev/guide/backend-integration">here</a>.</p>
-</blockquote>
-<p>In our package.json, we add a few parameters to dev and build under scripts. This is what it looks like after adding them</p>
-<pre data-lang="json" style="background-color:#2b303b;color:#c0c5ce;" class="language-json "><code class="language-json" data-lang="json"><span>{
-</span><span>  &quot;</span><span style="color:#a3be8c;">name</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">webui</span><span>&quot;,
-</span><span>  &quot;</span><span style="color:#a3be8c;">version</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">0.0.0</span><span>&quot;,
-</span><span>  &quot;</span><span style="color:#a3be8c;">private</span><span>&quot;: </span><span style="color:#d08770;">true</span><span>,
-</span><span>  &quot;</span><span style="color:#a3be8c;">type</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">module</span><span>&quot;,
-</span><span>  &quot;</span><span style="color:#a3be8c;">scripts</span><span>&quot;: {
-</span><span>    &quot;</span><span style="color:#a3be8c;">dev</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">vite build --mode development -w</span><span>&quot;,
-</span><span>    &quot;</span><span style="color:#a3be8c;">build</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">vite build --mode production</span><span>&quot;,
-</span><span>    &quot;</span><span style="color:#a3be8c;">preview</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">vite preview</span><span>&quot;
-</span><span>  },
-</span><span>  &quot;</span><span style="color:#a3be8c;">dependencies</span><span>&quot;: {
-</span><span>    &quot;</span><span style="color:#a3be8c;">vue</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">^3.5.13</span><span>&quot;
-</span><span>  },
-</span><span>  &quot;</span><span style="color:#a3be8c;">devDependencies</span><span>&quot;: {
-</span><span>    &quot;</span><span style="color:#a3be8c;">@vitejs/plugin-vue</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">^5.2.3</span><span>&quot;,
-</span><span>    &quot;</span><span style="color:#a3be8c;">vite</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">^6.2.4</span><span>&quot;,
-</span><span>    &quot;</span><span style="color:#a3be8c;">vite-plugin-vue-devtools</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">^7.7.2</span><span>&quot;
-</span><span>  }
-</span><span>}
-</span></code></pre>
-<p>add <code>base.html</code> in the templates folder =&gt; keep it simple:</p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;!</span><span style="color:#b48ead;">DOCTYPE </span><span style="color:#d08770;">html</span><span>&gt;
-</span><span>&lt;</span><span style="color:#bf616a;">html </span><span style="color:#d08770;">lang</span><span>=&quot;</span><span style="color:#a3be8c;">en</span><span>&quot;&gt;
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">head</span><span>&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">charset</span><span>=&quot;</span><span style="color:#a3be8c;">UTF-8</span><span>&quot;&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">viewport</span><span>&quot; </span><span style="color:#d08770;">content</span><span>=&quot;</span><span style="color:#a3be8c;">width=device-width, initial-scale=1.0</span><span>&quot;&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">head</span><span>&gt;
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">body</span><span>&gt;
-</span><span>    {%block content%}
-</span><span>    {%endblock content%}
-</span><span>&lt;/</span><span style="color:#bf616a;">body</span><span>&gt;
-</span><span>
-</span><span>&lt;/</span><span style="color:#bf616a;">html</span><span>&gt;
-</span></code></pre>
-<p>then add <code>index.html</code> file in the templates folder like this</p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>{%extends &#39;base.html&#39;%}
-</span><span>
-</span><span>{%block content%}
-</span><span>// html code goes here 
-</span><span>{%endblock content%}
-</span></code></pre>
-<h3 id="set-the-dynamic-path-to-fetch-js-and-css-files"><a class="zola-anchor" href="#set-the-dynamic-path-to-fetch-js-and-css-files" aria-label="Anchor link for: set-the-dynamic-path-to-fetch-js-and-css-files">Set the dynamic path to fetch js and css files</a></h3>
-<p>Let’s start with a quick refresher: <strong>context processors</strong> in Django are just functions that inject variables into the context of every template rendered. They're a great way to avoid repeating yourself—especially when you want certain data (like user info, app settings, or environment flags) to be available across all templates without explicitly passing them in each view.</p>
-<p>Now, with that in mind, let’s build a custom context processor that helps us dynamically load our JavaScript and CSS files from an assets folder—handy when working with tools like Vite or managing Vue components.</p>
-<p>Create <code>context_processors.py</code> in the config folder</p>
-<p>This is where we’ll define a function that inspects the <code>static/webui</code> directory and returns the names of JS/CSS files we want to include in our templates.</p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.conf </span><span style="color:#b48ead;">import </span><span>settings
-</span><span>
-</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">webui_files</span><span>(</span><span style="color:#bf616a;">request</span><span>):
-</span><span>    webui_assets_dir = settings.BASE_DIR.</span><span style="color:#bf616a;">joinpath</span><span>(&quot;</span><span style="color:#a3be8c;">static</span><span>&quot;)
-</span><span>    js_files = [file.</span><span style="color:#bf616a;">relative_to</span><span>(webui_assets_dir) </span><span style="color:#b48ead;">for </span><span>file </span><span style="color:#b48ead;">in </span><span>webui_assets_dir.</span><span style="color:#bf616a;">glob</span><span>(&quot;</span><span style="color:#a3be8c;">**/*.js</span><span>&quot;)]
-</span><span>    css_files = [file.</span><span style="color:#bf616a;">relative_to</span><span>(webui_assets_dir) </span><span style="color:#b48ead;">for </span><span>file </span><span style="color:#b48ead;">in </span><span>webui_assets_dir.</span><span style="color:#bf616a;">glob</span><span>(&quot;</span><span style="color:#a3be8c;">**/*.css</span><span>&quot;)]
-</span><span>
-</span><span>    </span><span style="color:#b48ead;">return </span><span>{
-</span><span>        &quot;</span><span style="color:#a3be8c;">js_files</span><span>&quot;:</span><span style="color:#bf616a;">list</span><span>(js_files),
-</span><span>        &quot;</span><span style="color:#a3be8c;">css_files</span><span>&quot;:</span><span style="color:#bf616a;">list</span><span>(css_files)
-</span><span>    }
-</span></code></pre>
-<p>Make sure to add the entry <code>context_processors.webui_files</code> under TEMPLATES - OPTIONS - context_processors in settings.py.
-Below is what it looks like</p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#bf616a;">TEMPLATES </span><span>= [
-</span><span>    {
-</span><span>        &#39;</span><span style="color:#a3be8c;">BACKEND</span><span>&#39;: &#39;</span><span style="color:#a3be8c;">django.template.backends.django.DjangoTemplates</span><span>&#39;,
-</span><span>        &#39;</span><span style="color:#a3be8c;">DIRS</span><span>&#39;: [BASE_DIR.</span><span style="color:#bf616a;">joinpath</span><span>(&quot;</span><span style="color:#a3be8c;">templates</span><span>&quot;)],
-</span><span>        &#39;</span><span style="color:#a3be8c;">APP_DIRS</span><span>&#39;: </span><span style="color:#d08770;">True</span><span>,
-</span><span>        &#39;</span><span style="color:#a3be8c;">OPTIONS</span><span>&#39;: {
-</span><span>            &#39;</span><span style="color:#a3be8c;">context_processors</span><span>&#39;: [
-</span><span>                &#39;</span><span style="color:#a3be8c;">django.template.context_processors.request</span><span>&#39;,
-</span><span>                &#39;</span><span style="color:#a3be8c;">django.contrib.auth.context_processors.auth</span><span>&#39;,
-</span><span>                &#39;</span><span style="color:#a3be8c;">django.contrib.messages.context_processors.messages</span><span>&#39;,
-</span><span>                &#39;</span><span style="color:#a3be8c;">config.context_processors.webui_files</span><span>&#39;,
-</span><span>            ],
-</span><span>        },
-</span><span>    },
-</span><span>]
-</span></code></pre>
-<p>The next step is to reference these variables in base.html so that they are available in every single template that is used. In the <code>&lt;head&gt;</code> section we iterate css_files template variable and load all the css files. Likewise in <code>&lt;body&gt;</code> section we iterate js_files and load all js files as <code>&lt;script&gt;</code> tags.</p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>{% load static %}
-</span><span>
-</span><span>&lt;!</span><span style="color:#b48ead;">DOCTYPE </span><span style="color:#d08770;">html</span><span>&gt;
-</span><span>&lt;</span><span style="color:#bf616a;">html </span><span style="color:#d08770;">lang</span><span>=&quot;</span><span style="color:#a3be8c;">en</span><span>&quot;&gt;
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">head</span><span>&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">charset</span><span>=&quot;</span><span style="color:#a3be8c;">UTF-8</span><span>&quot;&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">viewport</span><span>&quot; </span><span style="color:#d08770;">content</span><span>=&quot;</span><span style="color:#a3be8c;">width=device-width, initial-scale=1.0</span><span>&quot;&gt;
-</span><span>    {% for file in css_files %}
-</span><span>    &lt;</span><span style="color:#bf616a;">link </span><span style="color:#d08770;">rel</span><span>=&quot;</span><span style="color:#a3be8c;">stylesheet</span><span>&quot; </span><span style="color:#d08770;">href</span><span>=&quot;</span><span style="color:#a3be8c;">{% static file %}</span><span>&quot; /&gt;
-</span><span>    {% endfor %}
-</span><span>&lt;/</span><span style="color:#bf616a;">head</span><span>&gt;
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">body</span><span>&gt;
-</span><span>    {%block content%}
-</span><span>    {%endblock content%}
-</span><span>    {% for file in js_files %}
-</span><span>    &lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">src</span><span>=&quot;</span><span style="color:#a3be8c;">{% static file %}</span><span>&quot;&gt;&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
-</span><span>    {% endfor %}
-</span><span>&lt;/</span><span style="color:#bf616a;">body</span><span>&gt;
-</span><span>
-</span><span>&lt;/</span><span style="color:#bf616a;">html</span><span>&gt;
-</span></code></pre>
-<p>Then we should add the <code>path</code> to the <code>index.html</code> page in <code>config/urls.py</code></p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path
-</span><span style="color:#b48ead;">from </span><span>django.views.generic </span><span style="color:#b48ead;">import </span><span>TemplateView
-</span><span>
-</span><span>urlpatterns = [
-</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">admin/</span><span>&#39;, admin.site.urls),
-</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;&#39;,TemplateView.</span><span style="color:#bf616a;">as_view</span><span>(</span><span style="color:#bf616a;">template_name</span><span>=&quot;</span><span style="color:#a3be8c;">index.html</span><span>&quot;)),
-</span><span>]
-</span></code></pre>
-<p>after running django devserver. On inspecting the page, we should now see the following</p>
-<div align="center">
-<img src="/inspect.png" width="100%"/>
-</div>
-<h2 id="mount-the-vue-app-in-a-django-template"><a class="zola-anchor" href="#mount-the-vue-app-in-a-django-template" aria-label="Anchor link for: mount-the-vue-app-in-a-django-template">Mount the Vue app in a django template</a></h2>
-<p>It’s that simple—just call a Vue component directly inside a Django template using an id attribute. In our frontend folder, we’ve got a main.js file where the Vue app gets mounted like this:</p>
-<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span>&#39;</span><span style="color:#a3be8c;">./assets/main.css</span><span>&#39;
-</span><span>
-</span><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">createApp </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vue</span><span>&#39;
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">App </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">./App.vue</span><span>&#39;
-</span><span>
-</span><span style="color:#8fa1b3;">createApp</span><span>(</span><span style="color:#bf616a;">App</span><span>).</span><span style="color:#8fa1b3;">mount</span><span>(&#39;</span><span style="color:#a3be8c;">#app</span><span>&#39;)
-</span></code></pre>
-<p>This tells Vue to hook into any element with the id="app". By default, this loads the App.vue component.</p>
-<p>Now here’s where it gets fun. We simply drop a div with that ID into Django’s home.html template, right inside the {% block content %} section.</p>
-<p>Here’s what the template looks like now</p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>{%extends &#39;base.html&#39;%}
-</span><span>
-</span><span>{% block content %}
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">div </span><span style="color:#8fa1b3;">id</span><span>=&quot;</span><span style="color:#a3be8c;">app</span><span>&quot;&gt;&lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
-</span><span>
-</span><span>{% endblock content %}
-</span></code></pre>
-<p>When we refresh the page we see</p>
-<div align="center">
-<img src="/django-vite-results-static.png" width="100%"/>
-</div>
-<h2 id="vue-router-and-django-urlpatterns"><a class="zola-anchor" href="#vue-router-and-django-urlpatterns" aria-label="Anchor link for: vue-router-and-django-urlpatterns">Vue Router and Django <code>urlpatterns</code></a></h2>
-<p>Now we will add vue router to our application to manage navigation in the frontend</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">pnpm</span><span> add vue-router@4
-</span></code></pre>
-<p>Then we will create two views <code>Home.vue</code> and <code>About.vue</code></p>
-<p><strong>Home page</strong></p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">h1 </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">title</span><span>&quot;&gt;Home Page&lt;/</span><span style="color:#bf616a;">h1</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">setup</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
-</span></code></pre>
-<p><strong>About page</strong></p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">h1 </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">title</span><span>&quot;&gt;About Page&lt;/</span><span style="color:#bf616a;">h1</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">setup</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
-</span></code></pre>
-<p><strong>App.vue component</strong></p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">setup</span><span>&gt;
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">NavBar </span><span style="color:#b48ead;">from </span><span>&quot;</span><span style="color:#a3be8c;">@/components/NavBar.vue</span><span>&quot;
-</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
-</span><span>  &lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">container is-fluid</span><span>&quot;&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">NavBar</span><span>/&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">main</span><span>&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">RouterView </span><span>/&gt;
-</span><span>  &lt;/</span><span style="color:#bf616a;">main</span><span>&gt;
-</span><span>  &lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
-</span></code></pre>
-<p>In the sre folder add another folder called router ans create a file index.js with this content</p>
-<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">createRouter</span><span>, </span><span style="color:#bf616a;">createWebHistory </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vue-router</span><span>&#39;
-</span><span>
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">HomeView </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">../views/Home.vue</span><span>&#39;
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">AboutView </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">../views/About.vue</span><span>&#39;
-</span><span>
-</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">routes </span><span>= [
-</span><span>  { path: &#39;</span><span style="color:#a3be8c;">/</span><span>&#39;, component: </span><span style="color:#bf616a;">HomeView </span><span>},
-</span><span>  { path: &#39;</span><span style="color:#a3be8c;">/about</span><span>&#39;, component: </span><span style="color:#bf616a;">AboutView </span><span>},
-</span><span>]
-</span><span>
-</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">router </span><span>= </span><span style="color:#8fa1b3;">createRouter</span><span>({
-</span><span>    history: </span><span style="color:#8fa1b3;">createWebHistory</span><span>(),
-</span><span>    </span><span style="color:#bf616a;">routes
-</span><span>  })
-</span><span>
-</span><span>
-</span><span style="color:#b48ead;">export default </span><span style="color:#bf616a;">router</span><span>;
-</span></code></pre>
-<p>Finally main.js will look like this</p>
-<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">createApp </span><span>} </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">vue</span><span>&#39;
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">App </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">./App.vue</span><span>&#39;
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">router </span><span style="color:#b48ead;">from </span><span>&#39;</span><span style="color:#a3be8c;">./router</span><span>&#39;
-</span><span style="color:#b48ead;">import </span><span>&#39;</span><span style="color:#a3be8c;">bulma</span><span>&#39;
-</span><span style="color:#8fa1b3;">createApp</span><span>(</span><span style="color:#bf616a;">App</span><span>).</span><span style="color:#8fa1b3;">use</span><span>(</span><span style="color:#bf616a;">router</span><span>).</span><span style="color:#8fa1b3;">mount</span><span>(&#39;</span><span style="color:#a3be8c;">#app</span><span>&#39;)
-</span></code></pre>
-<blockquote>
-<p>Please note that I use <a href="https://bulma.io">Bulma</a> for the some styling.</p>
-</blockquote>
-<p><strong>catch-all URL pattern</strong></p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.contrib </span><span style="color:#b48ead;">import </span><span>admin
-</span><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path, re_path
-</span><span style="color:#b48ead;">from </span><span>django.views.generic </span><span style="color:#b48ead;">import </span><span>TemplateView
-</span><span>
-</span><span>urlpatterns = [
-</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">admin/</span><span>&#39;, admin.site.urls),
-</span><span>    </span><span style="color:#bf616a;">re_path</span><span>(</span><span style="color:#b48ead;">r</span><span>&#39;</span><span style="color:#b48ead;">^</span><span style="color:#a3be8c;">(?P&lt;path&gt;</span><span style="color:#d08770;">.</span><span>*</span><span style="color:#a3be8c;">)</span><span style="color:#b48ead;">$</span><span>&#39;,TemplateView.</span><span style="color:#bf616a;">as_view</span><span>(</span><span style="color:#bf616a;">template_name</span><span>=&quot;</span><span style="color:#a3be8c;">index.html</span><span>&quot;)),
-</span><span>]
-</span></code></pre>
-<blockquote>
-<p><strong>⚠️ Important : Ensure the catch-all route is the last pattern; Django matches URLs in order and stops at the first match.</strong></p>
-</blockquote>
-<p>Now we will add a simple Todo app in our Django:</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">python</span><span> manage.py startapp todos
-</span></code></pre>
-<p><strong>models.py</strong></p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.db </span><span style="color:#b48ead;">import </span><span>models
-</span><span>
-</span><span style="color:#65737e;"># Create your models here.
-</span><span style="color:#b48ead;">class </span><span style="color:#ebcb8b;">Todo</span><span style="color:#eff1f5;">(</span><span style="color:#a3be8c;">models.Model</span><span style="color:#eff1f5;">):
-</span><span>    task = models.</span><span style="color:#bf616a;">CharField</span><span>(</span><span style="color:#bf616a;">max_length</span><span>=</span><span style="color:#d08770;">100</span><span>)
-</span><span>    status = models.</span><span style="color:#bf616a;">BooleanField</span><span>(</span><span style="color:#bf616a;">default</span><span>=</span><span style="color:#d08770;">False</span><span>)
-</span><span>
-</span><span>    </span><span style="color:#b48ead;">def </span><span style="color:#96b5b4;">__str__</span><span>(</span><span style="color:#bf616a;">self</span><span>) -&gt; str:
-</span><span>        </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">self</span><span>.task
-</span></code></pre>
-<p>Add the todos app to INSTALLED_APPS in settings.py</p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#bf616a;">INSTALLED_APPS </span><span>= [
-</span><span>    //
-</span><span>    &#39;</span><span style="color:#a3be8c;">todos</span><span>&#39;,
-</span><span>]
-</span></code></pre>
-<p>In the terminal</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">python</span><span> manage.py makemigration &amp;&amp; </span><span style="color:#bf616a;">python</span><span> manage.py migrate
-</span></code></pre>
-<p><strong>admin.py</strong></p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.contrib </span><span style="color:#b48ead;">import </span><span>admin
-</span><span style="color:#b48ead;">from . </span><span>models </span><span style="color:#b48ead;">import </span><span>Todo
-</span><span>
-</span><span>
-</span><span>admin.site.</span><span style="color:#bf616a;">register</span><span>(Todo)
-</span></code></pre>
-<p><strong>views.py</strong></p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">import </span><span>json
-</span><span style="color:#b48ead;">from </span><span>django.http </span><span style="color:#b48ead;">import </span><span>JsonResponse
-</span><span style="color:#b48ead;">from </span><span>django.views.decorators.http </span><span style="color:#b48ead;">import </span><span>require_GET, require_POST
-</span><span>
-</span><span style="color:#b48ead;">from . import </span><span>models
-</span><span>
-</span><span>@</span><span style="color:#bf616a;">require_GET
-</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">todos_list</span><span>(</span><span style="color:#bf616a;">request</span><span>):
-</span><span>    todos_qs = models.Todo.objects.</span><span style="color:#bf616a;">all</span><span>()
-</span><span>    todos = [{&quot;</span><span style="color:#a3be8c;">id</span><span>&quot;:todo.id,&quot;</span><span style="color:#a3be8c;">task</span><span>&quot;:todo.task,&quot;</span><span style="color:#a3be8c;">status</span><span>&quot;:todo.status} </span><span style="color:#b48ead;">for </span><span>todo </span><span style="color:#b48ead;">in </span><span>todos_qs]
-</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">JsonResponse</span><span>(todos, </span><span style="color:#bf616a;">safe</span><span>=</span><span style="color:#d08770;">False</span><span>)
-</span><span>
-</span><span>@</span><span style="color:#bf616a;">require_POST
-</span><span style="color:#b48ead;">def </span><span style="color:#8fa1b3;">add_todo</span><span>(</span><span style="color:#bf616a;">request</span><span>):
-</span><span>    data = json.</span><span style="color:#bf616a;">loads</span><span>(request.body)
-</span><span>    todo_ins = models.</span><span style="color:#bf616a;">Todo</span><span>(</span><span style="color:#bf616a;">task</span><span>=data[&#39;</span><span style="color:#a3be8c;">todo</span><span>&#39;][&#39;</span><span style="color:#a3be8c;">task</span><span>&#39;])
-</span><span>    todo_ins.</span><span style="color:#bf616a;">save</span><span>()
-</span><span>    todo = </span><span style="color:#bf616a;">dict</span><span>(</span><span style="color:#bf616a;">id</span><span>=todo_ins.id, </span><span style="color:#bf616a;">task</span><span>=todo_ins.task, </span><span style="color:#bf616a;">status</span><span>=todo_ins.status)
-</span><span>    </span><span style="color:#b48ead;">return </span><span style="color:#bf616a;">JsonResponse</span><span>(todo, </span><span style="color:#bf616a;">safe</span><span>=</span><span style="color:#d08770;">False</span><span>)
-</span></code></pre>
-<p><strong>todos/urls.py</strong></p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path
-</span><span>
-</span><span style="color:#b48ead;">from . import </span><span>views
-</span><span>
-</span><span>urlpatterns = [
-</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;&#39;, </span><span style="color:#bf616a;">view</span><span>=views.todos_list),
-</span><span>    </span><span style="color:#bf616a;">path</span><span>(&quot;</span><span style="color:#a3be8c;">create/</span><span>&quot;, </span><span style="color:#bf616a;">view</span><span>=views.add_todo)
-</span><span>]
-</span></code></pre>
-<p><strong>config/urls.py</strong></p>
-<pre data-lang="python" style="background-color:#2b303b;color:#c0c5ce;" class="language-python "><code class="language-python" data-lang="python"><span style="color:#b48ead;">from </span><span>django.contrib </span><span style="color:#b48ead;">import </span><span>admin
-</span><span style="color:#b48ead;">from </span><span>django.urls </span><span style="color:#b48ead;">import </span><span>path, re_path, include
-</span><span style="color:#b48ead;">from </span><span>django.views.generic </span><span style="color:#b48ead;">import </span><span>TemplateView
-</span><span>
-</span><span style="color:#b48ead;">from . import </span><span>views
-</span><span>
-</span><span>urlpatterns = [
-</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">admin/</span><span>&#39;, admin.site.urls),
-</span><span>    </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">api/</span><span>&#39;, </span><span style="color:#bf616a;">include</span><span>([
-</span><span>        </span><span style="color:#bf616a;">path</span><span>(&#39;</span><span style="color:#a3be8c;">todos/</span><span>&#39;, </span><span style="color:#bf616a;">include</span><span>(&#39;</span><span style="color:#a3be8c;">todos.urls</span><span>&#39;))
-</span><span>    ])),
-</span><span>    </span><span style="color:#bf616a;">re_path</span><span>(</span><span style="color:#b48ead;">r</span><span>&#39;</span><span style="color:#b48ead;">^</span><span style="color:#a3be8c;">(?P&lt;path&gt;</span><span style="color:#d08770;">.</span><span>*</span><span style="color:#a3be8c;">)</span><span style="color:#b48ead;">$</span><span>&#39;,TemplateView.</span><span style="color:#bf616a;">as_view</span><span>(</span><span style="color:#bf616a;">template_name</span><span>=&quot;</span><span style="color:#a3be8c;">index.html</span><span>&quot;)),
-</span><span>]
-</span></code></pre>
-<p><strong>Axios</strong></p>
-<p>Now we will install axios in the fronend</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">pnpm</span><span> add axios
-</span></code></pre>
-<p><strong>webui/http/index.js</strong></p>
-<pre data-lang="js" style="background-color:#2b303b;color:#c0c5ce;" class="language-js "><code class="language-js" data-lang="js"><span style="color:#b48ead;">import </span><span style="color:#bf616a;">axios </span><span style="color:#b48ead;">from </span><span>&quot;</span><span style="color:#a3be8c;">axios</span><span>&quot;;
-</span><span>
-</span><span style="color:#b48ead;">export default </span><span style="color:#bf616a;">axios</span><span>.</span><span style="color:#8fa1b3;">create</span><span>({
-</span><span>    baseURL:&quot;</span><span style="color:#a3be8c;">/api</span><span>&quot;,
-</span><span>    withCredentials:</span><span style="color:#d08770;">true</span><span>,
-</span><span>    xsrfCookieName:&#39;</span><span style="color:#a3be8c;">csrftoken</span><span>&#39;,
-</span><span>    xsrfHeaderName:&quot;</span><span style="color:#a3be8c;">X-CSRFToken</span><span>&quot;,
-</span><span>})
-</span></code></pre>
-<p>Finally in the Home page we will add a simple form and table to list all our Todos:</p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;</span><span style="color:#bf616a;">template</span><span>&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">container</span><span>&quot;&gt;
-</span><span>        &lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">columns is-centered</span><span>&quot;&gt;
-</span><span>        &lt;</span><span style="color:#bf616a;">div </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">column is-6</span><span>&quot;&gt;
-</span><span>            &lt;</span><span style="color:#bf616a;">form </span><span style="color:#d08770;">@submit.prevent </span><span>= </span><span style="color:#a3be8c;">submitForm</span><span>&gt;
-</span><span>                &lt;</span><span style="color:#bf616a;">input </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">input is-primary</span><span>&quot; </span><span style="color:#d08770;">v-model</span><span>=&quot;</span><span style="color:#a3be8c;">todo.task</span><span>&quot;/&gt;
-</span><span>                &lt;</span><span style="color:#bf616a;">input </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">button is-success mt-3</span><span>&quot; </span><span style="color:#d08770;">type</span><span>=&quot;</span><span style="color:#a3be8c;">submit</span><span>&quot; </span><span style="color:#d08770;">value</span><span>=&quot;</span><span style="color:#a3be8c;">Add</span><span>&quot;/&gt;
-</span><span>            &lt;/</span><span style="color:#bf616a;">form</span><span>&gt;
-</span><span>            &lt;</span><span style="color:#bf616a;">table </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">table is-fullwidth</span><span>&quot;&gt;
-</span><span>                &lt;</span><span style="color:#bf616a;">thead</span><span>&gt;
-</span><span>                    &lt;</span><span style="color:#bf616a;">tr</span><span>&gt;
-</span><span>                        &lt;</span><span style="color:#bf616a;">th</span><span>&gt;#&lt;/</span><span style="color:#bf616a;">th</span><span>&gt;
-</span><span>                        &lt;</span><span style="color:#bf616a;">th</span><span>&gt;Task&lt;/</span><span style="color:#bf616a;">th</span><span>&gt;
-</span><span>                        &lt;</span><span style="color:#bf616a;">th</span><span>&gt;Status&lt;/</span><span style="color:#bf616a;">th</span><span>&gt;
-</span><span>                    &lt;/</span><span style="color:#bf616a;">tr</span><span>&gt;
-</span><span>                &lt;/</span><span style="color:#bf616a;">thead</span><span>&gt;
-</span><span>                &lt;</span><span style="color:#bf616a;">tbody</span><span>&gt;
-</span><span>                    &lt;</span><span style="color:#bf616a;">tr </span><span style="color:#d08770;">v-for</span><span>=&quot;</span><span style="color:#a3be8c;">todo in todos</span><span>&quot; </span><span style="color:#d08770;">:key</span><span>=&quot;</span><span style="color:#a3be8c;">todo.id</span><span>&quot;&gt;
-</span><span>                        &lt;</span><span style="color:#bf616a;">td</span><span>&gt;{{ todo.id }}&lt;/</span><span style="color:#bf616a;">td</span><span>&gt;
-</span><span>                        &lt;</span><span style="color:#bf616a;">td</span><span>&gt;{{ todo.task }}&lt;/</span><span style="color:#bf616a;">td</span><span>&gt;
-</span><span>                        &lt;</span><span style="color:#bf616a;">td</span><span>&gt;
-</span><span>                            &lt;</span><span style="color:#bf616a;">span </span><span style="color:#d08770;">v-if</span><span>=&quot;</span><span style="color:#a3be8c;">todo.status</span><span>&quot; </span><span style="color:#d08770;">class</span><span>=&quot;</span><span style="color:#a3be8c;">tag is-success</span><span>&quot;&gt;Done&lt;/</span><span style="color:#bf616a;">span</span><span>&gt;
-</span><span>                            &lt;</span><span style="color:#bf616a;">span </span><span style="color:#d08770;">v-else class</span><span>=&quot;</span><span style="color:#a3be8c;">tag is-warning</span><span>&quot;&gt;Waiting&lt;/</span><span style="color:#bf616a;">span</span><span>&gt;
-</span><span>                        &lt;/</span><span style="color:#bf616a;">td</span><span>&gt;
-</span><span>                    &lt;/</span><span style="color:#bf616a;">tr</span><span>&gt;
-</span><span>                &lt;/</span><span style="color:#bf616a;">tbody</span><span>&gt;
-</span><span>            &lt;/</span><span style="color:#bf616a;">table</span><span>&gt;
-</span><span>        &lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
-</span><span>    &lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
-</span><span>    &lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">template</span><span>&gt;
-</span><span>
-</span><span>&lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">setup</span><span>&gt;
-</span><span style="color:#b48ead;">import </span><span>{ </span><span style="color:#bf616a;">ref</span><span>, </span><span style="color:#bf616a;">reactive </span><span>} </span><span style="color:#b48ead;">from </span><span>&quot;</span><span style="color:#a3be8c;">vue</span><span>&quot;;
-</span><span style="color:#b48ead;">import </span><span style="color:#bf616a;">http </span><span style="color:#b48ead;">from </span><span>&quot;</span><span style="color:#a3be8c;">@/http</span><span>&quot;
-</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">todos </span><span>= </span><span style="color:#bf616a;">ref</span><span>([])
-</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">todo </span><span>= </span><span style="color:#bf616a;">reactive</span><span>({task:&quot;&quot;})
-</span><span>
-</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">submitForm </span><span>= </span><span style="color:#b48ead;">async </span><span>() </span><span style="color:#b48ead;">=&gt; </span><span>{
-</span><span>   </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">res </span><span>= </span><span style="color:#b48ead;">await </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">post</span><span>(&quot;</span><span style="color:#a3be8c;">todos/create/</span><span>&quot;, {</span><span style="color:#bf616a;">todo</span><span>})
-</span><span>   </span><span style="color:#bf616a;">todos</span><span>.value.</span><span style="color:#bf616a;">push</span><span>(</span><span style="color:#bf616a;">res</span><span>.data)
-</span><span>   
-</span><span>}
-</span><span>
-</span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">getTodos </span><span>= </span><span style="color:#b48ead;">async </span><span>() </span><span style="color:#b48ead;">=&gt; </span><span>{
-</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">res </span><span>= </span><span style="color:#b48ead;">await </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">get</span><span>(&quot;</span><span style="color:#a3be8c;">/todos/</span><span>&quot;)
-</span><span>    </span><span style="color:#bf616a;">todos</span><span>.value = </span><span style="color:#bf616a;">res</span><span>.data
-</span><span>}
-</span><span style="color:#bf616a;">getTodos</span><span>();
-</span><span>&lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
-</span></code></pre>
-<h2 id="result"><a class="zola-anchor" href="#result" aria-label="Anchor link for: result">Result</a></h2>
-<div align="center">
-<img src="/django-vite-final.gif" width="100%"/>
-</div>
-<h2 id="github-repo"><a class="zola-anchor" href="#github-repo" aria-label="Anchor link for: github-repo">Github Repo</a></h2>
-<p><a href="https://github.com/malnossi/django-vite">Django + Vite Integration</a></p>
-<h2 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">Conclusion</a></h2>
-<p>Integrating Django with a modern frontend powered by Vite and Vue (or any other Vite-compatible framework like React or Svelte) provides the best of both worlds: Django’s robust backend capabilities and modern JavaScript’s dynamic, component-based UIs. This hybrid approach keeps the development stack maintainable while allowing for progressive enhancement.</p>
-<p>By using Vite’s fast build tooling and Django’s templating and routing flexibility, you can avoid the overhead of a fully decoupled architecture while still delivering a responsive, interactive frontend. Context processors and static file handling allow for seamless asset management, and tools like Vue Router and Axios make frontend interaction and API communication simple and scalable.</p>
-<p>This workflow empowers developers to build powerful, modern web apps without sacrificing performance, flexibility, or developer experience. Whether you're enhancing existing Django templates or building more complex SPA-like interfaces, the Django + Vite combo is a future-proof foundation for modern web development.</p>
-<p>Here I tried to this without the need of third party packages, you can see how <a href="https://github.com/MrBin99/django-vite">Django Vite Package</a> do thins if you need the HMR in the front end dev mode, Also <a href="https://www.django-rest-framework.org">Django Rest Framework</a> or <a href="https://django-ninja.dev">Django Ninja</a> for all the serialization and the validation.</p>
-
-      </div>
-    </div>
-  </div>
-</div> -->
-
-    </main>
-
-    <script lang="js" src='https://malnossi.github.io/script.js'></script>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV" defer></script>
-    <script defer>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'G-8LBRDGLXJV');
-    </script>
+  <!-- End Body End inject -->
 </body>
 
 </html>

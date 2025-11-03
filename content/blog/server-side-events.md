@@ -6,8 +6,8 @@ description="Build Vue 3 plugin that simplifies the process of displaying notifi
 [taxonomies]
 tags=["Python","FastApi","Javascript"]
 [extra]
-cover="sse-events.png"
-cover_source="Unsplash"
+[extra.cover]
+image="sse-events.png"
 +++
 ## Introduction
 In multi-page web apps, there’s a pretty common flow that comes up:

@@ -1,0 +1,14 @@
+{# templates/injects/head_end.html #}
+{% if config.extra.analytics and config.extra.analytics.ga_id %}
+  <script async src="https://www.googletagmanager.com/gtag/js?id={{ config.extra.analytics.ga_id }}"></script>
+  <script>
+    // (Optional) default deny until consent tool flips it to granted
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { analytics_storage: 'denied' });
+    gtag('js', new Date());
+    gtag('config', '{{ config.extra.analytics.ga_id }}', {
+      anonymize_ip: true
+    });
+  </script>
+{% endif %}

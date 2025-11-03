@@ -1,899 +1,654 @@
-<!DOCTYPE html>
-<html lang="fr">
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="color-scheme" content="light dark">
-    <link rel="stylesheet" href="https://malnossi.github.io/pico.min.css">
-    <link rel="stylesheet" href="https://malnossi.github.io/style.css">
-    <script src="https://cdnapp.websitepolicies.net/widgets/cookies/mzad7vzz.js" defer></script>
-    <title>
-Mohamed Nossirat | Real Time Chat System With Golang, Redis and Server Side Events
-</title>
-</head>
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Real Time Chat System With Golang, Redis and Server Side Events</title>
+  <meta property="og:title" content="Real Time Chat System With Golang, Redis and Server Side Events" />
+  <meta name="description" content="Build Vue 3 plugin that simplifies the process of displaying notifications, alerts and confirmations in your Vue applications. It uses Vuetify components to provide a beautiful and customizable user e…" />
+  <meta property="og:description" content="Build Vue 3 plugin that simplifies the process of displaying notifications, alerts and confirmations in your Vue applications. It uses Vuetify components to provide a beautiful and customizable user experience." />
+  <meta property="og:url" content="https://malnossi.github.io/blog/serve-side-events-golang/" />
+  <link rel="canonical" href="https://malnossi.github.io/blog/serve-side-events-golang/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2025-10-10T00:00:00+00:00" />
+  <meta property="article:tag" content="Go" />
+  <meta property="article:tag" content="Redis" />
+  <meta property="article:tag" content="SSE" />
+  <meta property="article:tag" content="HTML" />
+  <meta property="article:tag" content="JavaScript" />
+  <meta property="og:image" content="https://malnossi.github.io/gosse.webp" />
+  <meta property="og:image:alt" content="" />
+  <meta property="og:image:width" content="1536" />
+  <meta property="og:image:height" content="1024" />
+  <meta property="og:image:type" content="image/png" />
+  <link rel="alternate" type="application/atom+xml" href="https://malnossi.github.io/atom.xml" title="Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://malnossi.github.io/main.min.css?h=a74dd0c65eed2d85f55f" />
+  <link rel="stylesheet" href="https://malnossi.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #f4f4f5; --header: #e4e4e7;} :root.dark{--bg: #18181b; --header: #27272a;}</style>
+  <meta name="theme-color" data-light="#e4e4e7" data-dark="#27272a" content="#e4e4e7" />
+  <link rel="icon" type="image/x-icon" href="https://malnossi.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" type="image/png" href="https://malnossi.github.io/apple-touch-icon.png?h=58bee300054c5308feb3" />
+  <link rel="icon" type="image/png" href="https://malnossi.github.io/android-icon.png?h=8d80ec95446bd2c36826" />
+  <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
 
-    :root {
-        --pico-font-family: "IBM Plex Serif", serif;
-    }
-</style>
-
-<body>
-    <main class="container">
-        <nav>
-  <ul>
-    <li><strong>Mohamed Nossirat</strong></li>
-  </ul>
-  <ul>
-    <li><a href="/" class="contrast">Home</a></li>
-    <li><a href="/blog" class="contrast">Blog</a></li>
-  </ul>
-</nav>
-<script>
-  document.addEventListener('DOMContentLoaded', () => {
-
-    // Get all "navbar-burger" elements
-    const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-
-    // Add a click event on each of them
-    $navbarBurgers.forEach(el => {
-      el.addEventListener('click', () => {
-
-        // Get the target from the "data-target" attribute
-        const target = el.dataset.target;
-        const $target = document.getElementById(target);
-
-        // Toggle the "is-active" class on both the "navbar-burger" and the "navbar-menu"
-        el.classList.toggle('is-active');
-        $target.classList.toggle('is-active');
-
-      });
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+  <script>
+    // (Optional) default deny until consent tool flips it to granted
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('consent', 'default', { analytics_storage: 'denied' });
+    gtag('js', new Date());
+    gtag('config', 'G-8LBRDGLXJV', {
+      anonymize_ip: true
     });
+  </script>
 
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <button type="button" title="Go to home page [Alt + !]" accesskey="!"
+          onclick="window.location.href='https://malnossi.github.io/';"
+          class="btn-home h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-home,url(icons/home.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Open search [Alt + /]" accesskey="/"
+          onclick="window.zolaTheme.search.toggle();"
+          class="btn-search ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-search,url(icons/search.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/blog/"
+          >Blog</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/tags/"
+          >Tags</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+      <!-- Search -->
+<div id="linkita-search-wrapper" class="hidden">
+  <ul id="linkita-search-results"></ul>
+</div>
+<script>window.zolaTheme.search.init({ scripts: ["https://malnossi.github.io/elasticlunr.min.js", "https://malnossi.github.io/search_index.en.js"], arg: { w: "#linkita-search-wrapper", r: "#linkita-search-results" } });</script>
+
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Real Time Chat System With Golang, Redis and Server Side Events</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2025-10-10T00:00:00+00:00">2025-10-10</time><span
+        class="middot"></span><time
+    datetime="PT0H7M0S">7&nbsp;min</time><span
+      class="middot"></span><span>Mohamed AL NOSSIRAT</span>
+</div>
+
+  </header>
+  <figure class="mt-0 mb-12">
+    <img
+      class="h-auto w-full rounded-lg"
+      src="https://malnossi.github.io/gosse.webp"
+      width="1536"
+      height="1024"
+    />
+  </figure>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/serve-side-events-golang/#introduction">Introduction</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/serve-side-events-golang/#what-is-server-side-events">What is Server Side Events</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/serve-side-events-golang/#how-to-implement-sse-in-go">How to Implement SSE in Go</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/serve-side-events-golang/#real-world-implementation-building-a-chat-system-with-go-and-server-sent-events">Real-World Implementation: Building a Chat System with Go and Server-Sent Events</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/serve-side-events-golang/#component-walkthrough-explanation">Component Walkthrough &amp; Explanation</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/serve-side-events-golang/#client-side">Client Side</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/serve-side-events-golang/#result-overview">Result Overview</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/serve-side-events-golang/#github-repository">Github repository</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="https://malnossi.github.io/blog/serve-side-events-golang/#final-words">Final Words</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h2>
+<p>Server-Sent Events (SSE) is a lightweight and efficient technology that enables servers to push real-time updates to connected clients over a single, long-lived HTTP connection. Unlike traditional polling or the more complex WebSocket protocol, SSE provides a simple, unidirectional communication channel—perfect for applications that only require server-to-client data flow.</p>
+<p>In this article, we’ll dive into how to implement SSE in Go, exploring its core concepts, advantages, and practical use cases. You’ll also see hands-on examples demonstrating how to stream live updates directly to a browser using Go’s standard library.</p>
+<p>By the end of this guide, you’ll have a solid understanding of how to use SSE for building real-time applications—from live dashboards and notifications to chat systems—using clean, efficient, and idiomatic Go code.</p>
+<h2 id="what-is-server-side-events"><a class="zola-anchor" href="#what-is-server-side-events" aria-label="Anchor link for: what-is-server-side-events">What is Server Side Events</a></h2>
+<p>Server-Sent Events (SSE) is a modern web technology that enables servers to push real-time data to clients through a single, persistent HTTP connection.</p>
+<p>Unlike WebSockets, which offer full-duplex (two-way) communication, SSE provides a unidirectional stream — from the server to the client. This design makes it significantly simpler to implement and perfectly suited for scenarios where continuous updates are needed from the server, but the client doesn’t need to send data back through the same channel.</p>
+<p>Building an SSE-powered web application is both intuitive and lightweight. On the server side, you only need a small amount of code to continuously stream events. On the client side, handling incoming data is nearly identical to using WebSockets — you register event listeners and react to updates as they arrive. However, because the connection is one-way, clients cannot send messages back to the server using SSE.</p>
+<p><strong>Benefits of Server-Sent Events</strong></p>
+<ul>
+<li><strong>Simplicity</strong>: SSE is easier to set up and maintain compared to WebSockets, requiring less code and configuration.</li>
+<li><strong>Native Browser Support</strong>: Most modern browsers support SSE natively through the EventSource API — no external libraries required.</li>
+<li><strong>Automatic Reconnection</strong>: If the connection drops (for example, due to network issues), the client will automatically attempt to reconnect without additional logic.</li>
+<li><strong>Efficiency</strong>: SSE operates over a single HTTP connection, minimizing overhead and making it ideal for scalable real-time applications such as dashboards, notifications, or live data feeds.</li>
+</ul>
+<h2 id="how-to-implement-sse-in-go"><a class="zola-anchor" href="#how-to-implement-sse-in-go" aria-label="Anchor link for: how-to-implement-sse-in-go">How to Implement SSE in Go</a></h2>
+<p>For this example, we’ll build a simple Server-Sent Events (SSE) server in Go that continuously sends updates to connected clients. Specifically, the server will stream the current timestamp every second, giving us a real-time feed of data updates.</p>
+<p>Once running, any client can connect to our server on port 8080 and begin receiving live messages as they are sent. This basic setup demonstrates the power and simplicity of SSE data flows automatically to clients as soon as it’s available, without the need for repeated polling or manual refreshes.</p>
+<p>In a real-world application, this same architecture can be extended far beyond timestamps. You might use SSE to:</p>
+<ul>
+<li>Send live notifications to users when new events occur.</li>
+<li>Display progress bar updates for long-running tasks.</li>
+<li>Push system health or analytics metrics to a live dashboard.</li>
+<li>Stream logs or sensor readings in real time.</li>
+</ul>
+<p>This example serves as a foundation — showing how easy it is to build continuous, one-way data streams from your Go backend to your users’ browsers using nothing more than standard HTTP and the Go standard library.</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">mkdir</span><span> ssegoredis &amp;&amp; </span><span style="color:#96b5b4;">cd</span><span> ssegoredis
+</span><span style="color:#bf616a;">go</span><span> mod init github.com/&lt;YOUR USERNAME&gt;/ssegoredis
+</span><span style="color:#bf616a;">//</span><span> go: creating new go.mod: module github.com/&lt;YOUR USERNAME&gt;/ssegoredis
+</span><span>
+</span><span style="color:#bf616a;">touch</span><span> main.go example.html
+</span></code></pre>
+<pre data-lang="go" style="background-color:#2b303b;color:#c0c5ce;" class="language-go "><code class="language-go" data-lang="go"><span style="color:#65737e;">// main.go
+</span><span style="color:#b48ead;">package </span><span style="color:#bf616a;">main
+</span><span>
+</span><span style="color:#b48ead;">import </span><span>(
+</span><span>	&quot;</span><span style="color:#a3be8c;">fmt</span><span>&quot;
+</span><span>	&quot;</span><span style="color:#a3be8c;">log</span><span>&quot;
+</span><span>	&quot;</span><span style="color:#a3be8c;">net/http</span><span>&quot;
+</span><span>	&quot;</span><span style="color:#a3be8c;">time</span><span>&quot;
+</span><span>)
+</span><span>
+</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">eventsHandler</span><span>(</span><span style="color:#bf616a;">w http</span><span>.</span><span style="color:#b48ead;">ResponseWriter</span><span>, </span><span style="color:#bf616a;">r </span><span>*</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#b48ead;">Request</span><span>) {
+</span><span>	</span><span style="color:#65737e;">// Required SSE headers
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Content-Type</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">text/event-stream</span><span>&quot;)
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Cache-Control</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">no-cache</span><span>&quot;)
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Connection</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">keep-alive</span><span>&quot;)
+</span><span>	</span><span style="color:#65737e;">// Optional: allow cross-origin EventSource connections (tune for your app)
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Access-Control-Allow-Origin</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">*</span><span>&quot;)
+</span><span>
+</span><span>	</span><span style="color:#65737e;">// Ensure the ResponseWriter supports flushing
+</span><span>	</span><span style="color:#bf616a;">clientGone </span><span>:= </span><span style="color:#bf616a;">r</span><span>.</span><span style="color:#bf616a;">Context</span><span>().</span><span style="color:#bf616a;">Done</span><span>()
+</span><span>
+</span><span>	</span><span style="color:#bf616a;">rc </span><span>:= </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">NewResponseController</span><span>(</span><span style="color:#bf616a;">w</span><span>)
+</span><span>	</span><span style="color:#bf616a;">t </span><span>:= </span><span style="color:#bf616a;">time</span><span>.</span><span style="color:#bf616a;">NewTicker</span><span>(</span><span style="color:#bf616a;">time</span><span>.</span><span style="color:#bf616a;">Second</span><span>)
+</span><span>	</span><span style="color:#b48ead;">defer </span><span style="color:#bf616a;">t</span><span>.</span><span style="color:#bf616a;">Stop</span><span>()
+</span><span>	</span><span style="color:#b48ead;">for </span><span>{
+</span><span>		</span><span style="color:#b48ead;">select </span><span>{
+</span><span>		</span><span style="color:#b48ead;">case </span><span>&lt;-</span><span style="color:#bf616a;">clientGone</span><span>:
+</span><span>			</span><span style="color:#bf616a;">fmt</span><span>.</span><span style="color:#bf616a;">Println</span><span>(&quot;</span><span style="color:#a3be8c;">Client disconnected</span><span>&quot;)
+</span><span>			</span><span style="color:#b48ead;">return
+</span><span>		</span><span style="color:#b48ead;">case </span><span>&lt;-</span><span style="color:#bf616a;">t</span><span>.</span><span style="color:#bf616a;">C</span><span>:
+</span><span>			</span><span style="color:#65737e;">// Send an event to the client
+</span><span>			</span><span style="color:#65737e;">// Here we send only the &quot;data&quot; field, but there are few others
+</span><span>			</span><span style="color:#bf616a;">_</span><span>, </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">fmt</span><span>.</span><span style="color:#bf616a;">Fprintf</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">data: The time is </span><span style="color:#d08770;">%s</span><span style="color:#96b5b4;">\n\n</span><span>&quot;, </span><span style="color:#bf616a;">time</span><span>.</span><span style="color:#bf616a;">Now</span><span>().</span><span style="color:#bf616a;">Format</span><span>(</span><span style="color:#bf616a;">time</span><span>.</span><span style="color:#bf616a;">UnixDate</span><span>))
+</span><span>			</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
+</span><span>				</span><span style="color:#b48ead;">return
+</span><span>			}
+</span><span>			</span><span style="color:#bf616a;">err </span><span>= </span><span style="color:#bf616a;">rc</span><span>.</span><span style="color:#bf616a;">Flush</span><span>()
+</span><span>			</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
+</span><span>				</span><span style="color:#b48ead;">return
+</span><span>			}
+</span><span>		}
+</span><span>	}
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">main</span><span>() {
+</span><span>	</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">HandleFunc</span><span>(&quot;</span><span style="color:#a3be8c;">/events</span><span>&quot;, </span><span style="color:#bf616a;">eventsHandler</span><span>)
+</span><span>
+</span><span>	</span><span style="color:#bf616a;">addr </span><span>:= &quot;</span><span style="color:#a3be8c;">:8080</span><span>&quot;
+</span><span>	</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">SSE server listening on </span><span style="color:#d08770;">%s</span><span style="color:#a3be8c;"> …</span><span>&quot;, </span><span style="color:#bf616a;">addr</span><span>)
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">ListenAndServe</span><span>(</span><span style="color:#bf616a;">addr</span><span>, </span><span style="color:#d08770;">nil</span><span>); </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
+</span><span>		</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Fatal</span><span>(</span><span style="color:#bf616a;">err</span><span>)
+</span><span>	}
+</span><span>}
+</span></code></pre>
+<p>In the <code>exmplae.html</code> file</p>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;!doctype html&gt;
+</span><span>&lt;</span><span style="color:#bf616a;">html</span><span>&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">body</span><span>&gt;
+</span><span>        &lt;</span><span style="color:#bf616a;">ul </span><span style="color:#8fa1b3;">id</span><span>=&quot;</span><span style="color:#a3be8c;">list</span><span>&quot;&gt;&lt;/</span><span style="color:#bf616a;">ul</span><span>&gt;
+</span><span>    &lt;/</span><span style="color:#bf616a;">body</span><span>&gt;
+</span><span>
+</span><span>    &lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">type</span><span>=&quot;</span><span style="color:#a3be8c;">text/javascript</span><span>&quot;&gt;
+</span><span>        console.</span><span style="color:#96b5b4;">log</span><span>(&quot;</span><span style="color:#a3be8c;">Coucou</span><span>&quot;);
+</span><span>        
+</span><span>        </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">eventSrc </span><span>= new </span><span style="color:#bf616a;">EventSource</span><span>(&quot;</span><span style="color:#a3be8c;">http://127.0.0.1:8080/events</span><span>&quot;);
+</span><span>
+</span><span>        </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">list </span><span>= document.</span><span style="color:#bf616a;">getElementById</span><span>(&quot;</span><span style="color:#a3be8c;">list</span><span>&quot;);
+</span><span>
+</span><span>        </span><span style="color:#ebcb8b;">eventSrc</span><span>.</span><span style="color:#bf616a;">onmessage </span><span>= (event) </span><span style="color:#b48ead;">=&gt; </span><span>{            
+</span><span>            </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">li </span><span>= document.</span><span style="color:#bf616a;">createElement</span><span>(&quot;</span><span style="color:#a3be8c;">li</span><span>&quot;);
+</span><span>            </span><span style="color:#bf616a;">li</span><span>.textContent = `</span><span style="color:#a3be8c;">message: </span><span>${</span><span style="color:#bf616a;">event</span><span>.data}`;
+</span><span>
+</span><span>            </span><span style="color:#bf616a;">list</span><span>.</span><span style="color:#bf616a;">appendChild</span><span>(</span><span style="color:#bf616a;">li</span><span>);
+</span><span>        };
+</span><span>    &lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">html</span><span>&gt;
+</span></code></pre>
+<p>Run the Code and open the html file with your browser</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">go</span><span> run main.go
+</span></code></pre>
+<div align="center" >
+<img src="/gossebasicresult.gif" width="100%"/>
+</div>
+<h2 id="real-world-implementation-building-a-chat-system-with-go-and-server-sent-events"><a class="zola-anchor" href="#real-world-implementation-building-a-chat-system-with-go-and-server-sent-events" aria-label="Anchor link for: real-world-implementation-building-a-chat-system-with-go-and-server-sent-events">Real-World Implementation: Building a Chat System with Go and Server-Sent Events</a></h2>
+<p>To demonstrate how Server-Sent Events (SSE) can be used in practice, let’s walk through building a lightweight real-time chat system in Go. This implementation uses only Go’s standard library along with a minimal Redis client to handle message distribution. The idea is simple but powerful: clients send messages via a standard HTTP POST endpoint, the server publishes them to a Redis channel, and connected clients receive live updates through an SSE stream. This setup allows you to achieve real-time, one-way message delivery from server to client—without the complexity of WebSockets. In the following sections, we’ll explore the architecture, challenges, and complete Go code for this system, including the message publisher, Redis subscriber, and SSE event handler, along with client-side integration, error handling, and scaling considerations.</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">mkdir</span><span> gossechat &amp;&amp; </span><span style="color:#96b5b4;">cd</span><span> gossechat
+</span><span style="color:#bf616a;">go</span><span> mod init github.com/&lt;YOUR USERNAME&gt;/gossechat
+</span><span style="color:#bf616a;">go</span><span> get github.com/go-redis/redis/v8
+</span><span style="color:#bf616a;">touch</span><span> main.go index.html
+</span></code></pre>
+<pre data-lang="go" style="background-color:#2b303b;color:#c0c5ce;" class="language-go "><code class="language-go" data-lang="go"><span style="color:#b48ead;">package </span><span style="color:#bf616a;">main
+</span><span>
+</span><span style="color:#b48ead;">import </span><span>(
+</span><span>	&quot;</span><span style="color:#a3be8c;">context</span><span>&quot;
+</span><span>	&quot;</span><span style="color:#a3be8c;">fmt</span><span>&quot;
+</span><span>	&quot;</span><span style="color:#a3be8c;">log</span><span>&quot;
+</span><span>	&quot;</span><span style="color:#a3be8c;">net/http</span><span>&quot;
+</span><span>	&quot;</span><span style="color:#a3be8c;">sync</span><span>&quot;
+</span><span>
+</span><span>	&quot;</span><span style="color:#a3be8c;">github.com/go-redis/redis/v8</span><span>&quot;
+</span><span>)
+</span><span>
+</span><span style="color:#b48ead;">var </span><span>(
+</span><span>	</span><span style="color:#bf616a;">redisAddr </span><span>= &quot;</span><span style="color:#a3be8c;">localhost:6379</span><span>&quot;
+</span><span>	</span><span style="color:#bf616a;">redisChan </span><span>= &quot;</span><span style="color:#a3be8c;">chat</span><span>&quot; </span><span style="color:#65737e;">// the channel name
+</span><span>)
+</span><span>
+</span><span style="color:#b48ead;">type </span><span>sseClient </span><span style="color:#b48ead;">struct </span><span>{
+</span><span>	</span><span style="color:#65737e;">// A channel where we send data to this client
+</span><span>	</span><span style="color:#bf616a;">send </span><span style="color:#b48ead;">chan string
+</span><span>	</span><span style="color:#65737e;">// You could add fields: lastEventID, done channel, etc.
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">type </span><span>server </span><span style="color:#b48ead;">struct </span><span>{
+</span><span>	</span><span style="color:#bf616a;">redisClient </span><span>*</span><span style="color:#bf616a;">redis</span><span>.</span><span style="color:#b48ead;">Client
+</span><span>	</span><span style="color:#65737e;">// protect clients map
+</span><span>	</span><span style="color:#bf616a;">mu      sync</span><span>.</span><span style="color:#b48ead;">Mutex
+</span><span>	</span><span style="color:#bf616a;">clients </span><span style="color:#b48ead;">map</span><span>[*</span><span style="color:#b48ead;">sseClient</span><span>]</span><span style="color:#b48ead;">struct</span><span>{}
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">newServer</span><span>() *</span><span style="color:#b48ead;">server </span><span>{
+</span><span>	</span><span style="color:#bf616a;">rdb </span><span>:= </span><span style="color:#bf616a;">redis</span><span>.</span><span style="color:#bf616a;">NewClient</span><span>(&amp;</span><span style="color:#bf616a;">redis</span><span>.</span><span style="color:#bf616a;">Options</span><span>{
+</span><span>		</span><span style="color:#bf616a;">Addr</span><span>: </span><span style="color:#bf616a;">redisAddr</span><span>,
+</span><span>	})
+</span><span>	</span><span style="color:#b48ead;">return </span><span>&amp;</span><span style="color:#bf616a;">server</span><span>{
+</span><span>		</span><span style="color:#bf616a;">redisClient</span><span>: </span><span style="color:#bf616a;">rdb</span><span>,
+</span><span>		</span><span style="color:#bf616a;">clients</span><span>:     </span><span style="color:#96b5b4;">make</span><span>(</span><span style="color:#b48ead;">map</span><span>[*</span><span style="color:#b48ead;">sseClient</span><span>]</span><span style="color:#b48ead;">struct</span><span>{}),
+</span><span>	}
+</span><span>}
+</span><span>
+</span><span style="color:#65737e;">// handlePublish handles POST /send
+</span><span style="color:#65737e;">// expects a form value &quot;msg&quot; or JSON etc.
+</span><span style="color:#b48ead;">func </span><span>(</span><span style="color:#bf616a;">s </span><span>*</span><span style="color:#b48ead;">server</span><span>) </span><span style="color:#8fa1b3;">handlePublish</span><span>(</span><span style="color:#bf616a;">w http</span><span>.</span><span style="color:#b48ead;">ResponseWriter</span><span>, </span><span style="color:#bf616a;">r </span><span>*</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#b48ead;">Request</span><span>) {
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Access-Control-Allow-Origin</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">*</span><span>&quot;)
+</span><span>	</span><span style="color:#bf616a;">ctx </span><span>:= </span><span style="color:#bf616a;">r</span><span>.</span><span style="color:#bf616a;">Context</span><span>()
+</span><span>
+</span><span>	</span><span style="color:#bf616a;">msg </span><span>:= </span><span style="color:#bf616a;">r</span><span>.</span><span style="color:#bf616a;">FormValue</span><span>(&quot;</span><span style="color:#a3be8c;">msg</span><span>&quot;)
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">msg </span><span>== &quot;&quot; {
+</span><span>		</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">msg missing</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusBadRequest</span><span>)
+</span><span>		</span><span style="color:#b48ead;">return
+</span><span>	}
+</span><span>
+</span><span>	</span><span style="color:#65737e;">// publish to redis
+</span><span>	</span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">redisClient</span><span>.</span><span style="color:#bf616a;">Publish</span><span>(</span><span style="color:#bf616a;">ctx</span><span>, </span><span style="color:#bf616a;">redisChan</span><span>, </span><span style="color:#bf616a;">msg</span><span>).</span><span style="color:#bf616a;">Err</span><span>()
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
+</span><span>		</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">Publish error: </span><span style="color:#d08770;">%v</span><span>&quot;, </span><span style="color:#bf616a;">err</span><span>)
+</span><span>		</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">publish failed</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusInternalServerError</span><span>)
+</span><span>		</span><span style="color:#b48ead;">return
+</span><span>	}
+</span><span>
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">WriteHeader</span><span>(</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusOK</span><span>)
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Write</span><span>([]</span><span style="color:#b48ead;">byte</span><span>(&quot;</span><span style="color:#a3be8c;">ok</span><span>&quot;))
+</span><span>}
+</span><span>
+</span><span style="color:#65737e;">// handleEvents handles GET /events
+</span><span style="color:#65737e;">// sets up an SSE connection to the client
+</span><span style="color:#b48ead;">func </span><span>(</span><span style="color:#bf616a;">s </span><span>*</span><span style="color:#b48ead;">server</span><span>) </span><span style="color:#8fa1b3;">handleEvents</span><span>(</span><span style="color:#bf616a;">w http</span><span>.</span><span style="color:#b48ead;">ResponseWriter</span><span>, </span><span style="color:#bf616a;">r </span><span>*</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#b48ead;">Request</span><span>) {
+</span><span>	</span><span style="color:#65737e;">// Prepare headers for SSE
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Content-Type</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">text/event-stream</span><span>&quot;)
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Cache-Control</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">no-cache</span><span>&quot;)
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Connection</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">keep-alive</span><span>&quot;)
+</span><span>	</span><span style="color:#65737e;">// Optionally:
+</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Access-Control-Allow-Origin</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">*</span><span>&quot;)
+</span><span>
+</span><span>	</span><span style="color:#bf616a;">flusher</span><span>, </span><span style="color:#bf616a;">ok </span><span>:= </span><span style="color:#bf616a;">w</span><span>.(</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#b48ead;">Flusher</span><span>)
+</span><span>	</span><span style="color:#b48ead;">if </span><span>!</span><span style="color:#bf616a;">ok </span><span>{
+</span><span>		</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">Streaming unsupported</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusInternalServerError</span><span>)
+</span><span>		</span><span style="color:#b48ead;">return
+</span><span>	}
+</span><span>
+</span><span>	</span><span style="color:#65737e;">// Create new SSE client
+</span><span>	</span><span style="color:#bf616a;">client </span><span>:= &amp;</span><span style="color:#bf616a;">sseClient</span><span>{
+</span><span>		</span><span style="color:#bf616a;">send</span><span>: </span><span style="color:#96b5b4;">make</span><span>(</span><span style="color:#b48ead;">chan string</span><span>, </span><span style="color:#d08770;">10</span><span>), </span><span style="color:#65737e;">// buffered channel
+</span><span>	}
+</span><span>
+</span><span>	</span><span style="color:#65737e;">// Register client
+</span><span>	</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Lock</span><span>()
+</span><span>	</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">clients</span><span>[</span><span style="color:#bf616a;">client</span><span>] = </span><span style="color:#b48ead;">struct</span><span>{}{}
+</span><span>	</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Unlock</span><span>()
+</span><span>
+</span><span>	</span><span style="color:#65737e;">// When this handler exits, unregister the client
+</span><span>	</span><span style="color:#b48ead;">defer func</span><span>() {
+</span><span>		</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Lock</span><span>()
+</span><span>		</span><span style="color:#96b5b4;">delete</span><span>(</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">clients</span><span>, </span><span style="color:#bf616a;">client</span><span>)
+</span><span>		</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Unlock</span><span>()
+</span><span>	}()
+</span><span>
+</span><span>	</span><span style="color:#65737e;">// Notify the client that connection is established (optional)
+</span><span>	</span><span style="color:#65737e;">// Send a comment or &quot;connected&quot; message
+</span><span>	</span><span style="color:#bf616a;">fmt</span><span>.</span><span style="color:#bf616a;">Fprintf</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">: connected</span><span style="color:#96b5b4;">\n\n</span><span>&quot;)
+</span><span>	</span><span style="color:#bf616a;">flusher</span><span>.</span><span style="color:#bf616a;">Flush</span><span>()
+</span><span>
+</span><span>	</span><span style="color:#65737e;">// A simple loop: listen to client.send chan and write SSE messages
+</span><span>	</span><span style="color:#bf616a;">notify </span><span>:= </span><span style="color:#bf616a;">r</span><span>.</span><span style="color:#bf616a;">Context</span><span>().</span><span style="color:#bf616a;">Done</span><span>()
+</span><span>	</span><span style="color:#b48ead;">for </span><span>{
+</span><span>		</span><span style="color:#b48ead;">select </span><span>{
+</span><span>		</span><span style="color:#b48ead;">case </span><span>&lt;-</span><span style="color:#bf616a;">notify</span><span>:
+</span><span>			</span><span style="color:#65737e;">// client closed connection
+</span><span>			</span><span style="color:#b48ead;">return
+</span><span>		</span><span style="color:#b48ead;">case </span><span style="color:#bf616a;">msg </span><span>:= &lt;-</span><span style="color:#bf616a;">client</span><span>.</span><span style="color:#bf616a;">send</span><span>:
+</span><span>			</span><span style="color:#65737e;">// Send as an SSE “data:” message
+</span><span>			</span><span style="color:#65737e;">// You can optionally add event: or id: lines
+</span><span>			</span><span style="color:#bf616a;">fmt</span><span>.</span><span style="color:#bf616a;">Fprintf</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">data: </span><span style="color:#d08770;">%s</span><span style="color:#96b5b4;">\n\n</span><span>&quot;, </span><span style="color:#bf616a;">msg</span><span>)
+</span><span>			</span><span style="color:#bf616a;">flusher</span><span>.</span><span style="color:#bf616a;">Flush</span><span>()
+</span><span>		}
+</span><span>	}
+</span><span>}
+</span><span>
+</span><span style="color:#65737e;">// broadcastLoop subscribes to Redis and fans out messages to all SSE clients
+</span><span style="color:#b48ead;">func </span><span>(</span><span style="color:#bf616a;">s </span><span>*</span><span style="color:#b48ead;">server</span><span>) </span><span style="color:#8fa1b3;">broadcastLoop</span><span>(</span><span style="color:#bf616a;">ctx context</span><span>.</span><span style="color:#b48ead;">Context</span><span>) {
+</span><span>	</span><span style="color:#bf616a;">pubsub </span><span>:= </span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">redisClient</span><span>.</span><span style="color:#bf616a;">Subscribe</span><span>(</span><span style="color:#bf616a;">ctx</span><span>, </span><span style="color:#bf616a;">redisChan</span><span>)
+</span><span>	</span><span style="color:#65737e;">// Ensure resources cleaned up when done
+</span><span>	</span><span style="color:#b48ead;">defer </span><span style="color:#bf616a;">pubsub</span><span>.</span><span style="color:#bf616a;">Close</span><span>()
+</span><span>
+</span><span>	</span><span style="color:#bf616a;">ch </span><span>:= </span><span style="color:#bf616a;">pubsub</span><span>.</span><span style="color:#bf616a;">Channel</span><span>()
+</span><span>
+</span><span>	</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">Subscribed to Redis channel </span><span style="color:#d08770;">%s</span><span>&quot;, </span><span style="color:#bf616a;">redisChan</span><span>)
+</span><span>
+</span><span>	</span><span style="color:#b48ead;">for </span><span>{
+</span><span>		</span><span style="color:#b48ead;">select </span><span>{
+</span><span>		</span><span style="color:#b48ead;">case </span><span>&lt;-</span><span style="color:#bf616a;">ctx</span><span>.</span><span style="color:#bf616a;">Done</span><span>():
+</span><span>			</span><span style="color:#b48ead;">return
+</span><span>		</span><span style="color:#b48ead;">case </span><span style="color:#bf616a;">m</span><span>, </span><span style="color:#bf616a;">ok </span><span>:= &lt;-</span><span style="color:#bf616a;">ch</span><span>:
+</span><span>			</span><span style="color:#b48ead;">if </span><span>!</span><span style="color:#bf616a;">ok </span><span>{
+</span><span>				</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">Redis channel closed</span><span>&quot;)
+</span><span>				</span><span style="color:#b48ead;">return
+</span><span>			}
+</span><span>			</span><span style="color:#65737e;">// Broadcast to all SSE clients
+</span><span>			</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Lock</span><span>()
+</span><span>			</span><span style="color:#b48ead;">for </span><span style="color:#bf616a;">c </span><span>:= </span><span style="color:#b48ead;">range </span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">clients </span><span>{
+</span><span>				</span><span style="color:#b48ead;">select </span><span>{
+</span><span>				</span><span style="color:#b48ead;">case </span><span style="color:#bf616a;">c</span><span>.</span><span style="color:#bf616a;">send </span><span>&lt;- </span><span style="color:#bf616a;">m</span><span>.</span><span style="color:#bf616a;">Payload</span><span>:
+</span><span>				</span><span style="color:#b48ead;">default</span><span>:
+</span><span>					</span><span style="color:#65737e;">// if the buffer is full, drop message for that client (or handle backpressure)
+</span><span>				}
+</span><span>			}
+</span><span>			</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Unlock</span><span>()
+</span><span>		}
+</span><span>	}
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">func </span><span>(</span><span style="color:#bf616a;">s </span><span>*</span><span style="color:#b48ead;">server</span><span>) </span><span style="color:#8fa1b3;">routes</span><span>() {
+</span><span>	</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">HandleFunc</span><span>(&quot;</span><span style="color:#a3be8c;">/send</span><span>&quot;, </span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">handlePublish</span><span>)
+</span><span>	</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">HandleFunc</span><span>(&quot;</span><span style="color:#a3be8c;">/events</span><span>&quot;, </span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">handleEvents</span><span>)
+</span><span>	</span><span style="color:#65737e;">// optionally serve HTML page etc.
+</span><span>}
+</span><span>
+</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">main</span><span>() {
+</span><span>	</span><span style="color:#bf616a;">srv </span><span>:= </span><span style="color:#bf616a;">newServer</span><span>()
+</span><span>	</span><span style="color:#bf616a;">srv</span><span>.</span><span style="color:#bf616a;">routes</span><span>()
+</span><span>
+</span><span>	</span><span style="color:#bf616a;">ctx</span><span>, </span><span style="color:#bf616a;">cancel </span><span>:= </span><span style="color:#bf616a;">context</span><span>.</span><span style="color:#bf616a;">WithCancel</span><span>(</span><span style="color:#bf616a;">context</span><span>.</span><span style="color:#bf616a;">Background</span><span>())
+</span><span>	</span><span style="color:#b48ead;">defer </span><span style="color:#bf616a;">cancel</span><span>()
+</span><span>	</span><span style="color:#b48ead;">go </span><span style="color:#bf616a;">srv</span><span>.</span><span style="color:#bf616a;">broadcastLoop</span><span>(</span><span style="color:#bf616a;">ctx</span><span>)
+</span><span>
+</span><span>	</span><span style="color:#bf616a;">addr </span><span>:= &quot;</span><span style="color:#a3be8c;">:8080</span><span>&quot;
+</span><span>	</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">Server listening on </span><span style="color:#d08770;">%s</span><span style="color:#a3be8c;"> …</span><span>&quot;, </span><span style="color:#bf616a;">addr</span><span>)
+</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">ListenAndServe</span><span>(</span><span style="color:#bf616a;">addr</span><span>, </span><span style="color:#d08770;">nil</span><span>); </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
+</span><span>		</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Fatalf</span><span>(&quot;</span><span style="color:#a3be8c;">ListenAndServe: </span><span style="color:#d08770;">%v</span><span>&quot;, </span><span style="color:#bf616a;">err</span><span>)
+</span><span>	}
+</span><span>}
+</span><span>
+</span></code></pre>
+<h3 id="component-walkthrough-explanation"><a class="zola-anchor" href="#component-walkthrough-explanation" aria-label="Anchor link for: component-walkthrough-explanation">Component Walkthrough &amp; Explanation</a></h3>
+<p>We use <code>go-redis/redis/v8</code> (or whichever Redis client you prefer). The key operations:</p>
+<ul>
+<li><code>rdb.Publish(ctx, channel, message)</code> to emit a message</li>
+<li><code>rdb.Subscribe(ctx, channel)</code> to create a subscription</li>
+<li>Using <code>pubsub.Channel()</code> returns a Go channel <code>chan *redis.Message</code> from which you receive messages continuously.</li>
+</ul>
+<p>In <code>broadcastLoop</code>, we listen on that channel forever, and when a message arrives, we fan out to SSE clients.</p>
+<p>One nuance: Subscribe is lazy, and first <code>Receive()</code> or subscribing might block until the subscription is set up. But <code>Channel()</code> hides some of that. Also, the client reconnects automatically in many implementations.</p>
+<p>We maintain a <code>map[*sseClient]struct{}</code> protected by a mutex. Each sseClient has a buffered send chan string.</p>
+<p>When a message arrives, we iterate all clients and try to send into their send channel; if it’s full, we drop for that client (this is a simple backpressure strategy). You could also block with a timeout or disconnect slow clients.</p>
+<p>In each client’s HTTP handler, a loop reads from <code>client.send</code> and writes SSE frames.
+Each message is separated by a blank line. You can optionally add event:, id:, etc. You must flush after writing (via <code>http.Flusher</code>). Also, handle when the client disconnects (via <code>ctx.Done()</code>).</p>
+<p>We also write an initial comment (: connected) to avoid some proxies dropping idle streams.</p>
+<ul>
+<li><code>/send</code>: accept msg (or JSON) and publish.</li>
+<li><code>/events</code>: upgrade headers, register SSE client, block writing until done.</li>
+</ul>
+<h2 id="client-side"><a class="zola-anchor" href="#client-side" aria-label="Anchor link for: client-side">Client Side</a></h2>
+<p>Here is a simple <code>HTML + JS</code> snippet to connect and <code>send/receive</code>:</p>
+<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;!</span><span style="color:#b48ead;">DOCTYPE </span><span style="color:#d08770;">html</span><span>&gt;
+</span><span>&lt;</span><span style="color:#bf616a;">html</span><span>&gt;
+</span><span>&lt;</span><span style="color:#bf616a;">head</span><span>&gt;
+</span><span>  &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">charset</span><span>=&quot;</span><span style="color:#a3be8c;">utf-8</span><span>&quot; /&gt;
+</span><span>  &lt;</span><span style="color:#bf616a;">title</span><span>&gt;Go + Redis Chat&lt;/</span><span style="color:#bf616a;">title</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">head</span><span>&gt;
+</span><span>&lt;</span><span style="color:#bf616a;">body</span><span>&gt;
+</span><span>  &lt;</span><span style="color:#bf616a;">h1</span><span>&gt;Chat&lt;/</span><span style="color:#bf616a;">h1</span><span>&gt;
+</span><span>  &lt;</span><span style="color:#bf616a;">div </span><span style="color:#8fa1b3;">id</span><span>=&quot;</span><span style="color:#a3be8c;">msgs</span><span>&quot; </span><span style="color:#d08770;">style</span><span>=&quot;border:</span><span style="color:#d08770;">1px </span><span>solid </span><span style="color:#96b5b4;">#ccc</span><span>; height: </span><span style="color:#d08770;">200px</span><span>; overflow:auto;&quot;&gt;&lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
+</span><span>
+</span><span>  &lt;</span><span style="color:#bf616a;">form </span><span style="color:#8fa1b3;">id</span><span>=&quot;</span><span style="color:#a3be8c;">frm</span><span>&quot;&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">input </span><span style="color:#d08770;">type</span><span>=&quot;</span><span style="color:#a3be8c;">text</span><span>&quot; </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">msg</span><span>&quot; </span><span style="color:#8fa1b3;">id</span><span>=&quot;</span><span style="color:#a3be8c;">input</span><span>&quot; </span><span style="color:#d08770;">autocomplete</span><span>=&quot;</span><span style="color:#a3be8c;">off</span><span>&quot; </span><span style="color:#d08770;">placeholder</span><span>=&quot;</span><span style="color:#a3be8c;">Type message...</span><span>&quot; /&gt;
+</span><span>    &lt;</span><span style="color:#bf616a;">button</span><span>&gt;Send&lt;/</span><span style="color:#bf616a;">button</span><span>&gt;
+</span><span>  &lt;/</span><span style="color:#bf616a;">form</span><span>&gt;
+</span><span>
+</span><span>  &lt;</span><span style="color:#bf616a;">script</span><span>&gt;
+</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">evtSource </span><span>= new </span><span style="color:#bf616a;">EventSource</span><span>(&quot;</span><span style="color:#a3be8c;">http://127.0.0.1:8080/events</span><span>&quot;);
+</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">msgsDiv </span><span>= document.</span><span style="color:#bf616a;">getElementById</span><span>(&quot;</span><span style="color:#a3be8c;">msgs</span><span>&quot;);
+</span><span>
+</span><span>    </span><span style="color:#ebcb8b;">evtSource</span><span>.</span><span style="color:#bf616a;">onmessage </span><span>= </span><span style="color:#b48ead;">function </span><span>(e) {
+</span><span>      </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">p </span><span>= document.</span><span style="color:#bf616a;">createElement</span><span>(&quot;</span><span style="color:#a3be8c;">p</span><span>&quot;);
+</span><span>      </span><span style="color:#bf616a;">p</span><span>.textContent = </span><span style="color:#bf616a;">e</span><span>.data;
+</span><span>      </span><span style="color:#bf616a;">msgsDiv</span><span>.</span><span style="color:#bf616a;">appendChild</span><span>(</span><span style="color:#bf616a;">p</span><span>);
+</span><span>      </span><span style="color:#bf616a;">msgsDiv</span><span>.scrollTop = </span><span style="color:#bf616a;">msgsDiv</span><span>.scrollHeight;
+</span><span>    };
+</span><span>
+</span><span>    </span><span style="color:#ebcb8b;">evtSource</span><span>.</span><span style="color:#bf616a;">onerror </span><span>= </span><span style="color:#b48ead;">function </span><span>(e) {
+</span><span>      console.</span><span style="color:#96b5b4;">error</span><span>(&quot;</span><span style="color:#a3be8c;">EventSource failed:</span><span>&quot;, </span><span style="color:#bf616a;">e</span><span>);
+</span><span>      </span><span style="color:#65737e;">// It auto-reconnects by default
+</span><span>    };
+</span><span>
+</span><span>    document.</span><span style="color:#bf616a;">getElementById</span><span>(&quot;</span><span style="color:#a3be8c;">frm</span><span>&quot;).</span><span style="color:#8fa1b3;">onsubmit </span><span>= </span><span style="color:#b48ead;">async function </span><span>(e) {
+</span><span>      </span><span style="color:#bf616a;">e</span><span>.</span><span style="color:#bf616a;">preventDefault</span><span>();
+</span><span>      </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">input </span><span>= document.</span><span style="color:#bf616a;">getElementById</span><span>(&quot;</span><span style="color:#a3be8c;">input</span><span>&quot;);
+</span><span>      </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">msg </span><span>= </span><span style="color:#bf616a;">input</span><span>.value;
+</span><span>      </span><span style="color:#b48ead;">if </span><span>(!</span><span style="color:#bf616a;">msg</span><span>) </span><span style="color:#b48ead;">return</span><span>;
+</span><span>      </span><span style="color:#65737e;">// simple POST (form-encoded)
+</span><span>      </span><span style="color:#b48ead;">await </span><span style="color:#bf616a;">fetch</span><span>(&quot;</span><span style="color:#a3be8c;">http://127.0.0.1:8080/send</span><span>&quot;, {
+</span><span>        method: &quot;</span><span style="color:#a3be8c;">POST</span><span>&quot;,
+</span><span>        headers: {
+</span><span>          &quot;</span><span style="color:#a3be8c;">Content-Type</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">application/x-www-form-urlencoded</span><span>&quot;,
+</span><span>        },
+</span><span>        body: &quot;</span><span style="color:#a3be8c;">msg=</span><span>&quot; + </span><span style="color:#96b5b4;">encodeURIComponent</span><span>(</span><span style="color:#bf616a;">msg</span><span>),
+</span><span>      });
+</span><span>      </span><span style="color:#bf616a;">input</span><span>.value = &quot;&quot;;
+</span><span>    };
+</span><span>  &lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">body</span><span>&gt;
+</span><span>&lt;/</span><span style="color:#bf616a;">html</span><span>&gt;
+</span></code></pre>
+<p>You’ll also need to set up a Redis server that RedisClient will use for broker communication. If you have Docker installed in your system, you can run the following command to start a Redis server:</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">docker</span><span> run</span><span style="color:#bf616a;"> --name</span><span> dev-redis</span><span style="color:#bf616a;"> -d -h</span><span> localhost</span><span style="color:#bf616a;"> -p</span><span> 6379:6379 redis:alpine
+</span></code></pre>
+<p>After the docker commande run your go code</p>
+<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">go</span><span> run main.go
+</span></code></pre>
+<p>Open the html page with your browser twice to coonect to th SSE server</p>
+<h2 id="result-overview"><a class="zola-anchor" href="#result-overview" aria-label="Anchor link for: result-overview">Result Overview</a></h2>
+<div align="center" >
+<img src="/gossefinal.gif" width="100%"/>
+</div>
+<h2 id="github-repository"><a class="zola-anchor" href="#github-repository" aria-label="Anchor link for: github-repository">Github repository</a></h2>
+<p><a href="https://github.com/malnossi/gossechat">Real Time Chat System With Golang, Redis and Server Side Events</a></p>
+<h2 id="final-words"><a class="zola-anchor" href="#final-words" aria-label="Anchor link for: final-words">Final Words</a></h2>
+<p>In this walkthrough, we’ve seen how surprisingly straightforward it is to build a real-time, server-to-client chat system using nothing more than Go’s standard library, HTTP, and Redis Pub/Sub. By combining a simple POST endpoint for publishing messages with a Server-Sent Events (SSE) stream for delivery, you can achieve continuous, low-latency updates without introducing the complexity of WebSockets or external frameworks.</p>
+<p>This approach offers several key advantages: the Go server cleanly handles both publishing (via /send) and broadcasting (via /events), Redis provides a lightweight yet powerful message bus for decoupling senders and receivers, and the entire architecture scales naturally across multiple instances.</p>
+<p>However, as with any real-time system, attention to detail matters. You’ll need to handle connection lifetimes, buffering, error recovery, reconnections, and client cleanup to ensure reliability under load. And while Redis Pub/Sub works perfectly for ephemeral, transient messaging, you may want to explore Redis Streams or more robust brokers (like NATS or Kafka) when you need persistence, message replay, or delivery guarantees.</p>
+<p>Ultimately, this example demonstrates how you can use standard Go features and minimal infrastructure to achieve a production-ready foundation for live updates, notifications, or collaborative features — simple, efficient, and scalable by design.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+<footer class="mt-12 flex flex-col" tabindex="-1" accesskey="_">
+  <div class="mb-2 flex flex-wrap">
+    <span class="block-bg mr-1.5 mb-1.5 rounded-lg px-5 py-1.5">Tags</span>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/go/">Go</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/redis/">Redis</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/sse/">SSE</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/html/">HTML</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/javascript/">JavaScript</a>
+    
+  </div>
+</footer>
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/streaming-videos-with-golang/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Stream videos with Go and Http</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/golang-vuetify-embedded/" accesskey="."
+    ><span>Embedding a Vuetify Frontend into a Go Web Server</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2025">2025</time>
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+
+  <!-- Begin Body End inject -->
+  
+
+  <script src="https:&#x2F;&#x2F;cdnapp.websitepolicies.net&#x2F;widgets&#x2F;cookies&#x2F;mzad7vzz.js" defer></script>
+
+
+
+<script>
+  // If your cookie widget exposes callbacks, flip GA consent when accepted.
+  // Adjust to your provider’s API.
+  window.addEventListener('CookieConsentAccepted', function () {
+    if (window.gtag) {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
   });
 </script>
-        
-<figure class="image is-16by9">
-  <img src="/gosse.webp" alt="Placeholder image" style="border-radius: 0.5rem;" width="100%"/>
-</figure>
-<div style="text-align: center; align-content: center; margin-top: 40px;">
-  <h1>Real Time Chat System With Golang, Redis and Server Side Events</h1>
-  
-  <a class="tag is-link is-hoverable" href="/tags/go">#Go</a>
-  
-  <a class="tag is-link is-hoverable" href="/tags/redis">#Redis</a>
-  
-  <a class="tag is-link is-hoverable" href="/tags/sse">#SSE</a>
-  
-  <a class="tag is-link is-hoverable" href="/tags/html">#HTML</a>
-  
-  <a class="tag is-link is-hoverable" href="/tags/javascript">#JavaScript</a>
-  
-</div>
-<div>
-  <h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h2>
-<p>Server-Sent Events (SSE) is a lightweight and efficient technology that enables servers to push real-time updates to connected clients over a single, long-lived HTTP connection. Unlike traditional polling or the more complex WebSocket protocol, SSE provides a simple, unidirectional communication channel—perfect for applications that only require server-to-client data flow.</p>
-<p>In this article, we’ll dive into how to implement SSE in Go, exploring its core concepts, advantages, and practical use cases. You’ll also see hands-on examples demonstrating how to stream live updates directly to a browser using Go’s standard library.</p>
-<p>By the end of this guide, you’ll have a solid understanding of how to use SSE for building real-time applications—from live dashboards and notifications to chat systems—using clean, efficient, and idiomatic Go code.</p>
-<h2 id="what-is-server-side-events"><a class="zola-anchor" href="#what-is-server-side-events" aria-label="Anchor link for: what-is-server-side-events">What is Server Side Events</a></h2>
-<p>Server-Sent Events (SSE) is a modern web technology that enables servers to push real-time data to clients through a single, persistent HTTP connection.</p>
-<p>Unlike WebSockets, which offer full-duplex (two-way) communication, SSE provides a unidirectional stream — from the server to the client. This design makes it significantly simpler to implement and perfectly suited for scenarios where continuous updates are needed from the server, but the client doesn’t need to send data back through the same channel.</p>
-<p>Building an SSE-powered web application is both intuitive and lightweight. On the server side, you only need a small amount of code to continuously stream events. On the client side, handling incoming data is nearly identical to using WebSockets — you register event listeners and react to updates as they arrive. However, because the connection is one-way, clients cannot send messages back to the server using SSE.</p>
-<p><strong>Benefits of Server-Sent Events</strong></p>
-<ul>
-<li><strong>Simplicity</strong>: SSE is easier to set up and maintain compared to WebSockets, requiring less code and configuration.</li>
-<li><strong>Native Browser Support</strong>: Most modern browsers support SSE natively through the EventSource API — no external libraries required.</li>
-<li><strong>Automatic Reconnection</strong>: If the connection drops (for example, due to network issues), the client will automatically attempt to reconnect without additional logic.</li>
-<li><strong>Efficiency</strong>: SSE operates over a single HTTP connection, minimizing overhead and making it ideal for scalable real-time applications such as dashboards, notifications, or live data feeds.</li>
-</ul>
-<h2 id="how-to-implement-sse-in-go"><a class="zola-anchor" href="#how-to-implement-sse-in-go" aria-label="Anchor link for: how-to-implement-sse-in-go">How to Implement SSE in Go</a></h2>
-<p>For this example, we’ll build a simple Server-Sent Events (SSE) server in Go that continuously sends updates to connected clients. Specifically, the server will stream the current timestamp every second, giving us a real-time feed of data updates.</p>
-<p>Once running, any client can connect to our server on port 8080 and begin receiving live messages as they are sent. This basic setup demonstrates the power and simplicity of SSE data flows automatically to clients as soon as it’s available, without the need for repeated polling or manual refreshes.</p>
-<p>In a real-world application, this same architecture can be extended far beyond timestamps. You might use SSE to:</p>
-<ul>
-<li>Send live notifications to users when new events occur.</li>
-<li>Display progress bar updates for long-running tasks.</li>
-<li>Push system health or analytics metrics to a live dashboard.</li>
-<li>Stream logs or sensor readings in real time.</li>
-</ul>
-<p>This example serves as a foundation — showing how easy it is to build continuous, one-way data streams from your Go backend to your users’ browsers using nothing more than standard HTTP and the Go standard library.</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">mkdir</span><span> ssegoredis &amp;&amp; </span><span style="color:#96b5b4;">cd</span><span> ssegoredis
-</span><span style="color:#bf616a;">go</span><span> mod init github.com/&lt;YOUR USERNAME&gt;/ssegoredis
-</span><span style="color:#bf616a;">//</span><span> go: creating new go.mod: module github.com/&lt;YOUR USERNAME&gt;/ssegoredis
-</span><span>
-</span><span style="color:#bf616a;">touch</span><span> main.go example.html
-</span></code></pre>
-<pre data-lang="go" style="background-color:#2b303b;color:#c0c5ce;" class="language-go "><code class="language-go" data-lang="go"><span style="color:#65737e;">// main.go
-</span><span style="color:#b48ead;">package </span><span style="color:#bf616a;">main
-</span><span>
-</span><span style="color:#b48ead;">import </span><span>(
-</span><span>	&quot;</span><span style="color:#a3be8c;">fmt</span><span>&quot;
-</span><span>	&quot;</span><span style="color:#a3be8c;">log</span><span>&quot;
-</span><span>	&quot;</span><span style="color:#a3be8c;">net/http</span><span>&quot;
-</span><span>	&quot;</span><span style="color:#a3be8c;">time</span><span>&quot;
-</span><span>)
-</span><span>
-</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">eventsHandler</span><span>(</span><span style="color:#bf616a;">w http</span><span>.</span><span style="color:#b48ead;">ResponseWriter</span><span>, </span><span style="color:#bf616a;">r </span><span>*</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#b48ead;">Request</span><span>) {
-</span><span>	</span><span style="color:#65737e;">// Required SSE headers
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Content-Type</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">text/event-stream</span><span>&quot;)
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Cache-Control</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">no-cache</span><span>&quot;)
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Connection</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">keep-alive</span><span>&quot;)
-</span><span>	</span><span style="color:#65737e;">// Optional: allow cross-origin EventSource connections (tune for your app)
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Access-Control-Allow-Origin</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">*</span><span>&quot;)
-</span><span>
-</span><span>	</span><span style="color:#65737e;">// Ensure the ResponseWriter supports flushing
-</span><span>	</span><span style="color:#bf616a;">clientGone </span><span>:= </span><span style="color:#bf616a;">r</span><span>.</span><span style="color:#bf616a;">Context</span><span>().</span><span style="color:#bf616a;">Done</span><span>()
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">rc </span><span>:= </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">NewResponseController</span><span>(</span><span style="color:#bf616a;">w</span><span>)
-</span><span>	</span><span style="color:#bf616a;">t </span><span>:= </span><span style="color:#bf616a;">time</span><span>.</span><span style="color:#bf616a;">NewTicker</span><span>(</span><span style="color:#bf616a;">time</span><span>.</span><span style="color:#bf616a;">Second</span><span>)
-</span><span>	</span><span style="color:#b48ead;">defer </span><span style="color:#bf616a;">t</span><span>.</span><span style="color:#bf616a;">Stop</span><span>()
-</span><span>	</span><span style="color:#b48ead;">for </span><span>{
-</span><span>		</span><span style="color:#b48ead;">select </span><span>{
-</span><span>		</span><span style="color:#b48ead;">case </span><span>&lt;-</span><span style="color:#bf616a;">clientGone</span><span>:
-</span><span>			</span><span style="color:#bf616a;">fmt</span><span>.</span><span style="color:#bf616a;">Println</span><span>(&quot;</span><span style="color:#a3be8c;">Client disconnected</span><span>&quot;)
-</span><span>			</span><span style="color:#b48ead;">return
-</span><span>		</span><span style="color:#b48ead;">case </span><span>&lt;-</span><span style="color:#bf616a;">t</span><span>.</span><span style="color:#bf616a;">C</span><span>:
-</span><span>			</span><span style="color:#65737e;">// Send an event to the client
-</span><span>			</span><span style="color:#65737e;">// Here we send only the &quot;data&quot; field, but there are few others
-</span><span>			</span><span style="color:#bf616a;">_</span><span>, </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">fmt</span><span>.</span><span style="color:#bf616a;">Fprintf</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">data: The time is </span><span style="color:#d08770;">%s</span><span style="color:#96b5b4;">\n\n</span><span>&quot;, </span><span style="color:#bf616a;">time</span><span>.</span><span style="color:#bf616a;">Now</span><span>().</span><span style="color:#bf616a;">Format</span><span>(</span><span style="color:#bf616a;">time</span><span>.</span><span style="color:#bf616a;">UnixDate</span><span>))
-</span><span>			</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
-</span><span>				</span><span style="color:#b48ead;">return
-</span><span>			}
-</span><span>			</span><span style="color:#bf616a;">err </span><span>= </span><span style="color:#bf616a;">rc</span><span>.</span><span style="color:#bf616a;">Flush</span><span>()
-</span><span>			</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
-</span><span>				</span><span style="color:#b48ead;">return
-</span><span>			}
-</span><span>		}
-</span><span>	}
-</span><span>}
-</span><span>
-</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">main</span><span>() {
-</span><span>	</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">HandleFunc</span><span>(&quot;</span><span style="color:#a3be8c;">/events</span><span>&quot;, </span><span style="color:#bf616a;">eventsHandler</span><span>)
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">addr </span><span>:= &quot;</span><span style="color:#a3be8c;">:8080</span><span>&quot;
-</span><span>	</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">SSE server listening on </span><span style="color:#d08770;">%s</span><span style="color:#a3be8c;"> …</span><span>&quot;, </span><span style="color:#bf616a;">addr</span><span>)
-</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">ListenAndServe</span><span>(</span><span style="color:#bf616a;">addr</span><span>, </span><span style="color:#d08770;">nil</span><span>); </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
-</span><span>		</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Fatal</span><span>(</span><span style="color:#bf616a;">err</span><span>)
-</span><span>	}
-</span><span>}
-</span></code></pre>
-<p>In the <code>exmplae.html</code> file</p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;!doctype html&gt;
-</span><span>&lt;</span><span style="color:#bf616a;">html</span><span>&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">body</span><span>&gt;
-</span><span>        &lt;</span><span style="color:#bf616a;">ul </span><span style="color:#8fa1b3;">id</span><span>=&quot;</span><span style="color:#a3be8c;">list</span><span>&quot;&gt;&lt;/</span><span style="color:#bf616a;">ul</span><span>&gt;
-</span><span>    &lt;/</span><span style="color:#bf616a;">body</span><span>&gt;
-</span><span>
-</span><span>    &lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">type</span><span>=&quot;</span><span style="color:#a3be8c;">text/javascript</span><span>&quot;&gt;
-</span><span>        console.</span><span style="color:#96b5b4;">log</span><span>(&quot;</span><span style="color:#a3be8c;">Coucou</span><span>&quot;);
-</span><span>        
-</span><span>        </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">eventSrc </span><span>= new </span><span style="color:#bf616a;">EventSource</span><span>(&quot;</span><span style="color:#a3be8c;">http://127.0.0.1:8080/events</span><span>&quot;);
-</span><span>
-</span><span>        </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">list </span><span>= document.</span><span style="color:#bf616a;">getElementById</span><span>(&quot;</span><span style="color:#a3be8c;">list</span><span>&quot;);
-</span><span>
-</span><span>        </span><span style="color:#ebcb8b;">eventSrc</span><span>.</span><span style="color:#bf616a;">onmessage </span><span>= (event) </span><span style="color:#b48ead;">=&gt; </span><span>{            
-</span><span>            </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">li </span><span>= document.</span><span style="color:#bf616a;">createElement</span><span>(&quot;</span><span style="color:#a3be8c;">li</span><span>&quot;);
-</span><span>            </span><span style="color:#bf616a;">li</span><span>.textContent = `</span><span style="color:#a3be8c;">message: </span><span>${</span><span style="color:#bf616a;">event</span><span>.data}`;
-</span><span>
-</span><span>            </span><span style="color:#bf616a;">list</span><span>.</span><span style="color:#bf616a;">appendChild</span><span>(</span><span style="color:#bf616a;">li</span><span>);
-</span><span>        };
-</span><span>    &lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">html</span><span>&gt;
-</span></code></pre>
-<p>Run the Code and open the html file with your browser</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">go</span><span> run main.go
-</span></code></pre>
-<div align="center" >
-<img src="/gossebasicresult.gif" width="100%"/>
-</div>
-<h2 id="real-world-implementation-building-a-chat-system-with-go-and-server-sent-events"><a class="zola-anchor" href="#real-world-implementation-building-a-chat-system-with-go-and-server-sent-events" aria-label="Anchor link for: real-world-implementation-building-a-chat-system-with-go-and-server-sent-events">Real-World Implementation: Building a Chat System with Go and Server-Sent Events</a></h2>
-<p>To demonstrate how Server-Sent Events (SSE) can be used in practice, let’s walk through building a lightweight real-time chat system in Go. This implementation uses only Go’s standard library along with a minimal Redis client to handle message distribution. The idea is simple but powerful: clients send messages via a standard HTTP POST endpoint, the server publishes them to a Redis channel, and connected clients receive live updates through an SSE stream. This setup allows you to achieve real-time, one-way message delivery from server to client—without the complexity of WebSockets. In the following sections, we’ll explore the architecture, challenges, and complete Go code for this system, including the message publisher, Redis subscriber, and SSE event handler, along with client-side integration, error handling, and scaling considerations.</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">mkdir</span><span> gossechat &amp;&amp; </span><span style="color:#96b5b4;">cd</span><span> gossechat
-</span><span style="color:#bf616a;">go</span><span> mod init github.com/&lt;YOUR USERNAME&gt;/gossechat
-</span><span style="color:#bf616a;">go</span><span> get github.com/go-redis/redis/v8
-</span><span style="color:#bf616a;">touch</span><span> main.go index.html
-</span></code></pre>
-<pre data-lang="go" style="background-color:#2b303b;color:#c0c5ce;" class="language-go "><code class="language-go" data-lang="go"><span style="color:#b48ead;">package </span><span style="color:#bf616a;">main
-</span><span>
-</span><span style="color:#b48ead;">import </span><span>(
-</span><span>	&quot;</span><span style="color:#a3be8c;">context</span><span>&quot;
-</span><span>	&quot;</span><span style="color:#a3be8c;">fmt</span><span>&quot;
-</span><span>	&quot;</span><span style="color:#a3be8c;">log</span><span>&quot;
-</span><span>	&quot;</span><span style="color:#a3be8c;">net/http</span><span>&quot;
-</span><span>	&quot;</span><span style="color:#a3be8c;">sync</span><span>&quot;
-</span><span>
-</span><span>	&quot;</span><span style="color:#a3be8c;">github.com/go-redis/redis/v8</span><span>&quot;
-</span><span>)
-</span><span>
-</span><span style="color:#b48ead;">var </span><span>(
-</span><span>	</span><span style="color:#bf616a;">redisAddr </span><span>= &quot;</span><span style="color:#a3be8c;">localhost:6379</span><span>&quot;
-</span><span>	</span><span style="color:#bf616a;">redisChan </span><span>= &quot;</span><span style="color:#a3be8c;">chat</span><span>&quot; </span><span style="color:#65737e;">// the channel name
-</span><span>)
-</span><span>
-</span><span style="color:#b48ead;">type </span><span>sseClient </span><span style="color:#b48ead;">struct </span><span>{
-</span><span>	</span><span style="color:#65737e;">// A channel where we send data to this client
-</span><span>	</span><span style="color:#bf616a;">send </span><span style="color:#b48ead;">chan string
-</span><span>	</span><span style="color:#65737e;">// You could add fields: lastEventID, done channel, etc.
-</span><span>}
-</span><span>
-</span><span style="color:#b48ead;">type </span><span>server </span><span style="color:#b48ead;">struct </span><span>{
-</span><span>	</span><span style="color:#bf616a;">redisClient </span><span>*</span><span style="color:#bf616a;">redis</span><span>.</span><span style="color:#b48ead;">Client
-</span><span>	</span><span style="color:#65737e;">// protect clients map
-</span><span>	</span><span style="color:#bf616a;">mu      sync</span><span>.</span><span style="color:#b48ead;">Mutex
-</span><span>	</span><span style="color:#bf616a;">clients </span><span style="color:#b48ead;">map</span><span>[*</span><span style="color:#b48ead;">sseClient</span><span>]</span><span style="color:#b48ead;">struct</span><span>{}
-</span><span>}
-</span><span>
-</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">newServer</span><span>() *</span><span style="color:#b48ead;">server </span><span>{
-</span><span>	</span><span style="color:#bf616a;">rdb </span><span>:= </span><span style="color:#bf616a;">redis</span><span>.</span><span style="color:#bf616a;">NewClient</span><span>(&amp;</span><span style="color:#bf616a;">redis</span><span>.</span><span style="color:#bf616a;">Options</span><span>{
-</span><span>		</span><span style="color:#bf616a;">Addr</span><span>: </span><span style="color:#bf616a;">redisAddr</span><span>,
-</span><span>	})
-</span><span>	</span><span style="color:#b48ead;">return </span><span>&amp;</span><span style="color:#bf616a;">server</span><span>{
-</span><span>		</span><span style="color:#bf616a;">redisClient</span><span>: </span><span style="color:#bf616a;">rdb</span><span>,
-</span><span>		</span><span style="color:#bf616a;">clients</span><span>:     </span><span style="color:#96b5b4;">make</span><span>(</span><span style="color:#b48ead;">map</span><span>[*</span><span style="color:#b48ead;">sseClient</span><span>]</span><span style="color:#b48ead;">struct</span><span>{}),
-</span><span>	}
-</span><span>}
-</span><span>
-</span><span style="color:#65737e;">// handlePublish handles POST /send
-</span><span style="color:#65737e;">// expects a form value &quot;msg&quot; or JSON etc.
-</span><span style="color:#b48ead;">func </span><span>(</span><span style="color:#bf616a;">s </span><span>*</span><span style="color:#b48ead;">server</span><span>) </span><span style="color:#8fa1b3;">handlePublish</span><span>(</span><span style="color:#bf616a;">w http</span><span>.</span><span style="color:#b48ead;">ResponseWriter</span><span>, </span><span style="color:#bf616a;">r </span><span>*</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#b48ead;">Request</span><span>) {
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Access-Control-Allow-Origin</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">*</span><span>&quot;)
-</span><span>	</span><span style="color:#bf616a;">ctx </span><span>:= </span><span style="color:#bf616a;">r</span><span>.</span><span style="color:#bf616a;">Context</span><span>()
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">msg </span><span>:= </span><span style="color:#bf616a;">r</span><span>.</span><span style="color:#bf616a;">FormValue</span><span>(&quot;</span><span style="color:#a3be8c;">msg</span><span>&quot;)
-</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">msg </span><span>== &quot;&quot; {
-</span><span>		</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">msg missing</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusBadRequest</span><span>)
-</span><span>		</span><span style="color:#b48ead;">return
-</span><span>	}
-</span><span>
-</span><span>	</span><span style="color:#65737e;">// publish to redis
-</span><span>	</span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">redisClient</span><span>.</span><span style="color:#bf616a;">Publish</span><span>(</span><span style="color:#bf616a;">ctx</span><span>, </span><span style="color:#bf616a;">redisChan</span><span>, </span><span style="color:#bf616a;">msg</span><span>).</span><span style="color:#bf616a;">Err</span><span>()
-</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
-</span><span>		</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">Publish error: </span><span style="color:#d08770;">%v</span><span>&quot;, </span><span style="color:#bf616a;">err</span><span>)
-</span><span>		</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">publish failed</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusInternalServerError</span><span>)
-</span><span>		</span><span style="color:#b48ead;">return
-</span><span>	}
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">WriteHeader</span><span>(</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusOK</span><span>)
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Write</span><span>([]</span><span style="color:#b48ead;">byte</span><span>(&quot;</span><span style="color:#a3be8c;">ok</span><span>&quot;))
-</span><span>}
-</span><span>
-</span><span style="color:#65737e;">// handleEvents handles GET /events
-</span><span style="color:#65737e;">// sets up an SSE connection to the client
-</span><span style="color:#b48ead;">func </span><span>(</span><span style="color:#bf616a;">s </span><span>*</span><span style="color:#b48ead;">server</span><span>) </span><span style="color:#8fa1b3;">handleEvents</span><span>(</span><span style="color:#bf616a;">w http</span><span>.</span><span style="color:#b48ead;">ResponseWriter</span><span>, </span><span style="color:#bf616a;">r </span><span>*</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#b48ead;">Request</span><span>) {
-</span><span>	</span><span style="color:#65737e;">// Prepare headers for SSE
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Content-Type</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">text/event-stream</span><span>&quot;)
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Cache-Control</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">no-cache</span><span>&quot;)
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Connection</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">keep-alive</span><span>&quot;)
-</span><span>	</span><span style="color:#65737e;">// Optionally:
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Access-Control-Allow-Origin</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">*</span><span>&quot;)
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">flusher</span><span>, </span><span style="color:#bf616a;">ok </span><span>:= </span><span style="color:#bf616a;">w</span><span>.(</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#b48ead;">Flusher</span><span>)
-</span><span>	</span><span style="color:#b48ead;">if </span><span>!</span><span style="color:#bf616a;">ok </span><span>{
-</span><span>		</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">Streaming unsupported</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusInternalServerError</span><span>)
-</span><span>		</span><span style="color:#b48ead;">return
-</span><span>	}
-</span><span>
-</span><span>	</span><span style="color:#65737e;">// Create new SSE client
-</span><span>	</span><span style="color:#bf616a;">client </span><span>:= &amp;</span><span style="color:#bf616a;">sseClient</span><span>{
-</span><span>		</span><span style="color:#bf616a;">send</span><span>: </span><span style="color:#96b5b4;">make</span><span>(</span><span style="color:#b48ead;">chan string</span><span>, </span><span style="color:#d08770;">10</span><span>), </span><span style="color:#65737e;">// buffered channel
-</span><span>	}
-</span><span>
-</span><span>	</span><span style="color:#65737e;">// Register client
-</span><span>	</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Lock</span><span>()
-</span><span>	</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">clients</span><span>[</span><span style="color:#bf616a;">client</span><span>] = </span><span style="color:#b48ead;">struct</span><span>{}{}
-</span><span>	</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Unlock</span><span>()
-</span><span>
-</span><span>	</span><span style="color:#65737e;">// When this handler exits, unregister the client
-</span><span>	</span><span style="color:#b48ead;">defer func</span><span>() {
-</span><span>		</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Lock</span><span>()
-</span><span>		</span><span style="color:#96b5b4;">delete</span><span>(</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">clients</span><span>, </span><span style="color:#bf616a;">client</span><span>)
-</span><span>		</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Unlock</span><span>()
-</span><span>	}()
-</span><span>
-</span><span>	</span><span style="color:#65737e;">// Notify the client that connection is established (optional)
-</span><span>	</span><span style="color:#65737e;">// Send a comment or &quot;connected&quot; message
-</span><span>	</span><span style="color:#bf616a;">fmt</span><span>.</span><span style="color:#bf616a;">Fprintf</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">: connected</span><span style="color:#96b5b4;">\n\n</span><span>&quot;)
-</span><span>	</span><span style="color:#bf616a;">flusher</span><span>.</span><span style="color:#bf616a;">Flush</span><span>()
-</span><span>
-</span><span>	</span><span style="color:#65737e;">// A simple loop: listen to client.send chan and write SSE messages
-</span><span>	</span><span style="color:#bf616a;">notify </span><span>:= </span><span style="color:#bf616a;">r</span><span>.</span><span style="color:#bf616a;">Context</span><span>().</span><span style="color:#bf616a;">Done</span><span>()
-</span><span>	</span><span style="color:#b48ead;">for </span><span>{
-</span><span>		</span><span style="color:#b48ead;">select </span><span>{
-</span><span>		</span><span style="color:#b48ead;">case </span><span>&lt;-</span><span style="color:#bf616a;">notify</span><span>:
-</span><span>			</span><span style="color:#65737e;">// client closed connection
-</span><span>			</span><span style="color:#b48ead;">return
-</span><span>		</span><span style="color:#b48ead;">case </span><span style="color:#bf616a;">msg </span><span>:= &lt;-</span><span style="color:#bf616a;">client</span><span>.</span><span style="color:#bf616a;">send</span><span>:
-</span><span>			</span><span style="color:#65737e;">// Send as an SSE “data:” message
-</span><span>			</span><span style="color:#65737e;">// You can optionally add event: or id: lines
-</span><span>			</span><span style="color:#bf616a;">fmt</span><span>.</span><span style="color:#bf616a;">Fprintf</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">data: </span><span style="color:#d08770;">%s</span><span style="color:#96b5b4;">\n\n</span><span>&quot;, </span><span style="color:#bf616a;">msg</span><span>)
-</span><span>			</span><span style="color:#bf616a;">flusher</span><span>.</span><span style="color:#bf616a;">Flush</span><span>()
-</span><span>		}
-</span><span>	}
-</span><span>}
-</span><span>
-</span><span style="color:#65737e;">// broadcastLoop subscribes to Redis and fans out messages to all SSE clients
-</span><span style="color:#b48ead;">func </span><span>(</span><span style="color:#bf616a;">s </span><span>*</span><span style="color:#b48ead;">server</span><span>) </span><span style="color:#8fa1b3;">broadcastLoop</span><span>(</span><span style="color:#bf616a;">ctx context</span><span>.</span><span style="color:#b48ead;">Context</span><span>) {
-</span><span>	</span><span style="color:#bf616a;">pubsub </span><span>:= </span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">redisClient</span><span>.</span><span style="color:#bf616a;">Subscribe</span><span>(</span><span style="color:#bf616a;">ctx</span><span>, </span><span style="color:#bf616a;">redisChan</span><span>)
-</span><span>	</span><span style="color:#65737e;">// Ensure resources cleaned up when done
-</span><span>	</span><span style="color:#b48ead;">defer </span><span style="color:#bf616a;">pubsub</span><span>.</span><span style="color:#bf616a;">Close</span><span>()
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">ch </span><span>:= </span><span style="color:#bf616a;">pubsub</span><span>.</span><span style="color:#bf616a;">Channel</span><span>()
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">Subscribed to Redis channel </span><span style="color:#d08770;">%s</span><span>&quot;, </span><span style="color:#bf616a;">redisChan</span><span>)
-</span><span>
-</span><span>	</span><span style="color:#b48ead;">for </span><span>{
-</span><span>		</span><span style="color:#b48ead;">select </span><span>{
-</span><span>		</span><span style="color:#b48ead;">case </span><span>&lt;-</span><span style="color:#bf616a;">ctx</span><span>.</span><span style="color:#bf616a;">Done</span><span>():
-</span><span>			</span><span style="color:#b48ead;">return
-</span><span>		</span><span style="color:#b48ead;">case </span><span style="color:#bf616a;">m</span><span>, </span><span style="color:#bf616a;">ok </span><span>:= &lt;-</span><span style="color:#bf616a;">ch</span><span>:
-</span><span>			</span><span style="color:#b48ead;">if </span><span>!</span><span style="color:#bf616a;">ok </span><span>{
-</span><span>				</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">Redis channel closed</span><span>&quot;)
-</span><span>				</span><span style="color:#b48ead;">return
-</span><span>			}
-</span><span>			</span><span style="color:#65737e;">// Broadcast to all SSE clients
-</span><span>			</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Lock</span><span>()
-</span><span>			</span><span style="color:#b48ead;">for </span><span style="color:#bf616a;">c </span><span>:= </span><span style="color:#b48ead;">range </span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">clients </span><span>{
-</span><span>				</span><span style="color:#b48ead;">select </span><span>{
-</span><span>				</span><span style="color:#b48ead;">case </span><span style="color:#bf616a;">c</span><span>.</span><span style="color:#bf616a;">send </span><span>&lt;- </span><span style="color:#bf616a;">m</span><span>.</span><span style="color:#bf616a;">Payload</span><span>:
-</span><span>				</span><span style="color:#b48ead;">default</span><span>:
-</span><span>					</span><span style="color:#65737e;">// if the buffer is full, drop message for that client (or handle backpressure)
-</span><span>				}
-</span><span>			}
-</span><span>			</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Unlock</span><span>()
-</span><span>		}
-</span><span>	}
-</span><span>}
-</span><span>
-</span><span style="color:#b48ead;">func </span><span>(</span><span style="color:#bf616a;">s </span><span>*</span><span style="color:#b48ead;">server</span><span>) </span><span style="color:#8fa1b3;">routes</span><span>() {
-</span><span>	</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">HandleFunc</span><span>(&quot;</span><span style="color:#a3be8c;">/send</span><span>&quot;, </span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">handlePublish</span><span>)
-</span><span>	</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">HandleFunc</span><span>(&quot;</span><span style="color:#a3be8c;">/events</span><span>&quot;, </span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">handleEvents</span><span>)
-</span><span>	</span><span style="color:#65737e;">// optionally serve HTML page etc.
-</span><span>}
-</span><span>
-</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">main</span><span>() {
-</span><span>	</span><span style="color:#bf616a;">srv </span><span>:= </span><span style="color:#bf616a;">newServer</span><span>()
-</span><span>	</span><span style="color:#bf616a;">srv</span><span>.</span><span style="color:#bf616a;">routes</span><span>()
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">ctx</span><span>, </span><span style="color:#bf616a;">cancel </span><span>:= </span><span style="color:#bf616a;">context</span><span>.</span><span style="color:#bf616a;">WithCancel</span><span>(</span><span style="color:#bf616a;">context</span><span>.</span><span style="color:#bf616a;">Background</span><span>())
-</span><span>	</span><span style="color:#b48ead;">defer </span><span style="color:#bf616a;">cancel</span><span>()
-</span><span>	</span><span style="color:#b48ead;">go </span><span style="color:#bf616a;">srv</span><span>.</span><span style="color:#bf616a;">broadcastLoop</span><span>(</span><span style="color:#bf616a;">ctx</span><span>)
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">addr </span><span>:= &quot;</span><span style="color:#a3be8c;">:8080</span><span>&quot;
-</span><span>	</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">Server listening on </span><span style="color:#d08770;">%s</span><span style="color:#a3be8c;"> …</span><span>&quot;, </span><span style="color:#bf616a;">addr</span><span>)
-</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">ListenAndServe</span><span>(</span><span style="color:#bf616a;">addr</span><span>, </span><span style="color:#d08770;">nil</span><span>); </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
-</span><span>		</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Fatalf</span><span>(&quot;</span><span style="color:#a3be8c;">ListenAndServe: </span><span style="color:#d08770;">%v</span><span>&quot;, </span><span style="color:#bf616a;">err</span><span>)
-</span><span>	}
-</span><span>}
-</span><span>
-</span></code></pre>
-<h3 id="component-walkthrough-explanation"><a class="zola-anchor" href="#component-walkthrough-explanation" aria-label="Anchor link for: component-walkthrough-explanation">Component Walkthrough &amp; Explanation</a></h3>
-<p>We use <code>go-redis/redis/v8</code> (or whichever Redis client you prefer). The key operations:</p>
-<ul>
-<li><code>rdb.Publish(ctx, channel, message)</code> to emit a message</li>
-<li><code>rdb.Subscribe(ctx, channel)</code> to create a subscription</li>
-<li>Using <code>pubsub.Channel()</code> returns a Go channel <code>chan *redis.Message</code> from which you receive messages continuously.</li>
-</ul>
-<p>In <code>broadcastLoop</code>, we listen on that channel forever, and when a message arrives, we fan out to SSE clients.</p>
-<p>One nuance: Subscribe is lazy, and first <code>Receive()</code> or subscribing might block until the subscription is set up. But <code>Channel()</code> hides some of that. Also, the client reconnects automatically in many implementations.</p>
-<p>We maintain a <code>map[*sseClient]struct{}</code> protected by a mutex. Each sseClient has a buffered send chan string.</p>
-<p>When a message arrives, we iterate all clients and try to send into their send channel; if it’s full, we drop for that client (this is a simple backpressure strategy). You could also block with a timeout or disconnect slow clients.</p>
-<p>In each client’s HTTP handler, a loop reads from <code>client.send</code> and writes SSE frames.
-Each message is separated by a blank line. You can optionally add event:, id:, etc. You must flush after writing (via <code>http.Flusher</code>). Also, handle when the client disconnects (via <code>ctx.Done()</code>).</p>
-<p>We also write an initial comment (: connected) to avoid some proxies dropping idle streams.</p>
-<ul>
-<li><code>/send</code>: accept msg (or JSON) and publish.</li>
-<li><code>/events</code>: upgrade headers, register SSE client, block writing until done.</li>
-</ul>
-<h2 id="client-side"><a class="zola-anchor" href="#client-side" aria-label="Anchor link for: client-side">Client Side</a></h2>
-<p>Here is a simple <code>HTML + JS</code> snippet to connect and <code>send/receive</code>:</p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;!</span><span style="color:#b48ead;">DOCTYPE </span><span style="color:#d08770;">html</span><span>&gt;
-</span><span>&lt;</span><span style="color:#bf616a;">html</span><span>&gt;
-</span><span>&lt;</span><span style="color:#bf616a;">head</span><span>&gt;
-</span><span>  &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">charset</span><span>=&quot;</span><span style="color:#a3be8c;">utf-8</span><span>&quot; /&gt;
-</span><span>  &lt;</span><span style="color:#bf616a;">title</span><span>&gt;Go + Redis Chat&lt;/</span><span style="color:#bf616a;">title</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">head</span><span>&gt;
-</span><span>&lt;</span><span style="color:#bf616a;">body</span><span>&gt;
-</span><span>  &lt;</span><span style="color:#bf616a;">h1</span><span>&gt;Chat&lt;/</span><span style="color:#bf616a;">h1</span><span>&gt;
-</span><span>  &lt;</span><span style="color:#bf616a;">div </span><span style="color:#8fa1b3;">id</span><span>=&quot;</span><span style="color:#a3be8c;">msgs</span><span>&quot; </span><span style="color:#d08770;">style</span><span>=&quot;border:</span><span style="color:#d08770;">1px </span><span>solid </span><span style="color:#96b5b4;">#ccc</span><span>; height: </span><span style="color:#d08770;">200px</span><span>; overflow:auto;&quot;&gt;&lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
-</span><span>
-</span><span>  &lt;</span><span style="color:#bf616a;">form </span><span style="color:#8fa1b3;">id</span><span>=&quot;</span><span style="color:#a3be8c;">frm</span><span>&quot;&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">input </span><span style="color:#d08770;">type</span><span>=&quot;</span><span style="color:#a3be8c;">text</span><span>&quot; </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">msg</span><span>&quot; </span><span style="color:#8fa1b3;">id</span><span>=&quot;</span><span style="color:#a3be8c;">input</span><span>&quot; </span><span style="color:#d08770;">autocomplete</span><span>=&quot;</span><span style="color:#a3be8c;">off</span><span>&quot; </span><span style="color:#d08770;">placeholder</span><span>=&quot;</span><span style="color:#a3be8c;">Type message...</span><span>&quot; /&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">button</span><span>&gt;Send&lt;/</span><span style="color:#bf616a;">button</span><span>&gt;
-</span><span>  &lt;/</span><span style="color:#bf616a;">form</span><span>&gt;
-</span><span>
-</span><span>  &lt;</span><span style="color:#bf616a;">script</span><span>&gt;
-</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">evtSource </span><span>= new </span><span style="color:#bf616a;">EventSource</span><span>(&quot;</span><span style="color:#a3be8c;">http://127.0.0.1:8080/events</span><span>&quot;);
-</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">msgsDiv </span><span>= document.</span><span style="color:#bf616a;">getElementById</span><span>(&quot;</span><span style="color:#a3be8c;">msgs</span><span>&quot;);
-</span><span>
-</span><span>    </span><span style="color:#ebcb8b;">evtSource</span><span>.</span><span style="color:#bf616a;">onmessage </span><span>= </span><span style="color:#b48ead;">function </span><span>(e) {
-</span><span>      </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">p </span><span>= document.</span><span style="color:#bf616a;">createElement</span><span>(&quot;</span><span style="color:#a3be8c;">p</span><span>&quot;);
-</span><span>      </span><span style="color:#bf616a;">p</span><span>.textContent = </span><span style="color:#bf616a;">e</span><span>.data;
-</span><span>      </span><span style="color:#bf616a;">msgsDiv</span><span>.</span><span style="color:#bf616a;">appendChild</span><span>(</span><span style="color:#bf616a;">p</span><span>);
-</span><span>      </span><span style="color:#bf616a;">msgsDiv</span><span>.scrollTop = </span><span style="color:#bf616a;">msgsDiv</span><span>.scrollHeight;
-</span><span>    };
-</span><span>
-</span><span>    </span><span style="color:#ebcb8b;">evtSource</span><span>.</span><span style="color:#bf616a;">onerror </span><span>= </span><span style="color:#b48ead;">function </span><span>(e) {
-</span><span>      console.</span><span style="color:#96b5b4;">error</span><span>(&quot;</span><span style="color:#a3be8c;">EventSource failed:</span><span>&quot;, </span><span style="color:#bf616a;">e</span><span>);
-</span><span>      </span><span style="color:#65737e;">// It auto-reconnects by default
-</span><span>    };
-</span><span>
-</span><span>    document.</span><span style="color:#bf616a;">getElementById</span><span>(&quot;</span><span style="color:#a3be8c;">frm</span><span>&quot;).</span><span style="color:#8fa1b3;">onsubmit </span><span>= </span><span style="color:#b48ead;">async function </span><span>(e) {
-</span><span>      </span><span style="color:#bf616a;">e</span><span>.</span><span style="color:#bf616a;">preventDefault</span><span>();
-</span><span>      </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">input </span><span>= document.</span><span style="color:#bf616a;">getElementById</span><span>(&quot;</span><span style="color:#a3be8c;">input</span><span>&quot;);
-</span><span>      </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">msg </span><span>= </span><span style="color:#bf616a;">input</span><span>.value;
-</span><span>      </span><span style="color:#b48ead;">if </span><span>(!</span><span style="color:#bf616a;">msg</span><span>) </span><span style="color:#b48ead;">return</span><span>;
-</span><span>      </span><span style="color:#65737e;">// simple POST (form-encoded)
-</span><span>      </span><span style="color:#b48ead;">await </span><span style="color:#bf616a;">fetch</span><span>(&quot;</span><span style="color:#a3be8c;">http://127.0.0.1:8080/send</span><span>&quot;, {
-</span><span>        method: &quot;</span><span style="color:#a3be8c;">POST</span><span>&quot;,
-</span><span>        headers: {
-</span><span>          &quot;</span><span style="color:#a3be8c;">Content-Type</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">application/x-www-form-urlencoded</span><span>&quot;,
-</span><span>        },
-</span><span>        body: &quot;</span><span style="color:#a3be8c;">msg=</span><span>&quot; + </span><span style="color:#96b5b4;">encodeURIComponent</span><span>(</span><span style="color:#bf616a;">msg</span><span>),
-</span><span>      });
-</span><span>      </span><span style="color:#bf616a;">input</span><span>.value = &quot;&quot;;
-</span><span>    };
-</span><span>  &lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">body</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">html</span><span>&gt;
-</span></code></pre>
-<p>You’ll also need to set up a Redis server that RedisClient will use for broker communication. If you have Docker installed in your system, you can run the following command to start a Redis server:</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">docker</span><span> run</span><span style="color:#bf616a;"> --name</span><span> dev-redis</span><span style="color:#bf616a;"> -d -h</span><span> localhost</span><span style="color:#bf616a;"> -p</span><span> 6379:6379 redis:alpine
-</span></code></pre>
-<p>After the docker commande run your go code</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">go</span><span> run main.go
-</span></code></pre>
-<p>Open the html page with your browser twice to coonect to th SSE server</p>
-<h2 id="result-overview"><a class="zola-anchor" href="#result-overview" aria-label="Anchor link for: result-overview">Result Overview</a></h2>
-<div align="center" >
-<img src="/gossefinal.gif" width="100%"/>
-</div>
-<h2 id="github-repository"><a class="zola-anchor" href="#github-repository" aria-label="Anchor link for: github-repository">Github repository</a></h2>
-<p><a href="https://github.com/malnossi/gossechat">Real Time Chat System With Golang, Redis and Server Side Events</a></p>
-<h2 id="final-words"><a class="zola-anchor" href="#final-words" aria-label="Anchor link for: final-words">Final Words</a></h2>
-<p>In this walkthrough, we’ve seen how surprisingly straightforward it is to build a real-time, server-to-client chat system using nothing more than Go’s standard library, HTTP, and Redis Pub/Sub. By combining a simple POST endpoint for publishing messages with a Server-Sent Events (SSE) stream for delivery, you can achieve continuous, low-latency updates without introducing the complexity of WebSockets or external frameworks.</p>
-<p>This approach offers several key advantages: the Go server cleanly handles both publishing (via /send) and broadcasting (via /events), Redis provides a lightweight yet powerful message bus for decoupling senders and receivers, and the entire architecture scales naturally across multiple instances.</p>
-<p>However, as with any real-time system, attention to detail matters. You’ll need to handle connection lifetimes, buffering, error recovery, reconnections, and client cleanup to ensure reliability under load. And while Redis Pub/Sub works perfectly for ephemeral, transient messaging, you may want to explore Redis Streams or more robust brokers (like NATS or Kafka) when you need persistence, message replay, or delivery guarantees.</p>
-<p>Ultimately, this example demonstrates how you can use standard Go features and minimal infrastructure to achieve a production-ready foundation for live updates, notifications, or collaborative features — simple, efficient, and scalable by design.</p>
-
-</div>
-<!-- <div class="section">
-  <div class="card">
-    <div class="card-image">
-
-    </div>
-    <div class="card-content">
-      <div class="level">
-        <div class="level-item has-text-centered">
-          <div>
-            <h1 class="heading is-size-5"><strong>Real Time Chat System With Golang, Redis and Server Side Events</strong></h1>
-            <div class="tags is-flex is-justify-content-center">
-              
-              <a class="tag is-link is-hoverable" href="/tags/go">#Go</a>
-              
-              <a class="tag is-link is-hoverable" href="/tags/redis">#Redis</a>
-              
-              <a class="tag is-link is-hoverable" href="/tags/sse">#SSE</a>
-              
-              <a class="tag is-link is-hoverable" href="/tags/html">#HTML</a>
-              
-              <a class="tag is-link is-hoverable" href="/tags/javascript">#JavaScript</a>
-              
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="media">
-        <div class="media-content">
-          <span class="title is-size-6">Mohamed AL NOSSIRAT</span> |
-          <time datetime="2025-10-10">10&#x2F;10&#x2F;2025</time>
-          <hr />
-        </div>
-
-      </div>
-      <div class="content has-text-justified">
-        <h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h2>
-<p>Server-Sent Events (SSE) is a lightweight and efficient technology that enables servers to push real-time updates to connected clients over a single, long-lived HTTP connection. Unlike traditional polling or the more complex WebSocket protocol, SSE provides a simple, unidirectional communication channel—perfect for applications that only require server-to-client data flow.</p>
-<p>In this article, we’ll dive into how to implement SSE in Go, exploring its core concepts, advantages, and practical use cases. You’ll also see hands-on examples demonstrating how to stream live updates directly to a browser using Go’s standard library.</p>
-<p>By the end of this guide, you’ll have a solid understanding of how to use SSE for building real-time applications—from live dashboards and notifications to chat systems—using clean, efficient, and idiomatic Go code.</p>
-<h2 id="what-is-server-side-events"><a class="zola-anchor" href="#what-is-server-side-events" aria-label="Anchor link for: what-is-server-side-events">What is Server Side Events</a></h2>
-<p>Server-Sent Events (SSE) is a modern web technology that enables servers to push real-time data to clients through a single, persistent HTTP connection.</p>
-<p>Unlike WebSockets, which offer full-duplex (two-way) communication, SSE provides a unidirectional stream — from the server to the client. This design makes it significantly simpler to implement and perfectly suited for scenarios where continuous updates are needed from the server, but the client doesn’t need to send data back through the same channel.</p>
-<p>Building an SSE-powered web application is both intuitive and lightweight. On the server side, you only need a small amount of code to continuously stream events. On the client side, handling incoming data is nearly identical to using WebSockets — you register event listeners and react to updates as they arrive. However, because the connection is one-way, clients cannot send messages back to the server using SSE.</p>
-<p><strong>Benefits of Server-Sent Events</strong></p>
-<ul>
-<li><strong>Simplicity</strong>: SSE is easier to set up and maintain compared to WebSockets, requiring less code and configuration.</li>
-<li><strong>Native Browser Support</strong>: Most modern browsers support SSE natively through the EventSource API — no external libraries required.</li>
-<li><strong>Automatic Reconnection</strong>: If the connection drops (for example, due to network issues), the client will automatically attempt to reconnect without additional logic.</li>
-<li><strong>Efficiency</strong>: SSE operates over a single HTTP connection, minimizing overhead and making it ideal for scalable real-time applications such as dashboards, notifications, or live data feeds.</li>
-</ul>
-<h2 id="how-to-implement-sse-in-go"><a class="zola-anchor" href="#how-to-implement-sse-in-go" aria-label="Anchor link for: how-to-implement-sse-in-go">How to Implement SSE in Go</a></h2>
-<p>For this example, we’ll build a simple Server-Sent Events (SSE) server in Go that continuously sends updates to connected clients. Specifically, the server will stream the current timestamp every second, giving us a real-time feed of data updates.</p>
-<p>Once running, any client can connect to our server on port 8080 and begin receiving live messages as they are sent. This basic setup demonstrates the power and simplicity of SSE data flows automatically to clients as soon as it’s available, without the need for repeated polling or manual refreshes.</p>
-<p>In a real-world application, this same architecture can be extended far beyond timestamps. You might use SSE to:</p>
-<ul>
-<li>Send live notifications to users when new events occur.</li>
-<li>Display progress bar updates for long-running tasks.</li>
-<li>Push system health or analytics metrics to a live dashboard.</li>
-<li>Stream logs or sensor readings in real time.</li>
-</ul>
-<p>This example serves as a foundation — showing how easy it is to build continuous, one-way data streams from your Go backend to your users’ browsers using nothing more than standard HTTP and the Go standard library.</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">mkdir</span><span> ssegoredis &amp;&amp; </span><span style="color:#96b5b4;">cd</span><span> ssegoredis
-</span><span style="color:#bf616a;">go</span><span> mod init github.com/&lt;YOUR USERNAME&gt;/ssegoredis
-</span><span style="color:#bf616a;">//</span><span> go: creating new go.mod: module github.com/&lt;YOUR USERNAME&gt;/ssegoredis
-</span><span>
-</span><span style="color:#bf616a;">touch</span><span> main.go example.html
-</span></code></pre>
-<pre data-lang="go" style="background-color:#2b303b;color:#c0c5ce;" class="language-go "><code class="language-go" data-lang="go"><span style="color:#65737e;">// main.go
-</span><span style="color:#b48ead;">package </span><span style="color:#bf616a;">main
-</span><span>
-</span><span style="color:#b48ead;">import </span><span>(
-</span><span>	&quot;</span><span style="color:#a3be8c;">fmt</span><span>&quot;
-</span><span>	&quot;</span><span style="color:#a3be8c;">log</span><span>&quot;
-</span><span>	&quot;</span><span style="color:#a3be8c;">net/http</span><span>&quot;
-</span><span>	&quot;</span><span style="color:#a3be8c;">time</span><span>&quot;
-</span><span>)
-</span><span>
-</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">eventsHandler</span><span>(</span><span style="color:#bf616a;">w http</span><span>.</span><span style="color:#b48ead;">ResponseWriter</span><span>, </span><span style="color:#bf616a;">r </span><span>*</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#b48ead;">Request</span><span>) {
-</span><span>	</span><span style="color:#65737e;">// Required SSE headers
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Content-Type</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">text/event-stream</span><span>&quot;)
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Cache-Control</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">no-cache</span><span>&quot;)
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Connection</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">keep-alive</span><span>&quot;)
-</span><span>	</span><span style="color:#65737e;">// Optional: allow cross-origin EventSource connections (tune for your app)
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Access-Control-Allow-Origin</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">*</span><span>&quot;)
-</span><span>
-</span><span>	</span><span style="color:#65737e;">// Ensure the ResponseWriter supports flushing
-</span><span>	</span><span style="color:#bf616a;">clientGone </span><span>:= </span><span style="color:#bf616a;">r</span><span>.</span><span style="color:#bf616a;">Context</span><span>().</span><span style="color:#bf616a;">Done</span><span>()
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">rc </span><span>:= </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">NewResponseController</span><span>(</span><span style="color:#bf616a;">w</span><span>)
-</span><span>	</span><span style="color:#bf616a;">t </span><span>:= </span><span style="color:#bf616a;">time</span><span>.</span><span style="color:#bf616a;">NewTicker</span><span>(</span><span style="color:#bf616a;">time</span><span>.</span><span style="color:#bf616a;">Second</span><span>)
-</span><span>	</span><span style="color:#b48ead;">defer </span><span style="color:#bf616a;">t</span><span>.</span><span style="color:#bf616a;">Stop</span><span>()
-</span><span>	</span><span style="color:#b48ead;">for </span><span>{
-</span><span>		</span><span style="color:#b48ead;">select </span><span>{
-</span><span>		</span><span style="color:#b48ead;">case </span><span>&lt;-</span><span style="color:#bf616a;">clientGone</span><span>:
-</span><span>			</span><span style="color:#bf616a;">fmt</span><span>.</span><span style="color:#bf616a;">Println</span><span>(&quot;</span><span style="color:#a3be8c;">Client disconnected</span><span>&quot;)
-</span><span>			</span><span style="color:#b48ead;">return
-</span><span>		</span><span style="color:#b48ead;">case </span><span>&lt;-</span><span style="color:#bf616a;">t</span><span>.</span><span style="color:#bf616a;">C</span><span>:
-</span><span>			</span><span style="color:#65737e;">// Send an event to the client
-</span><span>			</span><span style="color:#65737e;">// Here we send only the &quot;data&quot; field, but there are few others
-</span><span>			</span><span style="color:#bf616a;">_</span><span>, </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">fmt</span><span>.</span><span style="color:#bf616a;">Fprintf</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">data: The time is </span><span style="color:#d08770;">%s</span><span style="color:#96b5b4;">\n\n</span><span>&quot;, </span><span style="color:#bf616a;">time</span><span>.</span><span style="color:#bf616a;">Now</span><span>().</span><span style="color:#bf616a;">Format</span><span>(</span><span style="color:#bf616a;">time</span><span>.</span><span style="color:#bf616a;">UnixDate</span><span>))
-</span><span>			</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
-</span><span>				</span><span style="color:#b48ead;">return
-</span><span>			}
-</span><span>			</span><span style="color:#bf616a;">err </span><span>= </span><span style="color:#bf616a;">rc</span><span>.</span><span style="color:#bf616a;">Flush</span><span>()
-</span><span>			</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
-</span><span>				</span><span style="color:#b48ead;">return
-</span><span>			}
-</span><span>		}
-</span><span>	}
-</span><span>}
-</span><span>
-</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">main</span><span>() {
-</span><span>	</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">HandleFunc</span><span>(&quot;</span><span style="color:#a3be8c;">/events</span><span>&quot;, </span><span style="color:#bf616a;">eventsHandler</span><span>)
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">addr </span><span>:= &quot;</span><span style="color:#a3be8c;">:8080</span><span>&quot;
-</span><span>	</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">SSE server listening on </span><span style="color:#d08770;">%s</span><span style="color:#a3be8c;"> …</span><span>&quot;, </span><span style="color:#bf616a;">addr</span><span>)
-</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">ListenAndServe</span><span>(</span><span style="color:#bf616a;">addr</span><span>, </span><span style="color:#d08770;">nil</span><span>); </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
-</span><span>		</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Fatal</span><span>(</span><span style="color:#bf616a;">err</span><span>)
-</span><span>	}
-</span><span>}
-</span></code></pre>
-<p>In the <code>exmplae.html</code> file</p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;!doctype html&gt;
-</span><span>&lt;</span><span style="color:#bf616a;">html</span><span>&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">body</span><span>&gt;
-</span><span>        &lt;</span><span style="color:#bf616a;">ul </span><span style="color:#8fa1b3;">id</span><span>=&quot;</span><span style="color:#a3be8c;">list</span><span>&quot;&gt;&lt;/</span><span style="color:#bf616a;">ul</span><span>&gt;
-</span><span>    &lt;/</span><span style="color:#bf616a;">body</span><span>&gt;
-</span><span>
-</span><span>    &lt;</span><span style="color:#bf616a;">script </span><span style="color:#d08770;">type</span><span>=&quot;</span><span style="color:#a3be8c;">text/javascript</span><span>&quot;&gt;
-</span><span>        console.</span><span style="color:#96b5b4;">log</span><span>(&quot;</span><span style="color:#a3be8c;">Coucou</span><span>&quot;);
-</span><span>        
-</span><span>        </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">eventSrc </span><span>= new </span><span style="color:#bf616a;">EventSource</span><span>(&quot;</span><span style="color:#a3be8c;">http://127.0.0.1:8080/events</span><span>&quot;);
-</span><span>
-</span><span>        </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">list </span><span>= document.</span><span style="color:#bf616a;">getElementById</span><span>(&quot;</span><span style="color:#a3be8c;">list</span><span>&quot;);
-</span><span>
-</span><span>        </span><span style="color:#ebcb8b;">eventSrc</span><span>.</span><span style="color:#bf616a;">onmessage </span><span>= (event) </span><span style="color:#b48ead;">=&gt; </span><span>{            
-</span><span>            </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">li </span><span>= document.</span><span style="color:#bf616a;">createElement</span><span>(&quot;</span><span style="color:#a3be8c;">li</span><span>&quot;);
-</span><span>            </span><span style="color:#bf616a;">li</span><span>.textContent = `</span><span style="color:#a3be8c;">message: </span><span>${</span><span style="color:#bf616a;">event</span><span>.data}`;
-</span><span>
-</span><span>            </span><span style="color:#bf616a;">list</span><span>.</span><span style="color:#bf616a;">appendChild</span><span>(</span><span style="color:#bf616a;">li</span><span>);
-</span><span>        };
-</span><span>    &lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">html</span><span>&gt;
-</span></code></pre>
-<p>Run the Code and open the html file with your browser</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">go</span><span> run main.go
-</span></code></pre>
-<div align="center" >
-<img src="/gossebasicresult.gif" width="100%"/>
-</div>
-<h2 id="real-world-implementation-building-a-chat-system-with-go-and-server-sent-events"><a class="zola-anchor" href="#real-world-implementation-building-a-chat-system-with-go-and-server-sent-events" aria-label="Anchor link for: real-world-implementation-building-a-chat-system-with-go-and-server-sent-events">Real-World Implementation: Building a Chat System with Go and Server-Sent Events</a></h2>
-<p>To demonstrate how Server-Sent Events (SSE) can be used in practice, let’s walk through building a lightweight real-time chat system in Go. This implementation uses only Go’s standard library along with a minimal Redis client to handle message distribution. The idea is simple but powerful: clients send messages via a standard HTTP POST endpoint, the server publishes them to a Redis channel, and connected clients receive live updates through an SSE stream. This setup allows you to achieve real-time, one-way message delivery from server to client—without the complexity of WebSockets. In the following sections, we’ll explore the architecture, challenges, and complete Go code for this system, including the message publisher, Redis subscriber, and SSE event handler, along with client-side integration, error handling, and scaling considerations.</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">mkdir</span><span> gossechat &amp;&amp; </span><span style="color:#96b5b4;">cd</span><span> gossechat
-</span><span style="color:#bf616a;">go</span><span> mod init github.com/&lt;YOUR USERNAME&gt;/gossechat
-</span><span style="color:#bf616a;">go</span><span> get github.com/go-redis/redis/v8
-</span><span style="color:#bf616a;">touch</span><span> main.go index.html
-</span></code></pre>
-<pre data-lang="go" style="background-color:#2b303b;color:#c0c5ce;" class="language-go "><code class="language-go" data-lang="go"><span style="color:#b48ead;">package </span><span style="color:#bf616a;">main
-</span><span>
-</span><span style="color:#b48ead;">import </span><span>(
-</span><span>	&quot;</span><span style="color:#a3be8c;">context</span><span>&quot;
-</span><span>	&quot;</span><span style="color:#a3be8c;">fmt</span><span>&quot;
-</span><span>	&quot;</span><span style="color:#a3be8c;">log</span><span>&quot;
-</span><span>	&quot;</span><span style="color:#a3be8c;">net/http</span><span>&quot;
-</span><span>	&quot;</span><span style="color:#a3be8c;">sync</span><span>&quot;
-</span><span>
-</span><span>	&quot;</span><span style="color:#a3be8c;">github.com/go-redis/redis/v8</span><span>&quot;
-</span><span>)
-</span><span>
-</span><span style="color:#b48ead;">var </span><span>(
-</span><span>	</span><span style="color:#bf616a;">redisAddr </span><span>= &quot;</span><span style="color:#a3be8c;">localhost:6379</span><span>&quot;
-</span><span>	</span><span style="color:#bf616a;">redisChan </span><span>= &quot;</span><span style="color:#a3be8c;">chat</span><span>&quot; </span><span style="color:#65737e;">// the channel name
-</span><span>)
-</span><span>
-</span><span style="color:#b48ead;">type </span><span>sseClient </span><span style="color:#b48ead;">struct </span><span>{
-</span><span>	</span><span style="color:#65737e;">// A channel where we send data to this client
-</span><span>	</span><span style="color:#bf616a;">send </span><span style="color:#b48ead;">chan string
-</span><span>	</span><span style="color:#65737e;">// You could add fields: lastEventID, done channel, etc.
-</span><span>}
-</span><span>
-</span><span style="color:#b48ead;">type </span><span>server </span><span style="color:#b48ead;">struct </span><span>{
-</span><span>	</span><span style="color:#bf616a;">redisClient </span><span>*</span><span style="color:#bf616a;">redis</span><span>.</span><span style="color:#b48ead;">Client
-</span><span>	</span><span style="color:#65737e;">// protect clients map
-</span><span>	</span><span style="color:#bf616a;">mu      sync</span><span>.</span><span style="color:#b48ead;">Mutex
-</span><span>	</span><span style="color:#bf616a;">clients </span><span style="color:#b48ead;">map</span><span>[*</span><span style="color:#b48ead;">sseClient</span><span>]</span><span style="color:#b48ead;">struct</span><span>{}
-</span><span>}
-</span><span>
-</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">newServer</span><span>() *</span><span style="color:#b48ead;">server </span><span>{
-</span><span>	</span><span style="color:#bf616a;">rdb </span><span>:= </span><span style="color:#bf616a;">redis</span><span>.</span><span style="color:#bf616a;">NewClient</span><span>(&amp;</span><span style="color:#bf616a;">redis</span><span>.</span><span style="color:#bf616a;">Options</span><span>{
-</span><span>		</span><span style="color:#bf616a;">Addr</span><span>: </span><span style="color:#bf616a;">redisAddr</span><span>,
-</span><span>	})
-</span><span>	</span><span style="color:#b48ead;">return </span><span>&amp;</span><span style="color:#bf616a;">server</span><span>{
-</span><span>		</span><span style="color:#bf616a;">redisClient</span><span>: </span><span style="color:#bf616a;">rdb</span><span>,
-</span><span>		</span><span style="color:#bf616a;">clients</span><span>:     </span><span style="color:#96b5b4;">make</span><span>(</span><span style="color:#b48ead;">map</span><span>[*</span><span style="color:#b48ead;">sseClient</span><span>]</span><span style="color:#b48ead;">struct</span><span>{}),
-</span><span>	}
-</span><span>}
-</span><span>
-</span><span style="color:#65737e;">// handlePublish handles POST /send
-</span><span style="color:#65737e;">// expects a form value &quot;msg&quot; or JSON etc.
-</span><span style="color:#b48ead;">func </span><span>(</span><span style="color:#bf616a;">s </span><span>*</span><span style="color:#b48ead;">server</span><span>) </span><span style="color:#8fa1b3;">handlePublish</span><span>(</span><span style="color:#bf616a;">w http</span><span>.</span><span style="color:#b48ead;">ResponseWriter</span><span>, </span><span style="color:#bf616a;">r </span><span>*</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#b48ead;">Request</span><span>) {
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Access-Control-Allow-Origin</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">*</span><span>&quot;)
-</span><span>	</span><span style="color:#bf616a;">ctx </span><span>:= </span><span style="color:#bf616a;">r</span><span>.</span><span style="color:#bf616a;">Context</span><span>()
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">msg </span><span>:= </span><span style="color:#bf616a;">r</span><span>.</span><span style="color:#bf616a;">FormValue</span><span>(&quot;</span><span style="color:#a3be8c;">msg</span><span>&quot;)
-</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">msg </span><span>== &quot;&quot; {
-</span><span>		</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">msg missing</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusBadRequest</span><span>)
-</span><span>		</span><span style="color:#b48ead;">return
-</span><span>	}
-</span><span>
-</span><span>	</span><span style="color:#65737e;">// publish to redis
-</span><span>	</span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">redisClient</span><span>.</span><span style="color:#bf616a;">Publish</span><span>(</span><span style="color:#bf616a;">ctx</span><span>, </span><span style="color:#bf616a;">redisChan</span><span>, </span><span style="color:#bf616a;">msg</span><span>).</span><span style="color:#bf616a;">Err</span><span>()
-</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
-</span><span>		</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">Publish error: </span><span style="color:#d08770;">%v</span><span>&quot;, </span><span style="color:#bf616a;">err</span><span>)
-</span><span>		</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">publish failed</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusInternalServerError</span><span>)
-</span><span>		</span><span style="color:#b48ead;">return
-</span><span>	}
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">WriteHeader</span><span>(</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusOK</span><span>)
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Write</span><span>([]</span><span style="color:#b48ead;">byte</span><span>(&quot;</span><span style="color:#a3be8c;">ok</span><span>&quot;))
-</span><span>}
-</span><span>
-</span><span style="color:#65737e;">// handleEvents handles GET /events
-</span><span style="color:#65737e;">// sets up an SSE connection to the client
-</span><span style="color:#b48ead;">func </span><span>(</span><span style="color:#bf616a;">s </span><span>*</span><span style="color:#b48ead;">server</span><span>) </span><span style="color:#8fa1b3;">handleEvents</span><span>(</span><span style="color:#bf616a;">w http</span><span>.</span><span style="color:#b48ead;">ResponseWriter</span><span>, </span><span style="color:#bf616a;">r </span><span>*</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#b48ead;">Request</span><span>) {
-</span><span>	</span><span style="color:#65737e;">// Prepare headers for SSE
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Content-Type</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">text/event-stream</span><span>&quot;)
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Cache-Control</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">no-cache</span><span>&quot;)
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Connection</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">keep-alive</span><span>&quot;)
-</span><span>	</span><span style="color:#65737e;">// Optionally:
-</span><span>	</span><span style="color:#bf616a;">w</span><span>.</span><span style="color:#bf616a;">Header</span><span>().</span><span style="color:#bf616a;">Set</span><span>(&quot;</span><span style="color:#a3be8c;">Access-Control-Allow-Origin</span><span>&quot;, &quot;</span><span style="color:#a3be8c;">*</span><span>&quot;)
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">flusher</span><span>, </span><span style="color:#bf616a;">ok </span><span>:= </span><span style="color:#bf616a;">w</span><span>.(</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#b48ead;">Flusher</span><span>)
-</span><span>	</span><span style="color:#b48ead;">if </span><span>!</span><span style="color:#bf616a;">ok </span><span>{
-</span><span>		</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">Error</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">Streaming unsupported</span><span>&quot;, </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">StatusInternalServerError</span><span>)
-</span><span>		</span><span style="color:#b48ead;">return
-</span><span>	}
-</span><span>
-</span><span>	</span><span style="color:#65737e;">// Create new SSE client
-</span><span>	</span><span style="color:#bf616a;">client </span><span>:= &amp;</span><span style="color:#bf616a;">sseClient</span><span>{
-</span><span>		</span><span style="color:#bf616a;">send</span><span>: </span><span style="color:#96b5b4;">make</span><span>(</span><span style="color:#b48ead;">chan string</span><span>, </span><span style="color:#d08770;">10</span><span>), </span><span style="color:#65737e;">// buffered channel
-</span><span>	}
-</span><span>
-</span><span>	</span><span style="color:#65737e;">// Register client
-</span><span>	</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Lock</span><span>()
-</span><span>	</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">clients</span><span>[</span><span style="color:#bf616a;">client</span><span>] = </span><span style="color:#b48ead;">struct</span><span>{}{}
-</span><span>	</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Unlock</span><span>()
-</span><span>
-</span><span>	</span><span style="color:#65737e;">// When this handler exits, unregister the client
-</span><span>	</span><span style="color:#b48ead;">defer func</span><span>() {
-</span><span>		</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Lock</span><span>()
-</span><span>		</span><span style="color:#96b5b4;">delete</span><span>(</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">clients</span><span>, </span><span style="color:#bf616a;">client</span><span>)
-</span><span>		</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Unlock</span><span>()
-</span><span>	}()
-</span><span>
-</span><span>	</span><span style="color:#65737e;">// Notify the client that connection is established (optional)
-</span><span>	</span><span style="color:#65737e;">// Send a comment or &quot;connected&quot; message
-</span><span>	</span><span style="color:#bf616a;">fmt</span><span>.</span><span style="color:#bf616a;">Fprintf</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">: connected</span><span style="color:#96b5b4;">\n\n</span><span>&quot;)
-</span><span>	</span><span style="color:#bf616a;">flusher</span><span>.</span><span style="color:#bf616a;">Flush</span><span>()
-</span><span>
-</span><span>	</span><span style="color:#65737e;">// A simple loop: listen to client.send chan and write SSE messages
-</span><span>	</span><span style="color:#bf616a;">notify </span><span>:= </span><span style="color:#bf616a;">r</span><span>.</span><span style="color:#bf616a;">Context</span><span>().</span><span style="color:#bf616a;">Done</span><span>()
-</span><span>	</span><span style="color:#b48ead;">for </span><span>{
-</span><span>		</span><span style="color:#b48ead;">select </span><span>{
-</span><span>		</span><span style="color:#b48ead;">case </span><span>&lt;-</span><span style="color:#bf616a;">notify</span><span>:
-</span><span>			</span><span style="color:#65737e;">// client closed connection
-</span><span>			</span><span style="color:#b48ead;">return
-</span><span>		</span><span style="color:#b48ead;">case </span><span style="color:#bf616a;">msg </span><span>:= &lt;-</span><span style="color:#bf616a;">client</span><span>.</span><span style="color:#bf616a;">send</span><span>:
-</span><span>			</span><span style="color:#65737e;">// Send as an SSE “data:” message
-</span><span>			</span><span style="color:#65737e;">// You can optionally add event: or id: lines
-</span><span>			</span><span style="color:#bf616a;">fmt</span><span>.</span><span style="color:#bf616a;">Fprintf</span><span>(</span><span style="color:#bf616a;">w</span><span>, &quot;</span><span style="color:#a3be8c;">data: </span><span style="color:#d08770;">%s</span><span style="color:#96b5b4;">\n\n</span><span>&quot;, </span><span style="color:#bf616a;">msg</span><span>)
-</span><span>			</span><span style="color:#bf616a;">flusher</span><span>.</span><span style="color:#bf616a;">Flush</span><span>()
-</span><span>		}
-</span><span>	}
-</span><span>}
-</span><span>
-</span><span style="color:#65737e;">// broadcastLoop subscribes to Redis and fans out messages to all SSE clients
-</span><span style="color:#b48ead;">func </span><span>(</span><span style="color:#bf616a;">s </span><span>*</span><span style="color:#b48ead;">server</span><span>) </span><span style="color:#8fa1b3;">broadcastLoop</span><span>(</span><span style="color:#bf616a;">ctx context</span><span>.</span><span style="color:#b48ead;">Context</span><span>) {
-</span><span>	</span><span style="color:#bf616a;">pubsub </span><span>:= </span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">redisClient</span><span>.</span><span style="color:#bf616a;">Subscribe</span><span>(</span><span style="color:#bf616a;">ctx</span><span>, </span><span style="color:#bf616a;">redisChan</span><span>)
-</span><span>	</span><span style="color:#65737e;">// Ensure resources cleaned up when done
-</span><span>	</span><span style="color:#b48ead;">defer </span><span style="color:#bf616a;">pubsub</span><span>.</span><span style="color:#bf616a;">Close</span><span>()
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">ch </span><span>:= </span><span style="color:#bf616a;">pubsub</span><span>.</span><span style="color:#bf616a;">Channel</span><span>()
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">Subscribed to Redis channel </span><span style="color:#d08770;">%s</span><span>&quot;, </span><span style="color:#bf616a;">redisChan</span><span>)
-</span><span>
-</span><span>	</span><span style="color:#b48ead;">for </span><span>{
-</span><span>		</span><span style="color:#b48ead;">select </span><span>{
-</span><span>		</span><span style="color:#b48ead;">case </span><span>&lt;-</span><span style="color:#bf616a;">ctx</span><span>.</span><span style="color:#bf616a;">Done</span><span>():
-</span><span>			</span><span style="color:#b48ead;">return
-</span><span>		</span><span style="color:#b48ead;">case </span><span style="color:#bf616a;">m</span><span>, </span><span style="color:#bf616a;">ok </span><span>:= &lt;-</span><span style="color:#bf616a;">ch</span><span>:
-</span><span>			</span><span style="color:#b48ead;">if </span><span>!</span><span style="color:#bf616a;">ok </span><span>{
-</span><span>				</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">Redis channel closed</span><span>&quot;)
-</span><span>				</span><span style="color:#b48ead;">return
-</span><span>			}
-</span><span>			</span><span style="color:#65737e;">// Broadcast to all SSE clients
-</span><span>			</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Lock</span><span>()
-</span><span>			</span><span style="color:#b48ead;">for </span><span style="color:#bf616a;">c </span><span>:= </span><span style="color:#b48ead;">range </span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">clients </span><span>{
-</span><span>				</span><span style="color:#b48ead;">select </span><span>{
-</span><span>				</span><span style="color:#b48ead;">case </span><span style="color:#bf616a;">c</span><span>.</span><span style="color:#bf616a;">send </span><span>&lt;- </span><span style="color:#bf616a;">m</span><span>.</span><span style="color:#bf616a;">Payload</span><span>:
-</span><span>				</span><span style="color:#b48ead;">default</span><span>:
-</span><span>					</span><span style="color:#65737e;">// if the buffer is full, drop message for that client (or handle backpressure)
-</span><span>				}
-</span><span>			}
-</span><span>			</span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">mu</span><span>.</span><span style="color:#bf616a;">Unlock</span><span>()
-</span><span>		}
-</span><span>	}
-</span><span>}
-</span><span>
-</span><span style="color:#b48ead;">func </span><span>(</span><span style="color:#bf616a;">s </span><span>*</span><span style="color:#b48ead;">server</span><span>) </span><span style="color:#8fa1b3;">routes</span><span>() {
-</span><span>	</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">HandleFunc</span><span>(&quot;</span><span style="color:#a3be8c;">/send</span><span>&quot;, </span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">handlePublish</span><span>)
-</span><span>	</span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">HandleFunc</span><span>(&quot;</span><span style="color:#a3be8c;">/events</span><span>&quot;, </span><span style="color:#bf616a;">s</span><span>.</span><span style="color:#bf616a;">handleEvents</span><span>)
-</span><span>	</span><span style="color:#65737e;">// optionally serve HTML page etc.
-</span><span>}
-</span><span>
-</span><span style="color:#b48ead;">func </span><span style="color:#8fa1b3;">main</span><span>() {
-</span><span>	</span><span style="color:#bf616a;">srv </span><span>:= </span><span style="color:#bf616a;">newServer</span><span>()
-</span><span>	</span><span style="color:#bf616a;">srv</span><span>.</span><span style="color:#bf616a;">routes</span><span>()
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">ctx</span><span>, </span><span style="color:#bf616a;">cancel </span><span>:= </span><span style="color:#bf616a;">context</span><span>.</span><span style="color:#bf616a;">WithCancel</span><span>(</span><span style="color:#bf616a;">context</span><span>.</span><span style="color:#bf616a;">Background</span><span>())
-</span><span>	</span><span style="color:#b48ead;">defer </span><span style="color:#bf616a;">cancel</span><span>()
-</span><span>	</span><span style="color:#b48ead;">go </span><span style="color:#bf616a;">srv</span><span>.</span><span style="color:#bf616a;">broadcastLoop</span><span>(</span><span style="color:#bf616a;">ctx</span><span>)
-</span><span>
-</span><span>	</span><span style="color:#bf616a;">addr </span><span>:= &quot;</span><span style="color:#a3be8c;">:8080</span><span>&quot;
-</span><span>	</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Printf</span><span>(&quot;</span><span style="color:#a3be8c;">Server listening on </span><span style="color:#d08770;">%s</span><span style="color:#a3be8c;"> …</span><span>&quot;, </span><span style="color:#bf616a;">addr</span><span>)
-</span><span>	</span><span style="color:#b48ead;">if </span><span style="color:#bf616a;">err </span><span>:= </span><span style="color:#bf616a;">http</span><span>.</span><span style="color:#bf616a;">ListenAndServe</span><span>(</span><span style="color:#bf616a;">addr</span><span>, </span><span style="color:#d08770;">nil</span><span>); </span><span style="color:#bf616a;">err </span><span>!= </span><span style="color:#d08770;">nil </span><span>{
-</span><span>		</span><span style="color:#bf616a;">log</span><span>.</span><span style="color:#bf616a;">Fatalf</span><span>(&quot;</span><span style="color:#a3be8c;">ListenAndServe: </span><span style="color:#d08770;">%v</span><span>&quot;, </span><span style="color:#bf616a;">err</span><span>)
-</span><span>	}
-</span><span>}
-</span><span>
-</span></code></pre>
-<h3 id="component-walkthrough-explanation"><a class="zola-anchor" href="#component-walkthrough-explanation" aria-label="Anchor link for: component-walkthrough-explanation">Component Walkthrough &amp; Explanation</a></h3>
-<p>We use <code>go-redis/redis/v8</code> (or whichever Redis client you prefer). The key operations:</p>
-<ul>
-<li><code>rdb.Publish(ctx, channel, message)</code> to emit a message</li>
-<li><code>rdb.Subscribe(ctx, channel)</code> to create a subscription</li>
-<li>Using <code>pubsub.Channel()</code> returns a Go channel <code>chan *redis.Message</code> from which you receive messages continuously.</li>
-</ul>
-<p>In <code>broadcastLoop</code>, we listen on that channel forever, and when a message arrives, we fan out to SSE clients.</p>
-<p>One nuance: Subscribe is lazy, and first <code>Receive()</code> or subscribing might block until the subscription is set up. But <code>Channel()</code> hides some of that. Also, the client reconnects automatically in many implementations.</p>
-<p>We maintain a <code>map[*sseClient]struct{}</code> protected by a mutex. Each sseClient has a buffered send chan string.</p>
-<p>When a message arrives, we iterate all clients and try to send into their send channel; if it’s full, we drop for that client (this is a simple backpressure strategy). You could also block with a timeout or disconnect slow clients.</p>
-<p>In each client’s HTTP handler, a loop reads from <code>client.send</code> and writes SSE frames.
-Each message is separated by a blank line. You can optionally add event:, id:, etc. You must flush after writing (via <code>http.Flusher</code>). Also, handle when the client disconnects (via <code>ctx.Done()</code>).</p>
-<p>We also write an initial comment (: connected) to avoid some proxies dropping idle streams.</p>
-<ul>
-<li><code>/send</code>: accept msg (or JSON) and publish.</li>
-<li><code>/events</code>: upgrade headers, register SSE client, block writing until done.</li>
-</ul>
-<h2 id="client-side"><a class="zola-anchor" href="#client-side" aria-label="Anchor link for: client-side">Client Side</a></h2>
-<p>Here is a simple <code>HTML + JS</code> snippet to connect and <code>send/receive</code>:</p>
-<pre data-lang="html" style="background-color:#2b303b;color:#c0c5ce;" class="language-html "><code class="language-html" data-lang="html"><span>&lt;!</span><span style="color:#b48ead;">DOCTYPE </span><span style="color:#d08770;">html</span><span>&gt;
-</span><span>&lt;</span><span style="color:#bf616a;">html</span><span>&gt;
-</span><span>&lt;</span><span style="color:#bf616a;">head</span><span>&gt;
-</span><span>  &lt;</span><span style="color:#bf616a;">meta </span><span style="color:#d08770;">charset</span><span>=&quot;</span><span style="color:#a3be8c;">utf-8</span><span>&quot; /&gt;
-</span><span>  &lt;</span><span style="color:#bf616a;">title</span><span>&gt;Go + Redis Chat&lt;/</span><span style="color:#bf616a;">title</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">head</span><span>&gt;
-</span><span>&lt;</span><span style="color:#bf616a;">body</span><span>&gt;
-</span><span>  &lt;</span><span style="color:#bf616a;">h1</span><span>&gt;Chat&lt;/</span><span style="color:#bf616a;">h1</span><span>&gt;
-</span><span>  &lt;</span><span style="color:#bf616a;">div </span><span style="color:#8fa1b3;">id</span><span>=&quot;</span><span style="color:#a3be8c;">msgs</span><span>&quot; </span><span style="color:#d08770;">style</span><span>=&quot;border:</span><span style="color:#d08770;">1px </span><span>solid </span><span style="color:#96b5b4;">#ccc</span><span>; height: </span><span style="color:#d08770;">200px</span><span>; overflow:auto;&quot;&gt;&lt;/</span><span style="color:#bf616a;">div</span><span>&gt;
-</span><span>
-</span><span>  &lt;</span><span style="color:#bf616a;">form </span><span style="color:#8fa1b3;">id</span><span>=&quot;</span><span style="color:#a3be8c;">frm</span><span>&quot;&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">input </span><span style="color:#d08770;">type</span><span>=&quot;</span><span style="color:#a3be8c;">text</span><span>&quot; </span><span style="color:#d08770;">name</span><span>=&quot;</span><span style="color:#a3be8c;">msg</span><span>&quot; </span><span style="color:#8fa1b3;">id</span><span>=&quot;</span><span style="color:#a3be8c;">input</span><span>&quot; </span><span style="color:#d08770;">autocomplete</span><span>=&quot;</span><span style="color:#a3be8c;">off</span><span>&quot; </span><span style="color:#d08770;">placeholder</span><span>=&quot;</span><span style="color:#a3be8c;">Type message...</span><span>&quot; /&gt;
-</span><span>    &lt;</span><span style="color:#bf616a;">button</span><span>&gt;Send&lt;/</span><span style="color:#bf616a;">button</span><span>&gt;
-</span><span>  &lt;/</span><span style="color:#bf616a;">form</span><span>&gt;
-</span><span>
-</span><span>  &lt;</span><span style="color:#bf616a;">script</span><span>&gt;
-</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">evtSource </span><span>= new </span><span style="color:#bf616a;">EventSource</span><span>(&quot;</span><span style="color:#a3be8c;">http://127.0.0.1:8080/events</span><span>&quot;);
-</span><span>    </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">msgsDiv </span><span>= document.</span><span style="color:#bf616a;">getElementById</span><span>(&quot;</span><span style="color:#a3be8c;">msgs</span><span>&quot;);
-</span><span>
-</span><span>    </span><span style="color:#ebcb8b;">evtSource</span><span>.</span><span style="color:#bf616a;">onmessage </span><span>= </span><span style="color:#b48ead;">function </span><span>(e) {
-</span><span>      </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">p </span><span>= document.</span><span style="color:#bf616a;">createElement</span><span>(&quot;</span><span style="color:#a3be8c;">p</span><span>&quot;);
-</span><span>      </span><span style="color:#bf616a;">p</span><span>.textContent = </span><span style="color:#bf616a;">e</span><span>.data;
-</span><span>      </span><span style="color:#bf616a;">msgsDiv</span><span>.</span><span style="color:#bf616a;">appendChild</span><span>(</span><span style="color:#bf616a;">p</span><span>);
-</span><span>      </span><span style="color:#bf616a;">msgsDiv</span><span>.scrollTop = </span><span style="color:#bf616a;">msgsDiv</span><span>.scrollHeight;
-</span><span>    };
-</span><span>
-</span><span>    </span><span style="color:#ebcb8b;">evtSource</span><span>.</span><span style="color:#bf616a;">onerror </span><span>= </span><span style="color:#b48ead;">function </span><span>(e) {
-</span><span>      console.</span><span style="color:#96b5b4;">error</span><span>(&quot;</span><span style="color:#a3be8c;">EventSource failed:</span><span>&quot;, </span><span style="color:#bf616a;">e</span><span>);
-</span><span>      </span><span style="color:#65737e;">// It auto-reconnects by default
-</span><span>    };
-</span><span>
-</span><span>    document.</span><span style="color:#bf616a;">getElementById</span><span>(&quot;</span><span style="color:#a3be8c;">frm</span><span>&quot;).</span><span style="color:#8fa1b3;">onsubmit </span><span>= </span><span style="color:#b48ead;">async function </span><span>(e) {
-</span><span>      </span><span style="color:#bf616a;">e</span><span>.</span><span style="color:#bf616a;">preventDefault</span><span>();
-</span><span>      </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">input </span><span>= document.</span><span style="color:#bf616a;">getElementById</span><span>(&quot;</span><span style="color:#a3be8c;">input</span><span>&quot;);
-</span><span>      </span><span style="color:#b48ead;">const </span><span style="color:#bf616a;">msg </span><span>= </span><span style="color:#bf616a;">input</span><span>.value;
-</span><span>      </span><span style="color:#b48ead;">if </span><span>(!</span><span style="color:#bf616a;">msg</span><span>) </span><span style="color:#b48ead;">return</span><span>;
-</span><span>      </span><span style="color:#65737e;">// simple POST (form-encoded)
-</span><span>      </span><span style="color:#b48ead;">await </span><span style="color:#bf616a;">fetch</span><span>(&quot;</span><span style="color:#a3be8c;">http://127.0.0.1:8080/send</span><span>&quot;, {
-</span><span>        method: &quot;</span><span style="color:#a3be8c;">POST</span><span>&quot;,
-</span><span>        headers: {
-</span><span>          &quot;</span><span style="color:#a3be8c;">Content-Type</span><span>&quot;: &quot;</span><span style="color:#a3be8c;">application/x-www-form-urlencoded</span><span>&quot;,
-</span><span>        },
-</span><span>        body: &quot;</span><span style="color:#a3be8c;">msg=</span><span>&quot; + </span><span style="color:#96b5b4;">encodeURIComponent</span><span>(</span><span style="color:#bf616a;">msg</span><span>),
-</span><span>      });
-</span><span>      </span><span style="color:#bf616a;">input</span><span>.value = &quot;&quot;;
-</span><span>    };
-</span><span>  &lt;/</span><span style="color:#bf616a;">script</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">body</span><span>&gt;
-</span><span>&lt;/</span><span style="color:#bf616a;">html</span><span>&gt;
-</span></code></pre>
-<p>You’ll also need to set up a Redis server that RedisClient will use for broker communication. If you have Docker installed in your system, you can run the following command to start a Redis server:</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">docker</span><span> run</span><span style="color:#bf616a;"> --name</span><span> dev-redis</span><span style="color:#bf616a;"> -d -h</span><span> localhost</span><span style="color:#bf616a;"> -p</span><span> 6379:6379 redis:alpine
-</span></code></pre>
-<p>After the docker commande run your go code</p>
-<pre data-lang="bash" style="background-color:#2b303b;color:#c0c5ce;" class="language-bash "><code class="language-bash" data-lang="bash"><span style="color:#bf616a;">go</span><span> run main.go
-</span></code></pre>
-<p>Open the html page with your browser twice to coonect to th SSE server</p>
-<h2 id="result-overview"><a class="zola-anchor" href="#result-overview" aria-label="Anchor link for: result-overview">Result Overview</a></h2>
-<div align="center" >
-<img src="/gossefinal.gif" width="100%"/>
-</div>
-<h2 id="github-repository"><a class="zola-anchor" href="#github-repository" aria-label="Anchor link for: github-repository">Github repository</a></h2>
-<p><a href="https://github.com/malnossi/gossechat">Real Time Chat System With Golang, Redis and Server Side Events</a></p>
-<h2 id="final-words"><a class="zola-anchor" href="#final-words" aria-label="Anchor link for: final-words">Final Words</a></h2>
-<p>In this walkthrough, we’ve seen how surprisingly straightforward it is to build a real-time, server-to-client chat system using nothing more than Go’s standard library, HTTP, and Redis Pub/Sub. By combining a simple POST endpoint for publishing messages with a Server-Sent Events (SSE) stream for delivery, you can achieve continuous, low-latency updates without introducing the complexity of WebSockets or external frameworks.</p>
-<p>This approach offers several key advantages: the Go server cleanly handles both publishing (via /send) and broadcasting (via /events), Redis provides a lightweight yet powerful message bus for decoupling senders and receivers, and the entire architecture scales naturally across multiple instances.</p>
-<p>However, as with any real-time system, attention to detail matters. You’ll need to handle connection lifetimes, buffering, error recovery, reconnections, and client cleanup to ensure reliability under load. And while Redis Pub/Sub works perfectly for ephemeral, transient messaging, you may want to explore Redis Streams or more robust brokers (like NATS or Kafka) when you need persistence, message replay, or delivery guarantees.</p>
-<p>Ultimately, this example demonstrates how you can use standard Go features and minimal infrastructure to achieve a production-ready foundation for live updates, notifications, or collaborative features — simple, efficient, and scalable by design.</p>
-
-      </div>
-    </div>
-  </div>
-</div> -->
-
-    </main>
-
-    <script lang="js" src='https://malnossi.github.io/script.js'></script>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV" defer></script>
-    <script defer>
-        window.dataLayer = window.dataLayer || [];
-        function gtag() { dataLayer.push(arguments); }
-        gtag('js', new Date());
-
-        gtag('config', 'G-8LBRDGLXJV');
-    </script>
+  <!-- End Body End inject -->
 </body>
 
 </html>

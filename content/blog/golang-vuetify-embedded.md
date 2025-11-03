@@ -6,8 +6,8 @@ description=""
 [taxonomies]
 tags=["Vuejs","Vuetify","Javascript", "Go",]
 [extra]
-cover="goembed.png"
-cover_source="Unsplash"
+[extra.cover]
+image="goembed.png"
 +++
 ## Introduction
 Vuetify is a Material‑Design component library for Vue. The official site describes it as a "no‑design‑skills required Open Source UI library with beautifully handcrafted Vue components". It comes with more than seventy components, automatic tree shaking, RTL support, form validation and even internationalisation for 45 languages. Because it follows Google’s Material guidelines and supports server‑side rendering (SSR) and Nuxt a Vuetify SPA makes an excellent companion for a Go back‑end.

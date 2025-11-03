@@ -4,7 +4,8 @@ date=2024-10-11
 title="Django & Modern JS Frameworks Session Authentication"
 description="Django is one of the most popular backend web application frameworks that exists and it's written in Python. Vue.js is one of the most popular JavaScript tools for adding dynamic features to a web application.Django doesn't need Vue to run. Vue doesn't need Django to run. The combination gives developers an incredibly flexible and dynamic paradigm while also leveraging a number of the built-in benefits that each tool has."
 [extra]
-cover="django-session.webp"
+[extra.cover]
+image="django-session.webp"
 cover_source="Unsplash"
 [taxonomies]
 tags=["Django","Web","Javascript","Python"]

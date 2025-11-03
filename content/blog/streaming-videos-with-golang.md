@@ -6,8 +6,8 @@ description="Build Vue 3 plugin that simplifies the process of displaying notifi
 [taxonomies]
 tags=["Go","HTML","Streaming"]
 [extra]
-cover="govideo.png"
-cover_source="Unsplash"
+[extra.cover]
+image="govideo.png"
 +++
 ## Introduction
 In this article, we’ll explore different approaches for streaming video over the internet and demonstrate a simple, practical example of building a video streaming server using Go. The example will show how to serve video content efficiently with HTTP range requests, allowing playback directly in the browser through the HTML5 `<video>` tag.

@@ -6,8 +6,8 @@ description="Build Vue 3 plugin that simplifies the process of displaying notifi
 [taxonomies]
 tags=["Django","PostgreSQL","Data"]
 [extra]
-cover="djangopostgres.png"
-cover_source="Unsplash"
+[extra.cover]
+image="djangopostgres.png"
 +++
 ## Introduction
 At [Munity](https://munityapps.com), our entire mission revolves around one thing: connecting systems that were never meant to talk to each other. We live and breathe external API integrations pulling data from third-party platforms, transforming it, and making it usable inside modern applications. It sounds straightforward in theory. In practice, it’s controlled chaos.

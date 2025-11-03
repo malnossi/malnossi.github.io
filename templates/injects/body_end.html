@@ -1,0 +1,15 @@
+{# templates/injects/body_end.html #}
+{% if config.extra.cookies and config.extra.cookies.widget_src %}
+  <script src="{{ config.extra.cookies.widget_src }}" defer></script>
+{% endif %}
+
+{# Example: listen for consent and enable GA #}
+<script>
+  // If your cookie widget exposes callbacks, flip GA consent when accepted.
+  // Adjust to your provider’s API.
+  window.addEventListener('CookieConsentAccepted', function () {
+    if (window.gtag) {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  });
+</script>

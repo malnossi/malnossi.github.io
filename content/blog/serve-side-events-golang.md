@@ -6,8 +6,8 @@ description="Build Vue 3 plugin that simplifies the process of displaying notifi
 [taxonomies]
 tags=["Go","Redis","SSE","HTML","JavaScript"]
 [extra]
-cover="gosse.webp"
-cover_source="Unsplash"
+[extra.cover]
+image="gosse.webp"
 +++
 
 ## Introduction

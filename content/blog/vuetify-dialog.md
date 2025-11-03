@@ -6,8 +6,8 @@ description="Build Vue 3 plugin that simplifies the process of displaying notifi
 [taxonomies]
 tags=["Vuejs","Vuetify","Javascript"]
 [extra]
-cover="vuetify.avif"
-cover_source="Unsplash"
+[extra.cover]
+image="vuetify.avif"
 +++
 ## Introduction
 [Vuetify](https://vuetifyjs.com/), a popular Material Design framework for [Vue](https://vuejs.org/), provides a wide range of UI components, including highly customizable dialogs. This article will guide you through building composable programmatic dialogs using Vue and Vuetify, allowing you to manage dialogs efficiently and flexibly.Creating programmatic dialogs in Vue using Vuetify allows developers to dynamically generate dialogs that enhance the user experience without cluttering the template with numerous dialog components.

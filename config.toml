@@ -7,6 +7,8 @@ compile_sass = true
 # Whether to build a search index to be used later on by a JavaScript library
 build_search_index = true
 output_dir = "docs"
+theme = "linkita"
+generate_feeds = true
 taxonomies = [
     { name = "tags",render=true},
 ]
@@ -16,7 +18,25 @@ taxonomies = [
 highlight_code = true
 insert_anchor_links = "heading"
 [extra]
-github_link="https://github.com/malnossi"
-gitlab_link="https://gitlab.com/mohamed.w.nossirat"
-linkedin_link="https://www.linkedin.com/in/mohamed-waheeb-al-nossirat-bb2256105"
-email="mohamed.w.nossirat@gmail.com"
+header_menu_name = "menu_name"
+[extra.analytics]
+ga_id = "G-8LBRDGLXJV"
+[extra.cookies]
+# Your cookie widget script (WebsitePolicies example):
+widget_src = "https://cdnapp.websitepolicies.net/widgets/cookies/mzad7vzz.js"
+[extra.menus]
+menu_name = [
+  { url = "$BASE_URL/blog/", name = "Blog" },
+  { url = "$BASE_URL/tags/", name = "Tags" },
+]
+[extra.profiles.mohamed]
+avatar_url = "/photo.jpeg"
+avatar_alt = "Mohamed's profile picture"
+avatar_invert = false
+name = "Mohamed Nossirat"
+bio = "Software Engineer"
+social = [
+    { name = "linkedin", url = "https://linkedin.com/in/mohamed-waheeb-al-nossirat" },
+    { name = "github", url = "https://github.com/malnossi" },
+    { name = "gitlab", url = "https://gitlab.com/mohamed.w.nossirat" },
+]
