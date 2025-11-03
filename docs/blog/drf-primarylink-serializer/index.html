@@ -8,8 +8,8 @@
   <meta name="generator" content="Zola v0.21.0" />
   <title>Django Rest Framework rich related serializer</title>
   <meta property="og:title" content="Django Rest Framework rich related serializer" />
-  <meta name="description" content="Django REST framework is a powerful and flexible toolkit for building Web APIs. It is built on top of the popular Django web framework. It allows developers to quickly create APIs that various clients…" />
-  <meta property="og:description" content="Django REST framework is a powerful and flexible toolkit for building Web APIs. It is built on top of the popular Django web framework. It allows developers to quickly create APIs that various clients, including web, mobile, and desktop applications. In this article I would like to share with you a …" />
+  <meta name="description" content="Readable API responses shouldn’t compromise write operations. This article introduces a custom serializer field derived from DRF’s PrimaryKeyRelatedField that returns nested objects for reads while ac…" />
+  <meta property="og:description" content="Readable API responses shouldn’t compromise write operations. This article introduces a custom serializer field derived from DRF’s PrimaryKeyRelatedField that returns nested objects for reads while accepting primary keys for writes, yielding cleaner responses without sacrificing flexibility." />
   <meta property="og:url" content="https://malnossi.github.io/blog/drf-primarylink-serializer/" />
   <link rel="canonical" href="https://malnossi.github.io/blog/drf-primarylink-serializer/" />
   <meta property="og:type" content="article" />
@@ -36,18 +36,22 @@
   <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
   <!-- Begin Head End inject -->
   
+<meta name="author" content="Mohamed Nossirat">
+<meta property="article:author" content="Mohamed Nossirat">
+<meta name="twitter:creator" content="Mohamed Nossirat">
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
-  <script>
-    // (Optional) default deny until consent tool flips it to granted
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('consent', 'default', { analytics_storage: 'denied' });
-    gtag('js', new Date());
-    gtag('config', 'G-8LBRDGLXJV', {
-      anonymize_ip: true
-    });
-  </script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+<script>
+  // (Optional) default deny until consent tool flips it to granted
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('consent', 'default', { analytics_storage: 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-8LBRDGLXJV', {
+    anonymize_ip: true
+  });
+</script>
+
 
   <!-- End Head End inject -->
 </head>
@@ -128,7 +132,7 @@
       datetime="2024-08-23T00:00:00+00:00">2024-08-23</time><span
         class="middot"></span><time
     datetime="PT0H4M0S">4&nbsp;min</time><span
-      class="middot"></span><span>Mohamed AL NOSSIRAT</span>
+      class="middot"></span><span>Mohamed Nossirat</span>
 </div>
 
   </header>
@@ -438,7 +442,7 @@ There's always one thing that annoys me when I use this framework, that's how se
   <a
     class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
     href="https://malnossi.github.io/blog/django-vue/" accesskey=","
-    ><span class="mr-1.5">&#8249;</span><span>Django &amp; VueJS 2 an alternative integration</span></a>
+    ><span class="mr-1.5">&#8249;</span><span>Integrating Vue into a Django project doesn’t require heavy tooling.  This piece outlines a strategy where the Vue dev server handles local development while Django serves the built files in production, enabling gradual migration from a monolith to a microservice</span></a>
 </nav>
 
   <!-- Begin Page End inject -->
@@ -450,7 +454,7 @@ There's always one thing that annoys me when I use this framework, that's how se
   <!-- Footer -->
 <footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
   <div class="mr-auto basis-full lg:basis-1/2">
-  © <time datetime="2025">2025</time>
+  © <time datetime="2025">2025</time> Mohamed Nossirat
   </div>
   <div class="flex basis-full lg:basis-1/2 lg:justify-end">
     <span class="mr-6 lg:ml-6">

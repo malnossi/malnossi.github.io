@@ -1,8 +1,7 @@
 +++
-authors=["Mohamed AL NOSSIRAT"]
 date=2025-07-26
 title="Django & DRF Model Generic Auth Stuff"
-description="Django is one of the most popular backend web application frameworks that exists and it's written in Python. Vue.js is one of the most popular JavaScript tools for adding dynamic features to a web application.Django doesn't need Vue to run. Vue doesn't need Django to run. The combination gives developers an incredibly flexible and dynamic paradigm while also leveraging a number of the built-in benefits that each tool has."
+description="Tracking who created or updated a record is vital for auditing. This article shows how to automatically populate created_by and updated_by fields in Django REST Framework by leveraging HiddenFields, reducing boilerplate and improving data integrity"
 [extra]
 [extra.cover]
 image="djangodrf.png"

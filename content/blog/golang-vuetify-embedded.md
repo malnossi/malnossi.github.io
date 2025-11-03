@@ -1,8 +1,7 @@
 +++
 title="Embedding a Vuetify Frontend into a Go Web Server"
 date=2025-10-02
-authors = ["Mohamed AL NOSSIRAT"]
-description=""
+description="Vuetify adds a Material Design look to Vue apps, and Go 1.25’s embed package lets you ship static assets in a single binary.  Here you’ll see how to serve a Vuetify SPA from Go using net/http, Gin and Fiber, with pros and cons of each method"
 [taxonomies]
 tags=["Vuejs","Vuetify","Javascript", "Go",]
 [extra]

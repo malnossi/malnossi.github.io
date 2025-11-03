@@ -1,8 +1,7 @@
 +++
 title="Pushing real-time updates to clients with Server-Sent Events (SSEs)"
 date=2025-04-17
-authors = ["Mohamed AL NOSSIRAT"]
-description="Build Vue 3 plugin that simplifies the process of displaying notifications, alerts and confirmations in your Vue applications. It uses Vuetify components to provide a beautiful and customizable user experience."
+description="Long‑running tasks often need to send status updates back to the browser. This tutorial introduces Server‑Sent Events as a simple, one‑way streaming alternative to WebSockets, highlighting features like automatic reconnection and event IDs"
 [taxonomies]
 tags=["Python","FastApi","Javascript"]
 [extra]

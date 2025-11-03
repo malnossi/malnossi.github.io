@@ -8,6 +8,8 @@
   <meta name="generator" content="Zola v0.21.0" />
   <title>Embedding a Vuetify Frontend into a Go Web Server</title>
   <meta property="og:title" content="Embedding a Vuetify Frontend into a Go Web Server" />
+  <meta name="description" content="Vuetify adds a Material Design look to Vue apps, and Go 1.25’s embed package lets you ship static assets in a single binary.  Here you’ll see how to serve a Vuetify SPA from Go using net/http, Gin and…" />
+  <meta property="og:description" content="Vuetify adds a Material Design look to Vue apps, and Go 1.25’s embed package lets you ship static assets in a single binary.  Here you’ll see how to serve a Vuetify SPA from Go using net/http, Gin and Fiber, with pros and cons of each method" />
   <meta property="og:url" content="https://malnossi.github.io/blog/golang-vuetify-embedded/" />
   <link rel="canonical" href="https://malnossi.github.io/blog/golang-vuetify-embedded/" />
   <meta property="og:type" content="article" />
@@ -35,18 +37,22 @@
   <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
   <!-- Begin Head End inject -->
   
+<meta name="author" content="Mohamed Nossirat">
+<meta property="article:author" content="Mohamed Nossirat">
+<meta name="twitter:creator" content="Mohamed Nossirat">
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
-  <script>
-    // (Optional) default deny until consent tool flips it to granted
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('consent', 'default', { analytics_storage: 'denied' });
-    gtag('js', new Date());
-    gtag('config', 'G-8LBRDGLXJV', {
-      anonymize_ip: true
-    });
-  </script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+<script>
+  // (Optional) default deny until consent tool flips it to granted
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('consent', 'default', { analytics_storage: 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-8LBRDGLXJV', {
+    anonymize_ip: true
+  });
+</script>
+
 
   <!-- End Head End inject -->
 </head>
@@ -127,7 +133,7 @@
       datetime="2025-10-02T00:00:00+00:00">2025-10-02</time><span
         class="middot"></span><time
     datetime="PT0H5M0S">5&nbsp;min</time><span
-      class="middot"></span><span>Mohamed AL NOSSIRAT</span>
+      class="middot"></span><span>Mohamed Nossirat</span>
 </div>
 
   </header>
@@ -409,7 +415,7 @@ Once you’re happy with the UI, build the project:</p>
   <!-- Footer -->
 <footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
   <div class="mr-auto basis-full lg:basis-1/2">
-  © <time datetime="2025">2025</time>
+  © <time datetime="2025">2025</time> Mohamed Nossirat
   </div>
   <div class="flex basis-full lg:basis-1/2 lg:justify-end">
     <span class="mr-6 lg:ml-6">

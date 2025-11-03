@@ -8,6 +8,7 @@ compile_sass = true
 build_search_index = true
 output_dir = "docs"
 theme = "linkita"
+author = "mohamed"
 generate_feeds = true
 taxonomies = [
     { name = "tags",render=true},

@@ -1,8 +1,7 @@
 +++
 title="Real Time Chat System With Golang, Redis and Server Side Events"
 date=2025-10-10
-authors = ["Mohamed AL NOSSIRAT"]
-description="Build Vue 3 plugin that simplifies the process of displaying notifications, alerts and confirmations in your Vue applications. It uses Vuetify components to provide a beautiful and customizable user experience."
+description="Server‑Sent Events provide a lightweight way to push live updates over a single HTTP connection. This post explains SSE’s benefits—simplicity, automatic reconnection and efficiency and walks through building a real‑time chat using Go and Redis Pub/Sub"
 [taxonomies]
 tags=["Go","Redis","SSE","HTML","JavaScript"]
 [extra]

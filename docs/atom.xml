@@ -13,7 +13,9 @@
         
         <author>
           <name>
-            Mohamed AL NOSSIRAT
+            
+              mohamed
+            
           </name>
         </author>
         
@@ -498,7 +500,9 @@ That’s actually the &lt;strong&gt;best practice&lt;&#x2F;strong&gt;, because y
         
         <author>
           <name>
-            Mohamed AL NOSSIRAT
+            
+              mohamed
+            
           </name>
         </author>
         
@@ -738,7 +742,9 @@ We learned how browsers request partial video data through the Range header, how
         
         <author>
           <name>
-            Mohamed AL NOSSIRAT
+            
+              mohamed
+            
           </name>
         </author>
         
@@ -1138,7 +1144,9 @@ Each message is separated by a blank line. You can optionally add event:, id:, e
         
         <author>
           <name>
-            Mohamed AL NOSSIRAT
+            
+              mohamed
+            
           </name>
         </author>
         
@@ -1329,7 +1337,9 @@ Once you’re happy with the UI, build the project:&lt;&#x2F;p&gt;
         
         <author>
           <name>
-            Mohamed AL NOSSIRAT
+            
+              mohamed
+            
           </name>
         </author>
         
@@ -1607,7 +1617,9 @@ the response should be like this&lt;&#x2F;p&gt;
         
         <author>
           <name>
-            Mohamed AL NOSSIRAT
+            
+              mohamed
+            
           </name>
         </author>
         
@@ -2137,7 +2149,9 @@ Below is what it looks like&lt;&#x2F;p&gt;
         
         <author>
           <name>
-            Mohamed AL NOSSIRAT
+            
+              mohamed
+            
           </name>
         </author>
         
@@ -2495,7 +2509,9 @@ Notice, how the server pushes the result of the task automatically once it finis
         
         <author>
           <name>
-            Mohamed AL NOSSIRAT
+            
+              mohamed
+            
           </name>
         </author>
         
@@ -3148,7 +3164,9 @@ return Response(None, status=status.HTTP_202_ACCEPTED)&lt;&#x2F;p&gt;
         
         <author>
           <name>
-            Mohamed AL NOSSIRAT
+            
+              mohamed
+            
           </name>
         </author>
         
@@ -3312,13 +3330,15 @@ return Response(None, status=status.HTTP_202_ACCEPTED)&lt;&#x2F;p&gt;
         
     </entry>
     <entry xml:lang="en">
-        <title>Django &amp; VueJS 2 an alternative integration</title>
+        <title>Integrating Vue into a Django project doesn’t require heavy tooling.  This piece outlines a strategy where the Vue dev server handles local development while Django serves the built files in production, enabling gradual migration from a monolith to a microservice</title>
         <published>2024-08-25T00:00:00+00:00</published>
         <updated>2024-08-25T00:00:00+00:00</updated>
         
         <author>
           <name>
-            Mohamed AL NOSSIRAT
+            
+              mohamed
+            
           </name>
         </author>
         
@@ -3784,7 +3804,9 @@ A second benefit of this approach is that when you&#x27;re developing new featur
         
         <author>
           <name>
-            Mohamed AL NOSSIRAT
+            
+              mohamed
+            
           </name>
         </author>
         

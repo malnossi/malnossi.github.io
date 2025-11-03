@@ -1,8 +1,7 @@
 +++
 title="Django Rest Framework rich related serializer"
 date=2024-08-23
-authors = ["Mohamed AL NOSSIRAT"]
-description="Django REST framework is a powerful and flexible toolkit for building Web APIs. It is built on top of the popular Django web framework. It allows developers to quickly create APIs that various clients, including web, mobile, and desktop applications. In this article I would like to share with you a tip that helped me alot to improve the developer experience."
+description="Readable API responses shouldn’t compromise write operations. This article introduces a custom serializer field derived from DRF’s PrimaryKeyRelatedField that returns nested objects for reads while accepting primary keys for writes, yielding cleaner responses without sacrificing flexibility."
 [taxonomies]
 tags=["Django","DRF","Python"]
 [extra]

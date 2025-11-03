@@ -1,8 +1,7 @@
 +++
 title="Stream videos with Go and Http"
 date=2025-10-22
-authors = ["Mohamed AL NOSSIRAT"]
-description="Build Vue 3 plugin that simplifies the process of displaying notifications, alerts and confirmations in your Vue applications. It uses Vuetify components to provide a beautiful and customizable user experience."
+description="Learn how to build a simple video‑streaming server in Go.  The article explores HTTP range requests and the <video> element, contrasts HTTP, WebSocket and WebRTC approaches, and demonstrates handling Range headers to serve specific byte ranges for smooth playback"
 [taxonomies]
 tags=["Go","HTML","Streaming"]
 [extra]

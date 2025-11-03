@@ -1,8 +1,7 @@
 +++
-authors=["Mohamed AL NOSSIRAT"]
 date=2025-06-02
 title="Integrate Django and Vite based Frontend"
-description="Django is one of the most popular backend web application frameworks that exists and it's written in Python. Vue.js is one of the most popular JavaScript tools for adding dynamic features to a web application.Django doesn't need Vue to run. Vue doesn't need Django to run. The combination gives developers an incredibly flexible and dynamic paradigm while also leveraging a number of the built-in benefits that each tool has."
+description="Want modern JavaScript without abandoning Django’s monolithic structure? This guide demonstrates how to use Vite to bundle Vue or React components inside a Django project, enabling hot‑module reloading and future‑proof asset management"
 [extra]
 [extra.cover]
 image="django+vite.webp"

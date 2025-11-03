@@ -6,10 +6,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
   <meta name="generator" content="Zola v0.21.0" />
-  <title>Django &amp; VueJS 2 an alternative integration</title>
-  <meta property="og:title" content="Django &amp; VueJS 2 an alternative integration" />
-  <meta name="description" content="Django is one of the most popular backend web application frameworks that exists and it&apos;s written in Python. Vue.js is one of the most popular JavaScript tools for adding dynamic features to a web app…" />
-  <meta property="og:description" content="Django is one of the most popular backend web application frameworks that exists and it&apos;s written in Python. Vue.js is one of the most popular JavaScript tools for adding dynamic features to a web application.Django doesn&apos;t need Vue to run. Vue doesn&apos;t need Django to run. The combination gives devel…" />
+  <title>Integrating Vue into a Django project doesn’t require heavy tooling.  This piece outlines a strategy where the Vue dev server handles local development while Django serves the built files in productio…</title>
+  <meta property="og:title" content="Integrating Vue into a Django project doesn’t require heavy tooling.  This piece outlines a strategy where the Vue dev server handles local development while Django serves the built files in productio…" />
   <meta property="og:url" content="https://malnossi.github.io/blog/django-vue/" />
   <link rel="canonical" href="https://malnossi.github.io/blog/django-vue/" />
   <meta property="og:type" content="article" />
@@ -38,18 +36,22 @@
   <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
   <!-- Begin Head End inject -->
   
+<meta name="author" content="Mohamed Nossirat">
+<meta property="article:author" content="Mohamed Nossirat">
+<meta name="twitter:creator" content="Mohamed Nossirat">
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
-  <script>
-    // (Optional) default deny until consent tool flips it to granted
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('consent', 'default', { analytics_storage: 'denied' });
-    gtag('js', new Date());
-    gtag('config', 'G-8LBRDGLXJV', {
-      anonymize_ip: true
-    });
-  </script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+<script>
+  // (Optional) default deny until consent tool flips it to granted
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('consent', 'default', { analytics_storage: 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-8LBRDGLXJV', {
+    anonymize_ip: true
+  });
+</script>
+
 
   <!-- End Head End inject -->
 </head>
@@ -124,13 +126,13 @@
   <!-- End Page Start inject -->
 
   <header class="mb-16">
-    <h1 class="my-0! pb-2.5">Django &amp; VueJS 2 an alternative integration</h1>
+    <h1 class="my-0! pb-2.5">Integrating Vue into a Django project doesn’t require heavy tooling.  This piece outlines a strategy where the Vue dev server handles local development while Django serves the built files in production, enabling gradual migration from a monolith to a microservice</h1>
     <!-- Page Info -->
 <div class="text-sm antialiased opacity-80"><time
       datetime="2024-08-25T00:00:00+00:00">2024-08-25</time><span
         class="middot"></span><time
     datetime="PT0H6M0S">6&nbsp;min</time><span
-      class="middot"></span><span>Mohamed AL NOSSIRAT</span>
+      class="middot"></span><span>Mohamed Nossirat</span>
 </div>
 
   </header>
@@ -691,7 +693,7 @@ A second benefit of this approach is that when you're developing new features or
   <!-- Footer -->
 <footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
   <div class="mr-auto basis-full lg:basis-1/2">
-  © <time datetime="2025">2025</time>
+  © <time datetime="2025">2025</time> Mohamed Nossirat
   </div>
   <div class="flex basis-full lg:basis-1/2 lg:justify-end">
     <span class="mr-6 lg:ml-6">

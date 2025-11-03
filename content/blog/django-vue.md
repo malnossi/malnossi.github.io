@@ -1,8 +1,6 @@
 +++
-authors=["Mohamed AL NOSSIRAT"]
 date=2024-08-25
-title="Django & VueJS 2 an alternative integration"
-description="Django is one of the most popular backend web application frameworks that exists and it's written in Python. Vue.js is one of the most popular JavaScript tools for adding dynamic features to a web application.Django doesn't need Vue to run. Vue doesn't need Django to run. The combination gives developers an incredibly flexible and dynamic paradigm while also leveraging a number of the built-in benefits that each tool has."
+title="Integrating Vue into a Django project doesn’t require heavy tooling.  This piece outlines a strategy where the Vue dev server handles local development while Django serves the built files in production, enabling gradual migration from a monolith to a microservice"
 [extra]
 [extra.cover]
 image="two-scoops.avif"

@@ -8,8 +8,8 @@
   <meta name="generator" content="Zola v0.21.0" />
   <title>Real Time Chat System With Golang, Redis and Server Side Events</title>
   <meta property="og:title" content="Real Time Chat System With Golang, Redis and Server Side Events" />
-  <meta name="description" content="Build Vue 3 plugin that simplifies the process of displaying notifications, alerts and confirmations in your Vue applications. It uses Vuetify components to provide a beautiful and customizable user e…" />
-  <meta property="og:description" content="Build Vue 3 plugin that simplifies the process of displaying notifications, alerts and confirmations in your Vue applications. It uses Vuetify components to provide a beautiful and customizable user experience." />
+  <meta name="description" content="Server‑Sent Events provide a lightweight way to push live updates over a single HTTP connection. This post explains SSE’s benefits—simplicity, automatic reconnection and efficiency and walks through b…" />
+  <meta property="og:description" content="Server‑Sent Events provide a lightweight way to push live updates over a single HTTP connection. This post explains SSE’s benefits—simplicity, automatic reconnection and efficiency and walks through building a real‑time chat using Go and Redis Pub/Sub" />
   <meta property="og:url" content="https://malnossi.github.io/blog/serve-side-events-golang/" />
   <link rel="canonical" href="https://malnossi.github.io/blog/serve-side-events-golang/" />
   <meta property="og:type" content="article" />
@@ -38,18 +38,22 @@
   <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
   <!-- Begin Head End inject -->
   
+<meta name="author" content="Mohamed Nossirat">
+<meta property="article:author" content="Mohamed Nossirat">
+<meta name="twitter:creator" content="Mohamed Nossirat">
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
-  <script>
-    // (Optional) default deny until consent tool flips it to granted
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('consent', 'default', { analytics_storage: 'denied' });
-    gtag('js', new Date());
-    gtag('config', 'G-8LBRDGLXJV', {
-      anonymize_ip: true
-    });
-  </script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+<script>
+  // (Optional) default deny until consent tool flips it to granted
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('consent', 'default', { analytics_storage: 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-8LBRDGLXJV', {
+    anonymize_ip: true
+  });
+</script>
+
 
   <!-- End Head End inject -->
 </head>
@@ -130,7 +134,7 @@
       datetime="2025-10-10T00:00:00+00:00">2025-10-10</time><span
         class="middot"></span><time
     datetime="PT0H7M0S">7&nbsp;min</time><span
-      class="middot"></span><span>Mohamed AL NOSSIRAT</span>
+      class="middot"></span><span>Mohamed Nossirat</span>
 </div>
 
   </header>
@@ -617,7 +621,7 @@ Each message is separated by a blank line. You can optionally add event:, id:, e
   <!-- Footer -->
 <footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
   <div class="mr-auto basis-full lg:basis-1/2">
-  © <time datetime="2025">2025</time>
+  © <time datetime="2025">2025</time> Mohamed Nossirat
   </div>
   <div class="flex basis-full lg:basis-1/2 lg:justify-end">
     <span class="mr-6 lg:ml-6">

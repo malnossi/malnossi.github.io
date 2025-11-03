@@ -1,8 +1,7 @@
 +++
 title="Vue & Vuetify Composable Confirm Dialogs"
 date=2024-08-28
-authors = ["Mohamed AL NOSSIRAT"]
-description="Build Vue 3 plugin that simplifies the process of displaying notifications, alerts and confirmations in your Vue applications. It uses Vuetify components to provide a beautiful and customizable user experience."
+description="Create reusable confirm dialogs in Vue using Vuetify’s dialog component. The article shows a Dialog.vue component and a useDialog composable to programmatically trigger confirm/cancel prompts from anywhere in your app"
 [taxonomies]
 tags=["Vuejs","Vuetify","Javascript"]
 [extra]

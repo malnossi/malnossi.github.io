@@ -8,8 +8,8 @@
   <meta name="generator" content="Zola v0.21.0" />
   <title>Vue &amp; Vuetify Composable Confirm Dialogs</title>
   <meta property="og:title" content="Vue &amp; Vuetify Composable Confirm Dialogs" />
-  <meta name="description" content="Build Vue 3 plugin that simplifies the process of displaying notifications, alerts and confirmations in your Vue applications. It uses Vuetify components to provide a beautiful and customizable user e…" />
-  <meta property="og:description" content="Build Vue 3 plugin that simplifies the process of displaying notifications, alerts and confirmations in your Vue applications. It uses Vuetify components to provide a beautiful and customizable user experience." />
+  <meta name="description" content="Create reusable confirm dialogs in Vue using Vuetify’s dialog component. The article shows a Dialog.vue component and a useDialog composable to programmatically trigger confirm/cancel prompts from any…" />
+  <meta property="og:description" content="Create reusable confirm dialogs in Vue using Vuetify’s dialog component. The article shows a Dialog.vue component and a useDialog composable to programmatically trigger confirm/cancel prompts from anywhere in your app" />
   <meta property="og:url" content="https://malnossi.github.io/blog/vuetify-dialog/" />
   <link rel="canonical" href="https://malnossi.github.io/blog/vuetify-dialog/" />
   <meta property="og:type" content="article" />
@@ -36,18 +36,22 @@
   <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
   <!-- Begin Head End inject -->
   
+<meta name="author" content="Mohamed Nossirat">
+<meta property="article:author" content="Mohamed Nossirat">
+<meta name="twitter:creator" content="Mohamed Nossirat">
 
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
-  <script>
-    // (Optional) default deny until consent tool flips it to granted
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('consent', 'default', { analytics_storage: 'denied' });
-    gtag('js', new Date());
-    gtag('config', 'G-8LBRDGLXJV', {
-      anonymize_ip: true
-    });
-  </script>
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+<script>
+  // (Optional) default deny until consent tool flips it to granted
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('consent', 'default', { analytics_storage: 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-8LBRDGLXJV', {
+    anonymize_ip: true
+  });
+</script>
+
 
   <!-- End Head End inject -->
 </head>
@@ -128,7 +132,7 @@
       datetime="2024-08-28T00:00:00+00:00">2024-08-28</time><span
         class="middot"></span><time
     datetime="PT0H3M0S">3&nbsp;min</time><span
-      class="middot"></span><span>Mohamed AL NOSSIRAT</span>
+      class="middot"></span><span>Mohamed Nossirat</span>
 </div>
 
   </header>
@@ -360,7 +364,7 @@
   <a
     class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
     href="https://malnossi.github.io/blog/django-vue/" accesskey="."
-    ><span>Django &amp; VueJS 2 an alternative integration</span><span class="ml-1.5">&#8250;</span></a>
+    ><span>Integrating Vue into a Django project doesn’t require heavy tooling.  This piece outlines a strategy where the Vue dev server handles local development while Django serves the built files in production, enabling gradual migration from a monolith to a microservice</span><span class="ml-1.5">&#8250;</span></a>
 </nav>
 
   <!-- Begin Page End inject -->
@@ -372,7 +376,7 @@
   <!-- Footer -->
 <footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
   <div class="mr-auto basis-full lg:basis-1/2">
-  © <time datetime="2025">2025</time>
+  © <time datetime="2025">2025</time> Mohamed Nossirat
   </div>
   <div class="flex basis-full lg:basis-1/2 lg:justify-end">
     <span class="mr-6 lg:ml-6">

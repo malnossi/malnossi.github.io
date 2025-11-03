@@ -1,8 +1,7 @@
 +++
 title="Fast & Efficient Bulk Create with Django and PostgreSQL"
 date=2025-10-30
-authors = ["Mohamed AL NOSSIRAT"]
-description="Build Vue 3 plugin that simplifies the process of displaying notifications, alerts and confirmations in your Vue applications. It uses Vuetify components to provide a beautiful and customizable user experience."
+description="Building scalable back‑ends requires smart data ingestion. This guide shows how to stream large API datasets into PostgreSQL with Django’s bulk_create and the database COPY command.  It compares performance and memory use and explains why streaming is essential for handling remote, messy and big data"
 [taxonomies]
 tags=["Django","PostgreSQL","Data"]
 [extra]
