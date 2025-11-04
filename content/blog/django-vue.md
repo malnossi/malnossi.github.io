@@ -1,6 +1,7 @@
 +++
 date=2024-08-25
-title="Integrating Vue into a Django project doesn’t require heavy tooling.  This piece outlines a strategy where the Vue dev server handles local development while Django serves the built files in production, enabling gradual migration from a monolith to a microservice"
+title="Integrating VueJS 2 into a Django"
+description="Integrating Vue into a Django project doesn’t require heavy tooling. This piece outlines a strategy where the Vue dev server handles local development while Django serves the built files in production, enabling gradual migration from a monolith to a microservice"
 [extra]
 [extra.cover]
 image="two-scoops.avif"

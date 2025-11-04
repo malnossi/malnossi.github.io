@@ -3330,7 +3330,7 @@ return Response(None, status=status.HTTP_202_ACCEPTED)&lt;&#x2F;p&gt;
         
     </entry>
     <entry xml:lang="en">
-        <title>Integrating Vue into a Django project doesn’t require heavy tooling.  This piece outlines a strategy where the Vue dev server handles local development while Django serves the built files in production, enabling gradual migration from a monolith to a microservice</title>
+        <title>Integrating VueJS 2 into a Django</title>
         <published>2024-08-25T00:00:00+00:00</published>
         <updated>2024-08-25T00:00:00+00:00</updated>
         
