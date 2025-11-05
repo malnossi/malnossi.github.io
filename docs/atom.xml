@@ -4,8 +4,440 @@
     <link rel="self" type="application/atom+xml" href="https://malnossi.github.io/atom.xml"/>
     <link rel="alternate" type="text/html" href="https://malnossi.github.io"/>
     <generator uri="https://www.getzola.org/">Zola</generator>
-    <updated>2025-10-30T00:00:00+00:00</updated>
+    <updated>2025-11-05T00:00:00+00:00</updated>
     <id>https://malnossi.github.io/atom.xml</id>
+    <entry xml:lang="en">
+        <title>Create PDF files with Django &amp; Weasyprint</title>
+        <published>2025-11-05T00:00:00+00:00</published>
+        <updated>2025-11-05T00:00:00+00:00</updated>
+        
+        <author>
+          <name>
+            
+              mohamed
+            
+          </name>
+        </author>
+        
+        <link rel="alternate" type="text/html" href="https://malnossi.github.io/blog/django-weasyprint/"/>
+        <id>https://malnossi.github.io/blog/django-weasyprint/</id>
+        
+        <content type="html" xml:base="https://malnossi.github.io/blog/django-weasyprint/">&lt;h2 id=&quot;introduction&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#introduction&quot; aria-label=&quot;Anchor link for: introduction&quot;&gt;Introduction&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;When building business-oriented web applications with &lt;a href=&quot;https:&#x2F;&#x2F;www.djangoproject.com&quot;&gt;Django&lt;&#x2F;a&gt;, a common requirement is to generate PDF documents; for example invoices, quotes, receipts or reports. While Django handles the HTML web interface easily, turning HTML + CSS into a polished PDF can be tricky. That’s where &lt;a href=&quot;https:&#x2F;&#x2F;weasyprint.org&quot;&gt;WeasyPrint&lt;&#x2F;a&gt; comes in: it’s a library that renders HTML and CSS to PDF and works nicely in a Django context.&lt;&#x2F;p&gt;
+&lt;p&gt;In this article we’ll build a simple &lt;strong&gt;&quot;Invoice Generator&quot;&lt;&#x2F;strong&gt; application: you’ll define a model for Invoice, render an invoice template in HTML, then provide a Django view that uses WeasyPrint to generate a downloadable PDF. We’ll cover project structure, installation, template design, view logic and tips for integration (handling static files, stylesheets, page breaks etc). At the end you’ll have a reusable setup you can adapt for any kind of document generation.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;project-setup&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#project-setup&quot; aria-label=&quot;Anchor link for: project-setup&quot;&gt;Project Setup&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Create a virtual environment. Then install Django and WeasyPrint, here I use &lt;a href=&quot;https:&#x2F;&#x2F;docs.astral.sh&#x2F;uv&#x2F;&quot;&gt;uv python package and project manager&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;mkdir&lt;&#x2F;span&gt;&lt;span&gt; djangoweasyprint &amp;amp;&amp;amp; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;cd&lt;&#x2F;span&gt;&lt;span&gt; djangoweasyprint
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;uv&lt;&#x2F;span&gt;&lt;span&gt; init .
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;uv&lt;&#x2F;span&gt;&lt;span&gt; add django weasyprit
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;source&lt;&#x2F;span&gt;&lt;span&gt; .venv&#x2F;bin&#x2F;activate
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;django-admin&lt;&#x2F;span&gt;&lt;span&gt; startproject config .
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;&lt;em&gt;Note: On Linux (Debian&#x2F;Ubuntu) you may need to install system dependencies such as &lt;code&gt;libpango1.0-0&lt;&#x2F;code&gt;, &lt;code&gt;libcairo2&lt;&#x2F;code&gt;, &lt;code&gt;libffi-dev&lt;&#x2F;code&gt; etc:&lt;&#x2F;em&gt;&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;sudo&lt;&#x2F;span&gt;&lt;span&gt; apt install libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 libffi-dev
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;├──&lt;&#x2F;span&gt;&lt;span&gt; README.md
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;├──&lt;&#x2F;span&gt;&lt;span&gt; config
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   ├── __init__.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   ├── asgi.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   ├── settings.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   ├── urls.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   └── wsgi.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;├──&lt;&#x2F;span&gt;&lt;span&gt; manage.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;├──&lt;&#x2F;span&gt;&lt;span&gt; pyproject.toml
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;└──&lt;&#x2F;span&gt;&lt;span&gt; uv.lock
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;In your Django &lt;code&gt;settings.py&lt;&#x2F;code&gt;, ensure your &lt;code&gt;STATIC_URL&lt;&#x2F;code&gt; and &lt;code&gt;STATIC_ROOT&lt;&#x2F;code&gt; or &lt;code&gt;STATICFILES_DIRS&lt;&#x2F;code&gt; are properly configured so that assets like CSS, fonts or images used in the invoice template can be resolved when generating the PDF.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# &#x2F;&#x2F; more code above
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;TEMPLATES &lt;&#x2F;span&gt;&lt;span&gt;= [
+&lt;&#x2F;span&gt;&lt;span&gt;    {
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;BACKEND&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;django.template.backends.django.DjangoTemplates&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;DIRS&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: [&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;BASE_DIR &lt;&#x2F;span&gt;&lt;span&gt;&#x2F; &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;templates&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;],
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;APP_DIRS&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;True&lt;&#x2F;span&gt;&lt;span&gt;,
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;OPTIONS&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: {
+&lt;&#x2F;span&gt;&lt;span&gt;            &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;context_processors&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: [
+&lt;&#x2F;span&gt;&lt;span&gt;                &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;django.template.context_processors.request&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;                &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;django.contrib.auth.context_processors.auth&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;                &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;django.contrib.messages.context_processors.messages&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;            ],
+&lt;&#x2F;span&gt;&lt;span&gt;        },
+&lt;&#x2F;span&gt;&lt;span&gt;    },
+&lt;&#x2F;span&gt;&lt;span&gt;]
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# &#x2F;&#x2F;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;STATIC_URL &lt;&#x2F;span&gt;&lt;span&gt;= &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;static&#x2F;&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;STATICFILES_DIRS &lt;&#x2F;span&gt;&lt;span&gt;= [&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;BASE_DIR &lt;&#x2F;span&gt;&lt;span&gt;&#x2F; &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;static&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;]
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# &#x2F;&#x2F;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Now create the &lt;code&gt;billing&lt;&#x2F;code&gt; app in django&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;python&lt;&#x2F;span&gt;&lt;span&gt; manage.py startapp billing
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;mkdir -p&lt;&#x2F;span&gt;&lt;span&gt; billing&#x2F;templates&#x2F;billing 
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;mkdir -p&lt;&#x2F;span&gt;&lt;span&gt; billing&#x2F;static&#x2F;billing&#x2F;{css,img}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;touch&lt;&#x2F;span&gt;&lt;span&gt; billing&#x2F;templates&#x2F;billing&#x2F;invoice_detail.html 
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;rouch&lt;&#x2F;span&gt;&lt;span&gt; billing&#x2F;static&#x2F;billing&#x2F;css&#x2F;billing.css
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;.
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;├──&lt;&#x2F;span&gt;&lt;span&gt; README.md
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;├──&lt;&#x2F;span&gt;&lt;span&gt; billing
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   ├── __init__.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   ├── admin.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   ├── apps.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   ├── migrations
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   │   └── __init__.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   ├── models.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   ├── static
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   │   └── billing
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   │       ├── css
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   │       │   └── billing.css
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   │       └── img
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   ├── templates
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   │   └── billing
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   │       └── invoice_detail.html
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   ├── tests.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   └── views.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;├──&lt;&#x2F;span&gt;&lt;span&gt; config
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   ├── __init__.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   ├── asgi.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   ├── settings.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   ├── urls.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;│&lt;&#x2F;span&gt;&lt;span&gt;   └── wsgi.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;├──&lt;&#x2F;span&gt;&lt;span&gt; manage.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;├──&lt;&#x2F;span&gt;&lt;span&gt; pyproject.toml
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;└──&lt;&#x2F;span&gt;&lt;span&gt; uv.lock
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Add the &lt;code&gt;billing&lt;&#x2F;code&gt; app to the &lt;code&gt;settings.py&lt;&#x2F;code&gt; &lt;code&gt;INSTALLED_APPS&lt;&#x2F;code&gt;&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;INSTALLED_APPS &lt;&#x2F;span&gt;&lt;span&gt;= [
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;django.contrib.admin&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;django.contrib.auth&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;django.contrib.contenttypes&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;django.contrib.sessions&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;django.contrib.messages&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;django.contrib.staticfiles&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;,
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;billing&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# new
+&lt;&#x2F;span&gt;&lt;span&gt;]
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;the-models&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#the-models&quot; aria-label=&quot;Anchor link for: the-models&quot;&gt;The models&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;In &lt;code&gt;billing&#x2F;models.py&lt;&#x2F;code&gt;, you can define a simple &lt;code&gt;Invoice&lt;&#x2F;code&gt; and &lt;code&gt;InvoiceItem&lt;&#x2F;code&gt; model. For instance:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;from &lt;&#x2F;span&gt;&lt;span&gt;django.db &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;models
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;class &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;Invoice&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;models.Model&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    number = models.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;CharField&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;max_length&lt;&#x2F;span&gt;&lt;span&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;20&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;unique&lt;&#x2F;span&gt;&lt;span&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;True&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    date = models.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;DateField&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;auto_now_add&lt;&#x2F;span&gt;&lt;span&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;True&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    client_name = models.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;CharField&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;max_length&lt;&#x2F;span&gt;&lt;span&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;200&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    client_address = models.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;TextField&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;    total = models.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;DecimalField&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;max_digits&lt;&#x2F;span&gt;&lt;span&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;10&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;decimal_places&lt;&#x2F;span&gt;&lt;span&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# … other fields: VAT, terms, etc.
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;__str__&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return f&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Invoice &lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.number}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt; - &lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.client_name}&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;class &lt;&#x2F;span&gt;&lt;span style=&quot;color:#ebcb8b;&quot;&gt;InvoiceItem&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;models.Model&lt;&#x2F;span&gt;&lt;span style=&quot;color:#eff1f5;&quot;&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    invoice = models.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;ForeignKey&lt;&#x2F;span&gt;&lt;span&gt;(Invoice, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;on_delete&lt;&#x2F;span&gt;&lt;span&gt;=models.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;CASCADE&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;related_name&lt;&#x2F;span&gt;&lt;span&gt;=&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;items&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;)
+&lt;&#x2F;span&gt;&lt;span&gt;    description = models.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;CharField&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;max_length&lt;&#x2F;span&gt;&lt;span&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;255&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    quantity = models.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;IntegerField&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;default&lt;&#x2F;span&gt;&lt;span&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;    unit_price = models.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;DecimalField&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;max_digits&lt;&#x2F;span&gt;&lt;span&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;10&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;decimal_places&lt;&#x2F;span&gt;&lt;span&gt;=&lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2&lt;&#x2F;span&gt;&lt;span&gt;)
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    @&lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;property
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;line_total&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.quantity * &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.unit_price
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;__str__&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;        &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return f&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.description}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt; (&lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.quantity}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt; × &lt;&#x2F;span&gt;&lt;span&gt;{&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;self&lt;&#x2F;span&gt;&lt;span&gt;.unit_price}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;)&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;This gives you a foreign-key relation: each invoice has many invoice items.&lt;&#x2F;p&gt;
+&lt;p&gt;Remember to run &lt;code&gt;python manage.py makemigrations&lt;&#x2F;code&gt; and &lt;code&gt;python manage.py migrate&lt;&#x2F;code&gt;.&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;template-design&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#template-design&quot; aria-label=&quot;Anchor link for: template-design&quot;&gt;Template Design&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;In &lt;code&gt;billing&#x2F;templates&#x2F;billing&#x2F;invoice_detail.html&lt;&#x2F;code&gt;, craft an &lt;code&gt;HTML&lt;&#x2F;code&gt; representation of the invoice. Because WeasyPrint renders &lt;code&gt;HTML+CSS&lt;&#x2F;code&gt;, you can design the layout exactly how you’d want the PDF to look (header, footer, table of items, totals, page break control, etc). Example:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;html&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-html &quot;&gt;&lt;code class=&quot;language-html&quot; data-lang=&quot;html&quot;&gt;&lt;span&gt;{%load static%}
+&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;!&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;DOCTYPE &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;html&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;html &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;lang&lt;&#x2F;span&gt;&lt;span&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;en&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;head&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;meta &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;charset&lt;&#x2F;span&gt;&lt;span&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;utf-8&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;title&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;Invoice&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;title&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;link &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;rel&lt;&#x2F;span&gt;&lt;span&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;stylesheet&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;href&lt;&#x2F;span&gt;&lt;span&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;{% static &amp;#39;billing&#x2F;css&#x2F;billing.css&amp;#39; %}&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;meta &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;description&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot; &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;content&lt;&#x2F;span&gt;&lt;span&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Invoice demo sample&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;head&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;body&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;h1&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;Invoice&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;h1&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;aside&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;address &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;id&lt;&#x2F;span&gt;&lt;span&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;from&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        WeasyPrint
+&lt;&#x2F;span&gt;&lt;span&gt;        26 rue Emile Decorps
+&lt;&#x2F;span&gt;&lt;span&gt;        69100 Villeurbanne
+&lt;&#x2F;span&gt;&lt;span&gt;        France
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;address&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;address &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;id&lt;&#x2F;span&gt;&lt;span&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;to&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        Our awesome developers
+&lt;&#x2F;span&gt;&lt;span&gt;        From all around the world
+&lt;&#x2F;span&gt;&lt;span&gt;        Earth
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;address&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;aside&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dl &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;id&lt;&#x2F;span&gt;&lt;span&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;informations&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dt&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;Invoice number&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dt&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dd&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;{{ invoice.number }}&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dd&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dt&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;Date&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dt&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dd&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;{{ invoice.date }}&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dd&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dl&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;table&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;thead&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tr&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;th&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;Description&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;th&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;th&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;Price&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;th&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;th&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;Quantity&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;th&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;th&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;Subtotal&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;th&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tr&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;thead&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tbody&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        {% for item in invoice.items.all %}
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tr&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;{{ item.description }}&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;{{ item.unit_price }}&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;{{ item.quantity }}&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;{{ item.line_total }}&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tr&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        {% endfor %}
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tbody&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;table&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;footer&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;table &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;id&lt;&#x2F;span&gt;&lt;span&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;total&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;thead&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tr&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;            &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;th&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;Due by&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;th&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;            &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;th&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;Total due&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;th&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tr&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;thead&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tbody&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tr&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;            &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;{{ invoice.date }}&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;            &amp;lt;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;€{{ invoice.total }}&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;          &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tr&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;        &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;tbody&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;      &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;table&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;footer&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;  &amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;body&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;span&gt;&amp;lt;&#x2F;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;html&lt;&#x2F;span&gt;&lt;span&gt;&amp;gt;
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;in the &lt;code&gt;billing&#x2F;static&#x2F;billing&#x2F;css&#x2F;billing.css&lt;&#x2F;code&gt;, you might include styles such as:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;css&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-css &quot;&gt;&lt;code class=&quot;language-css&quot; data-lang=&quot;css&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;@font-face &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  font-family: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Pacifico&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  src: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;url&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;pacifico.ttf&lt;&#x2F;span&gt;&lt;span&gt;);
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;@font-face &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  font-family: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Source Sans Pro&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  font-weight: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;400&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  src: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;url&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;SourceSans3-Regular.ttf&lt;&#x2F;span&gt;&lt;span&gt;);
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;@font-face &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  font-family: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Source Sans Pro&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  font-weight: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;700&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  src: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;url&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;SourceSans3-Bold.ttf&lt;&#x2F;span&gt;&lt;span&gt;);
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;@page &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  font-family: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Pacifico&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  margin: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;3cm&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  @bottom-left {
+&lt;&#x2F;span&gt;&lt;span&gt;    color: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;#1ee494&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    content: &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;♥ Thank you!&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;;
+&lt;&#x2F;span&gt;&lt;span&gt;  }
+&lt;&#x2F;span&gt;&lt;span&gt;  @&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;bottom-right &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;    color: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;#a9a&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;    content: &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;contact@courtbouillon.org | courtbouillon.org&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;;
+&lt;&#x2F;span&gt;&lt;span&gt;    font-size: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;9pt&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  }
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;html &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  color: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;#14213d&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  font-family: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Source Sans Pro&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  font-size: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;11pt&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  line-height: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1.6&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;body &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  margin: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;h1 &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  color: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;#1ee494&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  font-family: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Pacifico&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  font-size: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;40pt&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  margin: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;aside &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  display: flex;
+&lt;&#x2F;span&gt;&lt;span&gt;  margin: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2em 0 4em&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;aside address &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  font-style: normal;
+&lt;&#x2F;span&gt;&lt;span&gt;  white-space: pre-line;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;aside address&lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;#from &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  color: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;#a9a&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  flex: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;1&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;aside address&lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;#to &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  text-align: right;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dl &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  position: absolute;
+&lt;&#x2F;span&gt;&lt;span&gt;  right: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  text-align: right;
+&lt;&#x2F;span&gt;&lt;span&gt;  top: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dt&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dd &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  display: inline;
+&lt;&#x2F;span&gt;&lt;span&gt;  margin: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dt &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  color: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;#a9a&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dt&lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;before &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  content: &amp;#39;&amp;#39;;
+&lt;&#x2F;span&gt;&lt;span&gt;  display: block;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;dt&lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;::&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;after &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  content: &amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;table &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  border-collapse: collapse;
+&lt;&#x2F;span&gt;&lt;span&gt;  width: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;100%&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;th &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  border-bottom: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;.2mm &lt;&#x2F;span&gt;&lt;span&gt;solid &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;#a9a&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  color: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;#a9a&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  font-size: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;10pt&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  font-weight: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;400&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  padding-bottom: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;.25cm&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  text-transform: uppercase;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  padding-top: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;7mm&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td&lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;last-of-type &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  color: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;#1ee494&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  font-weight: bold;
+&lt;&#x2F;span&gt;&lt;span&gt;  text-align: right;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;th&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  text-align: center;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;th&lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;first-of-type, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td&lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;first-of-type &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  text-align: left;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;th&lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;last-of-type, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;td&lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;:&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;last-of-type &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  text-align: right;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;footer &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  content: &amp;#39;&amp;#39;;
+&lt;&#x2F;span&gt;&lt;span&gt;  display: block;
+&lt;&#x2F;span&gt;&lt;span&gt;  height: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;6cm&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;table&lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;#total &lt;&#x2F;span&gt;&lt;span&gt;{
+&lt;&#x2F;span&gt;&lt;span&gt;  background: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;#f6f6f6&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  border-color: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#96b5b4;&quot;&gt;#f6f6f6&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  border-style: solid;
+&lt;&#x2F;span&gt;&lt;span&gt;  border-width: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;2cm 3cm&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  bottom: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  font-size: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;20pt&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  margin: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;0 -3cm&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;  position: absolute;
+&lt;&#x2F;span&gt;&lt;span&gt;  width: &lt;&#x2F;span&gt;&lt;span style=&quot;color:#d08770;&quot;&gt;18cm&lt;&#x2F;span&gt;&lt;span&gt;;
+&lt;&#x2F;span&gt;&lt;span&gt;}
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;view-to-generate-pdf&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#view-to-generate-pdf&quot; aria-label=&quot;Anchor link for: view-to-generate-pdf&quot;&gt;View to generate PDF&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;In &lt;code&gt;billing&#x2F;views.py&lt;&#x2F;code&gt;, create a view that fetches the invoice instance, renders the &lt;code&gt;HTML&lt;&#x2F;code&gt; template with context, then calls WeasyPrint to write the PDF and returns a HttpResponse of type application&#x2F;pdf.&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;from &lt;&#x2F;span&gt;&lt;span&gt;django.shortcuts &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;get_object_or_404
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;from &lt;&#x2F;span&gt;&lt;span&gt;django.http &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;HttpResponse
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;from &lt;&#x2F;span&gt;&lt;span&gt;django.template.loader &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;render_to_string
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;from &lt;&#x2F;span&gt;&lt;span&gt;weasyprint &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;HTML&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;CSS
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;from .&lt;&#x2F;span&gt;&lt;span&gt;models &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;Invoice
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;def &lt;&#x2F;span&gt;&lt;span style=&quot;color:#8fa1b3;&quot;&gt;invoice_pdf_view&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;request&lt;&#x2F;span&gt;&lt;span&gt;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pk&lt;&#x2F;span&gt;&lt;span&gt;):
+&lt;&#x2F;span&gt;&lt;span&gt;    invoice = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;get_object_or_404&lt;&#x2F;span&gt;&lt;span&gt;(Invoice, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;pk&lt;&#x2F;span&gt;&lt;span&gt;=pk)
+&lt;&#x2F;span&gt;&lt;span&gt;    html_string = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;render_to_string&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;billing&#x2F;invoice_detail.html&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, {&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;invoice&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;: invoice})
+&lt;&#x2F;span&gt;&lt;span&gt;    html = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;HTML&lt;&#x2F;span&gt;&lt;span&gt;(&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;string&lt;&#x2F;span&gt;&lt;span&gt;=html_string, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;base_url&lt;&#x2F;span&gt;&lt;span&gt;=request.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;build_absolute_uri&lt;&#x2F;span&gt;&lt;span&gt;())
+&lt;&#x2F;span&gt;&lt;span&gt;    pdf_bytes = html.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;write_pdf&lt;&#x2F;span&gt;&lt;span&gt;()
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;    response = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;HttpResponse&lt;&#x2F;span&gt;&lt;span&gt;(pdf_bytes, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;content_type&lt;&#x2F;span&gt;&lt;span&gt;=&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;application&#x2F;pdf&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;)
+&lt;&#x2F;span&gt;&lt;span&gt;    response[&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;Content-Disposition&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;] = &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;f&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;inline; filename=invoice_&lt;&#x2F;span&gt;&lt;span&gt;{invoice.number}&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;.pdf&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;return &lt;&#x2F;span&gt;&lt;span&gt;response
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;blockquote&gt;
+&lt;p&gt;Important: Notice the base_url=request.build_absolute_uri() (or use base_url=settings.STATIC_ROOT depending on your setup) so that relative static URLs in the template resolve correctly. Without that, images or CSS may not load in the PDF.&lt;&#x2F;p&gt;
+&lt;&#x2F;blockquote&gt;
+&lt;p&gt;Remember in your urls.py to map:&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;from &lt;&#x2F;span&gt;&lt;span&gt;django.urls &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;path
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;from .&lt;&#x2F;span&gt;&lt;span&gt;views &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;invoice_pdf_view
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;urlpatterns = [
+&lt;&#x2F;span&gt;&lt;span&gt;    &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;path&lt;&#x2F;span&gt;&lt;span&gt;(&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;invoice&#x2F;&amp;lt;int:pk&amp;gt;&#x2F;pdf&#x2F;&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;, invoice_pdf_view, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;name&lt;&#x2F;span&gt;&lt;span&gt;=&amp;#39;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;invoice_pdf&lt;&#x2F;span&gt;&lt;span&gt;&amp;#39;),
+&lt;&#x2F;span&gt;&lt;span&gt;]
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# iin the main urls.py
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;from &lt;&#x2F;span&gt;&lt;span&gt;django.contrib &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;admin
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;from &lt;&#x2F;span&gt;&lt;span&gt;django.urls &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;path, include
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span&gt;urlpatterns = [&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;path&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;admin&#x2F;&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;, admin.site.urls), &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;path&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&amp;quot;, &lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;include&lt;&#x2F;span&gt;&lt;span&gt;(&amp;quot;&lt;&#x2F;span&gt;&lt;span style=&quot;color:#a3be8c;&quot;&gt;billing.urls&lt;&#x2F;span&gt;&lt;span&gt;&amp;quot;))]
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Add the &lt;code&gt;Invoice&lt;&#x2F;code&gt; and the &lt;code&gt;InvoiceItem&lt;&#x2F;code&gt; to the &lt;code&gt;admin.py&lt;&#x2F;code&gt; file&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;from &lt;&#x2F;span&gt;&lt;span&gt;django.contrib &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;admin
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;from .&lt;&#x2F;span&gt;&lt;span&gt;models &lt;&#x2F;span&gt;&lt;span style=&quot;color:#b48ead;&quot;&gt;import &lt;&#x2F;span&gt;&lt;span&gt;Invoice, InvoiceItem
+&lt;&#x2F;span&gt;&lt;span&gt;
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# Register your models here.
+&lt;&#x2F;span&gt;&lt;span&gt;admin.site.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;register&lt;&#x2F;span&gt;&lt;span&gt;(Invoice)
+&lt;&#x2F;span&gt;&lt;span&gt;admin.site.&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;register&lt;&#x2F;span&gt;&lt;span&gt;(InvoiceItem)
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;p&gt;Create a &lt;code&gt;superuser&lt;&#x2F;code&gt; and add some Incoices and InvoiceItems&lt;&#x2F;p&gt;
+&lt;pre data-lang=&quot;bash&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-bash &quot;&gt;&lt;code class=&quot;language-bash&quot; data-lang=&quot;bash&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;python&lt;&#x2F;span&gt;&lt;span&gt; manage.py createsuperuser
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#65737e;&quot;&gt;# after the creation of the superuser
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;python&lt;&#x2F;span&gt;&lt;span&gt; manage.py runserver
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;putting-it-all-together&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#putting-it-all-together&quot; aria-label=&quot;Anchor link for: putting-it-all-together&quot;&gt;Putting it all together&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;ol&gt;
+&lt;li&gt;Create your Invoice data via Django admin or via your app.&lt;&#x2F;li&gt;
+&lt;li&gt;Navigate to the URL &lt;code&gt;&#x2F;invoice&#x2F;&amp;lt;pk&amp;gt;&#x2F;pdf&#x2F;&lt;&#x2F;code&gt; and you should get a generated PDF of the invoice, styled according to your template.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;h2 id=&quot;overview&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#overview&quot; aria-label=&quot;Anchor link for: overview&quot;&gt;Overview&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;img src=&quot;&#x2F;pdf-result.png&quot; alt=&quot;Overview&quot; &#x2F;&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;additional-concerns&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#additional-concerns&quot; aria-label=&quot;Anchor link for: additional-concerns&quot;&gt;Additional Concerns&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;Large documents &amp;amp; performance:&lt;&#x2F;strong&gt; If you have many invoices or a batch of PDF exports, you might offload generation to a background task (e.g., Celery) and store the PDF file. The &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;fdemmer&#x2F;django-weasyprint&#x2F;blob&#x2F;main&#x2F;README.rst&quot;&gt;django-weasyprint&lt;&#x2F;a&gt; &lt;code&gt;README&lt;&#x2F;code&gt; includes an example of a Celery task.&lt;&#x2F;li&gt;
+&lt;li&gt;&lt;strong&gt;Docker&#x2F;Alpine:&lt;&#x2F;strong&gt; If you deploy in Docker (especially Alpine), ensure you install the native libraries for Pango&#x2F;Cairo&#x2F;Harfbuzz.&lt;&#x2F;li&gt;
+&lt;&#x2F;ol&gt;
+&lt;pre data-lang=&quot;python&quot; style=&quot;background-color:#2b303b;color:#c0c5ce;&quot; class=&quot;language-python &quot;&gt;&lt;code class=&quot;language-python&quot; data-lang=&quot;python&quot;&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RUN &lt;&#x2F;span&gt;&lt;span&gt;apk add --no-cache jpeg-dev zlib-dev git gcc musl-dev python3-dev postgresql-dev
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RUN &lt;&#x2F;span&gt;&lt;span&gt;apk add py3-pip py3-pillow py3-cffi py3-brotli gcc musl-dev python3-dev pango
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RUN &lt;&#x2F;span&gt;&lt;span&gt;apk add py3-pip gcc musl-dev python3-dev pango zlib-dev jpeg-dev openjpeg-dev g++ libffi-dev
+&lt;&#x2F;span&gt;&lt;span style=&quot;color:#bf616a;&quot;&gt;RUN &lt;&#x2F;span&gt;&lt;span&gt;apk add --no-cache --virtual .build-deps build-base linux-headers
+&lt;&#x2F;span&gt;&lt;&#x2F;code&gt;&lt;&#x2F;pre&gt;
+&lt;h2 id=&quot;github&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#github&quot; aria-label=&quot;Anchor link for: github&quot;&gt;Github&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;&lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;malnossi&#x2F;djangoweasyprint&quot;&gt;Django &amp;amp; Weasyprint&lt;&#x2F;a&gt;&lt;&#x2F;p&gt;
+&lt;h2 id=&quot;conclusion&quot;&gt;&lt;a class=&quot;zola-anchor&quot; href=&quot;#conclusion&quot; aria-label=&quot;Anchor link for: conclusion&quot;&gt;Conclusion&lt;&#x2F;a&gt;&lt;&#x2F;h2&gt;
+&lt;p&gt;Integrating WeasyPrint with Django gives you a powerful combination for HTML-to-PDF document generation ideal for invoices, reports, receipts and more. By designing your template in HTML&#x2F;CSS, you retain full styling control and avoid more cumbersome PDF libraries.&lt;&#x2F;p&gt;
+&lt;p&gt;Take-aways:&lt;&#x2F;p&gt;
+&lt;ul&gt;
+&lt;li&gt;See the &lt;a href=&quot;https:&#x2F;&#x2F;doc.courtbouillon.org&#x2F;weasyprint&#x2F;stable&#x2F;&quot;&gt;Weasyprint Documentation&lt;&#x2F;a&gt; for mor examples and use cases.&lt;&#x2F;li&gt;
+&lt;li&gt;You can Use the &lt;a href=&quot;https:&#x2F;&#x2F;github.com&#x2F;fdemmer&#x2F;django-weasyprint&quot;&gt;django-weasyprint&lt;&#x2F;a&gt; package for a Django-friendly wrapper.&lt;&#x2F;li&gt;
+&lt;li&gt;Install the required system dependencies (Pango, Cairo, Harfbuzz) especially on non-standard Linux distros.&lt;&#x2F;li&gt;
+&lt;li&gt;Ensure static&#x2F;media URLs resolve in the PDF context by using &lt;code&gt;base_url&lt;&#x2F;code&gt; or a custom URL fetcher.&lt;&#x2F;li&gt;
+&lt;li&gt;Choose between inline download vs saving to disk or background tasks depending on your workflow.&lt;&#x2F;li&gt;
+&lt;&#x2F;ul&gt;
+&lt;p&gt;Armed with this setup, you can now incorporate PDF invoice generation into your Django application with confidence, offering users polished downloadable documents with minimal overhead.&lt;&#x2F;p&gt;
+</content>
+        
+    </entry>
     <entry xml:lang="en">
         <title>Fast &amp; Efficient Bulk Create with Django and PostgreSQL</title>
         <published>2025-10-30T00:00:00+00:00</published>
