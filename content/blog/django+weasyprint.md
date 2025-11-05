@@ -428,7 +428,7 @@ RUN apk add --no-cache --virtual .build-deps build-base linux-headers
 Integrating WeasyPrint with Django gives you a powerful combination for HTML-to-PDF document generation ideal for invoices, reports, receipts and more. By designing your template in HTML/CSS, you retain full styling control and avoid more cumbersome PDF libraries.
 
 Take-aways:
-- See the [Weasyprint Documentation](https://doc.courtbouillon.org/weasyprint/stable/) for mor examples and use cases.
+- See the [Weasyprint Documentation](https://doc.courtbouillon.org/weasyprint/stable/) for more examples and use cases.
 - You can Use the [django-weasyprint](https://github.com/fdemmer/django-weasyprint) package for a Django-friendly wrapper.
 - Install the required system dependencies (Pango, Cairo, Harfbuzz) especially on non-standard Linux distros.
 - Ensure static/media URLs resolve in the PDF context by using `base_url` or a custom URL fetcher.
