@@ -3,7 +3,7 @@ title="Create PDF files with Django & Weasyprint"
 date=2025-11-05
 description="In this article you’ll learn how to integrate WeasyPrint with Django to build a robust invoice-generating application. We walk through the installation, project setup, template design, view logic and PDF production, giving you a complete blueprint to deliver downloadable or printable invoices in your Django project."
 [taxonomies]
-tags=["Django","Weasyprin","PDF"]
+tags=["Django","Weasyprint","PDF"]
 [extra]
 [extra.cover]
 image="django-weasyprint.png"
