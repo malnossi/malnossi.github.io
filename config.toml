@@ -38,6 +38,7 @@ widget_src = "https://cdnapp.websitepolicies.net/widgets/cookies/mzad7vzz.js"
 [extra.menus]
 menu_name = [
   { url = "$BASE_URL/blog/", name = "Blog" },
+  { url = "$BASE_URL/talks/", name = "Talks" },
   { url = "$BASE_URL/tags/", name = "Tags" },
 ]
 [extra.profiles.mohamed]
