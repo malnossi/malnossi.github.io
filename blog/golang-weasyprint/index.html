@@ -1,0 +1,525 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Building an HTTP PDF Generation Service in Go Using HTML Templates and WeasyPrint</title>
+  <meta property="og:title" content="Building an HTTP PDF Generation Service in Go Using HTML Templates and WeasyPrint" />
+  <meta name="description" content="In this article you’ll learn how to integrate WeasyPrint with Golang to build a robust invoice-generating application. We walk through the installation, project setup, template design, view logic and …" />
+  <meta property="og:description" content="In this article you’ll learn how to integrate WeasyPrint with Golang to build a robust invoice-generating application. We walk through the installation, project setup, template design, view logic and PDF production, giving you a complete blueprint to deliver downloadable or printable invoices in you…" />
+  <meta property="og:url" content="https://malnossi.github.io/blog/golang-weasyprint/" />
+  <link rel="canonical" href="https://malnossi.github.io/blog/golang-weasyprint/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-01-07T00:00:00+00:00" />
+  <meta property="article:tag" content="Go" />
+  <meta property="article:tag" content="Weasyprint" />
+  <meta property="article:tag" content="PDF" />
+  <meta property="og:image" content="https://malnossi.github.io/go-pdf.webp" />
+  <meta property="og:image:alt" content="" />
+  <meta property="og:image:width" content="781" />
+  <meta property="og:image:height" content="480" />
+  <meta property="og:image:type" content="image/webp" />
+  <link rel="alternate" type="application/atom+xml" href="https://malnossi.github.io/atom.xml" title="Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://malnossi.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://malnossi.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #f4f4f5; --header: #e4e4e7;} :root.dark{--bg: #18181b; --header: #27272a;}</style>
+  <meta name="theme-color" data-light="#e4e4e7" data-dark="#27272a" content="#e4e4e7" />
+  <link rel="icon" type="image/x-icon" href="https://malnossi.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" type="image/png" href="https://malnossi.github.io/apple-touch-icon.png?h=58bee300054c5308feb3" />
+  <link rel="icon" type="image/png" href="https://malnossi.github.io/android-icon.png?h=8d80ec95446bd2c36826" />
+  <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+<meta name="author" content="Mohamed Nossirat©">
+<meta property="article:author" content="Mohamed Nossirat©">
+<meta name="twitter:creator" content="Mohamed Nossirat©">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+<script>
+  // (Optional) default deny until consent tool flips it to granted
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('consent', 'default', { analytics_storage: 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-8LBRDGLXJV', {
+    anonymize_ip: true
+  });
+</script>
+
+
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <button type="button" title="Go to home page [Alt + !]" accesskey="!"
+          onclick="window.location.href='https://malnossi.github.io/';"
+          class="btn-home h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-home,url(icons/home.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Open search [Alt + /]" accesskey="/"
+          onclick="window.zolaTheme.search.toggle();"
+          class="btn-search ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-search,url(icons/search.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/blog/"
+          >Blog</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/talks/"
+          >Talks</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/tags/"
+          >Tags</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+      <!-- Search -->
+<div id="linkita-search-wrapper" class="hidden">
+  <ul id="linkita-search-results"></ul>
+</div>
+<script>window.zolaTheme.search.init({ scripts: ["https://malnossi.github.io/elasticlunr.min.js", "https://malnossi.github.io/search_index.en.js"], arg: { w: "#linkita-search-wrapper", r: "#linkita-search-results" } });</script>
+
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Building an HTTP PDF Generation Service in Go Using HTML Templates and WeasyPrint</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2026-01-07T00:00:00+00:00">2026-01-07</time><span
+        class="middot"></span><time
+    datetime="PT0H2M0S">2&nbsp;min</time><span
+      class="middot"></span><span>Mohamed Nossirat</span>
+</div>
+
+  </header>
+  <figure class="mt-0 mb-12">
+    <img
+      class="h-auto w-full rounded-lg"
+      src="https://malnossi.github.io/go-pdf.webp"
+      width="781"
+      height="480"
+    />
+  </figure>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#introduction">Introduction</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#install-weasyprint">Install Weasyprint</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#project-structure">Project Structure</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#domain-model-invoice-data">Domain Model: Invoice Data</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#html-template-file">HTML Template File</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#styling-and-fonts">Styling and Fonts</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#rendering-html-into-a-buffer">Rendering HTML into a Buffer</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#converting-html-to-pdf">Converting HTML to PDF</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#http-handler-streaming-the-pdf">HTTP Handler: Streaming the PDF</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#server-entry-point">Server Entry Point</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#result">Result</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#github">Github</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#conclusion">Conclusion</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h2>
+<p>PDF generation is a common backend requirement for invoices, receipts, reports, and legal documents. In Go, while the standard library does not render PDFs directly, it provides excellent primitives to build a clean HTTP service that generates PDFs by delegating rendering to a specialized engine.</p>
+<p>In this article, we will build a HTTP service that returns a PDF response, generated from HTML templates, styled with external CSS and fonts, and rendered using WeasyPrint.</p>
+<p>The result is a production-grade architecture that is easy to maintain, test, and extend.</p>
+<h2 id="install-weasyprint"><a class="zola-anchor" href="#install-weasyprint" aria-label="Anchor link for: install-weasyprint">Install Weasyprint</a></h2>
+<p>You can refer to <a rel="external" href="https://doc.courtbouillon.org/weasyprint/stable/first_steps.html#installation">Weasyprint Installation Documentation</a> and follow the steps to install the package on your system, however, the easiest way to install WeasyPrint on macOS is to use Homebrew:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">brew</span><span style="color: #9ECBFF;"> install weasyprint</span></span></code></pre><h2 id="project-structure"><a class="zola-anchor" href="#project-structure" aria-label="Anchor link for: project-structure">Project Structure</a></h2>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">goweasyprint/</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> assets</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│</span><span style="color: #9ECBFF;">   ├── css</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│</span><span style="color: #9ECBFF;">   │   └── invoice.css</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│</span><span style="color: #9ECBFF;">   ├── fonts</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│</span><span style="color: #9ECBFF;">   │   └── Inter-Regular.ttf</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│</span><span style="color: #9ECBFF;">   └── images</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│</span><span style="color: #9ECBFF;">       └── logo.webp</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> cmd</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│</span><span style="color: #9ECBFF;">   └── main.go</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> go.mod</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">└──</span><span style="color: #9ECBFF;"> templates</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    └──</span><span style="color: #9ECBFF;"> invoice.html</span></span></code></pre>
+<p>This structure keeps presentation assets clearly separated from application logic.</p>
+<h2 id="domain-model-invoice-data"><a class="zola-anchor" href="#domain-model-invoice-data" aria-label="Anchor link for: domain-model-invoice-data">Domain Model: Invoice Data</a></h2>
+<p>We start with a well-defined model. This keeps business logic out of templates.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="go"><span class="giallo-l"><span style="color: #F97583;">type</span><span style="color: #B392F0;"> Company</span><span style="color: #F97583;"> struct</span><span> {</span></span>
+<span class="giallo-l"><span>	Name</span><span style="color: #F97583;">    string</span></span>
+<span class="giallo-l"><span>	Address</span><span style="color: #F97583;"> string</span></span>
+<span class="giallo-l"><span>	LogoURL</span><span style="color: #F97583;"> string</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">type</span><span style="color: #B392F0;"> Item</span><span style="color: #F97583;"> struct</span><span> {</span></span>
+<span class="giallo-l"><span>	Description</span><span style="color: #F97583;"> string</span></span>
+<span class="giallo-l"><span>	Quantity</span><span style="color: #F97583;">    int</span></span>
+<span class="giallo-l"><span>	UnitPrice</span><span style="color: #F97583;">   float64</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">func</span><span> (</span><span style="color: #FFAB70;">i </span><span style="color: #B392F0;">Item</span><span>)</span><span style="color: #B392F0;"> Total</span><span>()</span><span style="color: #F97583;"> float64</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">	return float64</span><span>(i.Quantity)</span><span style="color: #F97583;"> *</span><span> i.UnitPrice</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">type</span><span style="color: #B392F0;"> Invoice</span><span style="color: #F97583;"> struct</span><span> {</span></span>
+<span class="giallo-l"><span>	Number</span><span style="color: #F97583;">    string</span></span>
+<span class="giallo-l"><span>	Date</span><span style="color: #F97583;">      string</span></span>
+<span class="giallo-l"><span>	Company</span><span style="color: #B392F0;">   Company</span></span>
+<span class="giallo-l"><span>	Customer</span><span style="color: #F97583;">  string</span></span>
+<span class="giallo-l"><span>	Items     []</span><span style="color: #B392F0;">Item</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">func</span><span> (</span><span style="color: #FFAB70;">i </span><span style="color: #B392F0;">Invoice</span><span>)</span><span style="color: #B392F0;"> GrandTotal</span><span>()</span><span style="color: #F97583;"> float64</span><span> {</span></span>
+<span class="giallo-l"><span>	total</span><span style="color: #F97583;"> :=</span><span style="color: #79B8FF;"> 0.0</span></span>
+<span class="giallo-l"><span style="color: #F97583;">	for</span><span> _, item</span><span style="color: #F97583;"> := range</span><span> i.Items {</span></span>
+<span class="giallo-l"><span>		total</span><span style="color: #F97583;"> +=</span><span> item.</span><span style="color: #B392F0;">Total</span><span>()</span></span>
+<span class="giallo-l"><span>	}</span></span>
+<span class="giallo-l"><span style="color: #F97583;">	return</span><span> total</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="html-template-file"><a class="zola-anchor" href="#html-template-file" aria-label="Anchor link for: html-template-file">HTML Template File</a></h2>
+<p>This template is print-optimized and includes pagination, headers, and footers.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="html"><span class="giallo-l"><span>&lt;!</span><span style="color: #85E89D;">DOCTYPE</span><span style="color: #B392F0;"> html</span><span>&gt;</span></span>
+<span class="giallo-l"><span>&lt;</span><span style="color: #85E89D;">html</span><span>&gt;</span></span>
+<span class="giallo-l"><span>&lt;</span><span style="color: #85E89D;">head</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">meta</span><span style="color: #B392F0;"> charset</span><span>=</span><span style="color: #9ECBFF;">&quot;UTF-8&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">title</span><span>&gt;Invoice {{.Number}}&lt;/</span><span style="color: #85E89D;">title</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">link</span><span style="color: #B392F0;"> rel</span><span>=</span><span style="color: #9ECBFF;">&quot;stylesheet&quot;</span><span style="color: #B392F0;"> href</span><span>=</span><span style="color: #9ECBFF;">&quot;css/invoice.css&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>&lt;/</span><span style="color: #85E89D;">head</span><span>&gt;</span></span>
+<span class="giallo-l"><span>&lt;</span><span style="color: #85E89D;">body</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&lt;</span><span style="color: #85E89D;">header</span><span style="color: #B392F0;"> class</span><span>=</span><span style="color: #9ECBFF;">&quot;header&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">img</span><span style="color: #B392F0;"> src</span><span>=</span><span style="color: #9ECBFF;">&quot;images/logo.webp&quot;</span><span style="color: #B392F0;"> class</span><span>=</span><span style="color: #9ECBFF;">&quot;logo&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">div</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;</span><span style="color: #85E89D;">h1</span><span>&gt;Invoice&lt;/</span><span style="color: #85E89D;">h1</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;</span><span style="color: #85E89D;">p</span><span>&gt;#{{.Number}}&lt;/</span><span style="color: #85E89D;">p</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;</span><span style="color: #85E89D;">p</span><span>&gt;Date: {{.Date}}&lt;/</span><span style="color: #85E89D;">p</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;/</span><span style="color: #85E89D;">div</span><span>&gt;</span></span>
+<span class="giallo-l"><span>&lt;/</span><span style="color: #85E89D;">header</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&lt;</span><span style="color: #85E89D;">section</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">strong</span><span>&gt;{{.Company.Name}}&lt;/</span><span style="color: #85E89D;">strong</span><span>&gt;&lt;</span><span style="color: #85E89D;">br</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    {{.Company.Address}}</span></span>
+<span class="giallo-l"><span>&lt;/</span><span style="color: #85E89D;">section</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&lt;</span><span style="color: #85E89D;">section</span><span style="color: #B392F0;"> class</span><span>=</span><span style="color: #9ECBFF;">&quot;customer&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">strong</span><span>&gt;Billed To:&lt;/</span><span style="color: #85E89D;">strong</span><span>&gt;&lt;</span><span style="color: #85E89D;">br</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    {{.Customer}}</span></span>
+<span class="giallo-l"><span>&lt;/</span><span style="color: #85E89D;">section</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&lt;</span><span style="color: #85E89D;">table</span><span style="color: #B392F0;"> class</span><span>=</span><span style="color: #9ECBFF;">&quot;items&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">thead</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;</span><span style="color: #85E89D;">tr</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;</span><span style="color: #85E89D;">th</span><span>&gt;Description&lt;/</span><span style="color: #85E89D;">th</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;</span><span style="color: #85E89D;">th</span><span>&gt;Qty&lt;/</span><span style="color: #85E89D;">th</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;</span><span style="color: #85E89D;">th</span><span>&gt;Unit&lt;/</span><span style="color: #85E89D;">th</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;</span><span style="color: #85E89D;">th</span><span>&gt;Total&lt;/</span><span style="color: #85E89D;">th</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;/</span><span style="color: #85E89D;">tr</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;/</span><span style="color: #85E89D;">thead</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">tbody</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    {{range .Items}}</span></span>
+<span class="giallo-l"><span>        &lt;</span><span style="color: #85E89D;">tr</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;</span><span style="color: #85E89D;">td</span><span>&gt;{{.Description}}&lt;/</span><span style="color: #85E89D;">td</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;</span><span style="color: #85E89D;">td</span><span>&gt;{{.Quantity}}&lt;/</span><span style="color: #85E89D;">td</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;</span><span style="color: #85E89D;">td</span><span>&gt;{{printf &quot;%.2f&quot; .UnitPrice}}&lt;/</span><span style="color: #85E89D;">td</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;</span><span style="color: #85E89D;">td</span><span>&gt;{{printf &quot;%.2f&quot; .Total}}&lt;/</span><span style="color: #85E89D;">td</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;/</span><span style="color: #85E89D;">tr</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    {{end}}</span></span>
+<span class="giallo-l"><span>    &lt;/</span><span style="color: #85E89D;">tbody</span><span>&gt;</span></span>
+<span class="giallo-l"><span>&lt;/</span><span style="color: #85E89D;">table</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&lt;</span><span style="color: #85E89D;">section</span><span style="color: #B392F0;"> class</span><span>=</span><span style="color: #9ECBFF;">&quot;total&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">strong</span><span>&gt;Grand Total:&lt;/</span><span style="color: #85E89D;">strong</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    {{printf &quot;%.2f&quot; .GrandTotal}}</span></span>
+<span class="giallo-l"><span>&lt;/</span><span style="color: #85E89D;">section</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&lt;/</span><span style="color: #85E89D;">body</span><span>&gt;</span></span>
+<span class="giallo-l"><span>&lt;/</span><span style="color: #85E89D;">html</span><span>&gt;</span></span></code></pre><h2 id="styling-and-fonts"><a class="zola-anchor" href="#styling-and-fonts" aria-label="Anchor link for: styling-and-fonts">Styling and Fonts</a></h2>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="css"><span class="giallo-l"><span style="color: #F97583;">@font-face</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    font-family</span><span>:</span><span style="color: #9ECBFF;"> &quot;Inter&quot;</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    src</span><span>:</span><span style="color: #79B8FF;"> url</span><span>(</span><span style="color: #9ECBFF;">&quot;fonts/Inter-Regular.ttf&quot;</span><span>);</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #85E89D;">body</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    font-family</span><span>:</span><span style="color: #9ECBFF;"> &quot;Inter&quot;</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    margin</span><span>:</span><span style="color: #79B8FF;"> 40</span><span style="color: #F97583;">px</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    color</span><span>:</span><span style="color: #79B8FF;"> #333</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">.header</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    display</span><span>:</span><span style="color: #79B8FF;"> flex</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    justify-content</span><span>:</span><span style="color: #79B8FF;"> space-between</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    margin-bottom</span><span>:</span><span style="color: #79B8FF;"> 30</span><span style="color: #F97583;">px</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">.logo</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    height</span><span>:</span><span style="color: #79B8FF;"> 100</span><span style="color: #F97583;">px</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">.items</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    width</span><span>:</span><span style="color: #79B8FF;"> 100</span><span style="color: #F97583;">%</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    border-collapse</span><span>:</span><span style="color: #79B8FF;"> collapse</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    margin-top</span><span>:</span><span style="color: #79B8FF;"> 20</span><span style="color: #F97583;">px</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">.items</span><span style="color: #85E89D;"> th</span><span>,</span><span style="color: #B392F0;"> .items</span><span style="color: #85E89D;"> td</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    border</span><span>:</span><span style="color: #79B8FF;"> 1</span><span style="color: #F97583;">px</span><span style="color: #79B8FF;"> solid #ddd</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    padding</span><span>:</span><span style="color: #79B8FF;"> 8</span><span style="color: #F97583;">px</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">.total</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    margin-top</span><span>:</span><span style="color: #79B8FF;"> 20</span><span style="color: #F97583;">px</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    text-align</span><span>:</span><span style="color: #79B8FF;"> right</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    font-size</span><span>:</span><span style="color: #79B8FF;"> 18</span><span style="color: #F97583;">px</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="rendering-html-into-a-buffer"><a class="zola-anchor" href="#rendering-html-into-a-buffer" aria-label="Anchor link for: rendering-html-into-a-buffer">Rendering HTML into a Buffer</a></h2>
+<p>We render the template directly into memory.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="go"><span class="giallo-l"><span style="color: #F97583;">func</span><span style="color: #B392F0;"> renderHTML</span><span>(</span><span style="color: #FFAB70;">invoice</span><span style="color: #B392F0;"> Invoice</span><span>) (</span><span style="color: #F97583;">*</span><span style="color: #B392F0;">bytes</span><span>.</span><span style="color: #B392F0;">Buffer</span><span>,</span><span style="color: #F97583;"> error</span><span>) {</span></span>
+<span class="giallo-l"><span>	tmpl, err</span><span style="color: #F97583;"> :=</span><span> template.</span><span style="color: #B392F0;">ParseFiles</span><span>(</span><span style="color: #9ECBFF;">&quot;templates/invoice.html&quot;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">	if</span><span> err</span><span style="color: #F97583;"> !=</span><span style="color: #79B8FF;"> nil</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">		return</span><span style="color: #79B8FF;"> nil</span><span>, err</span></span>
+<span class="giallo-l"><span>	}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">	var</span><span> buf</span><span style="color: #B392F0;"> bytes</span><span>.</span><span style="color: #B392F0;">Buffer</span></span>
+<span class="giallo-l"><span style="color: #F97583;">	if</span><span> err</span><span style="color: #F97583;"> :=</span><span> tmpl.</span><span style="color: #B392F0;">Execute</span><span>(</span><span style="color: #F97583;">&amp;</span><span>buf, invoice); err</span><span style="color: #F97583;"> !=</span><span style="color: #79B8FF;"> nil</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">		return</span><span style="color: #79B8FF;"> nil</span><span>, err</span></span>
+<span class="giallo-l"><span>	}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">	return &amp;</span><span>buf,</span><span style="color: #79B8FF;"> nil</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="converting-html-to-pdf"><a class="zola-anchor" href="#converting-html-to-pdf" aria-label="Anchor link for: converting-html-to-pdf">Converting HTML to PDF</a></h2>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="go"><span class="giallo-l"><span style="color: #F97583;">func</span><span style="color: #B392F0;"> htmlToPDF</span><span>(</span><span style="color: #FFAB70;">html</span><span style="color: #F97583;"> *</span><span style="color: #B392F0;">bytes</span><span>.</span><span style="color: #B392F0;">Buffer</span><span>) ([]</span><span style="color: #F97583;">byte</span><span>,</span><span style="color: #F97583;"> error</span><span>) {</span></span>
+<span class="giallo-l"><span>	cmd</span><span style="color: #F97583;"> :=</span><span> exec.</span><span style="color: #B392F0;">Command</span><span>(</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">		&quot;weasyprint&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">		&quot;-&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">		&quot;-&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">		&quot;--base-url&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">		&quot;assets&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>	)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>	cmd.Stdin</span><span style="color: #F97583;"> =</span><span> html</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">	var</span><span> pdf</span><span style="color: #B392F0;"> bytes</span><span>.</span><span style="color: #B392F0;">Buffer</span></span>
+<span class="giallo-l"><span>	cmd.Stdout</span><span style="color: #F97583;"> = &amp;</span><span>pdf</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">	var</span><span> stderr</span><span style="color: #B392F0;"> bytes</span><span>.</span><span style="color: #B392F0;">Buffer</span></span>
+<span class="giallo-l"><span>	cmd.Stderr</span><span style="color: #F97583;"> = &amp;</span><span>stderr</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">	if</span><span> err</span><span style="color: #F97583;"> :=</span><span> cmd.</span><span style="color: #B392F0;">Run</span><span>(); err</span><span style="color: #F97583;"> !=</span><span style="color: #79B8FF;"> nil</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">		return</span><span style="color: #79B8FF;"> nil</span><span>, fmt.</span><span style="color: #B392F0;">Errorf</span><span>(</span><span style="color: #9ECBFF;">&quot;weasyprint error: </span><span style="color: #79B8FF;">%s</span><span style="color: #9ECBFF;">&quot;</span><span>, stderr.</span><span style="color: #B392F0;">String</span><span>())</span></span>
+<span class="giallo-l"><span>	}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">	return</span><span> pdf.</span><span style="color: #B392F0;">Bytes</span><span>(),</span><span style="color: #79B8FF;"> nil</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<ul>
+<li><code>-</code> tells WeasyPrint to read HTML from stdin</li>
+<li><code>-</code> tells it to write PDF to stdout</li>
+<li><code>--base-url</code> assets resolves:
+<ul>
+<li>css/invoice.css</li>
+<li>fonts/*.ttf</li>
+<li>images/logo.png</li>
+</ul>
+</li>
+</ul>
+<h2 id="http-handler-streaming-the-pdf"><a class="zola-anchor" href="#http-handler-streaming-the-pdf" aria-label="Anchor link for: http-handler-streaming-the-pdf">HTTP Handler: Streaming the PDF</a></h2>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="go"><span class="giallo-l"><span style="color: #F97583;">func</span><span style="color: #B392F0;"> invoiceHandler</span><span>(</span><span style="color: #FFAB70;">w</span><span style="color: #B392F0;"> http</span><span>.</span><span style="color: #B392F0;">ResponseWriter</span><span>,</span><span style="color: #FFAB70;"> r</span><span style="color: #F97583;"> *</span><span style="color: #B392F0;">http</span><span>.</span><span style="color: #B392F0;">Request</span><span>) {</span></span>
+<span class="giallo-l"><span>	invoice</span><span style="color: #F97583;"> :=</span><span style="color: #B392F0;"> Invoice</span><span>{</span></span>
+<span class="giallo-l"><span>		Number:</span><span style="color: #9ECBFF;"> &quot;INV-2026-001&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>		Date:   time.</span><span style="color: #B392F0;">Now</span><span>().</span><span style="color: #B392F0;">Format</span><span>(</span><span style="color: #9ECBFF;">&quot;2006-01-02&quot;</span><span>),</span></span>
+<span class="giallo-l"><span>		Company:</span><span style="color: #B392F0;"> Company</span><span>{</span></span>
+<span class="giallo-l"><span>			Name:</span><span style="color: #9ECBFF;">    &quot;Acme Corp&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>			Address:</span><span style="color: #9ECBFF;"> &quot;123 Business Rd, Tech City&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>		},</span></span>
+<span class="giallo-l"><span>		Customer:</span><span style="color: #9ECBFF;"> &quot;John Doe&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>		Items: []</span><span style="color: #B392F0;">Item</span><span>{</span></span>
+<span class="giallo-l"><span>			{</span><span style="color: #9ECBFF;">&quot;Consulting Services&quot;</span><span>,</span><span style="color: #79B8FF;"> 8</span><span>,</span><span style="color: #79B8FF;"> 75</span><span>},</span></span>
+<span class="giallo-l"><span>			{</span><span style="color: #9ECBFF;">&quot;Cloud Hosting&quot;</span><span>,</span><span style="color: #79B8FF;"> 1</span><span>,</span><span style="color: #79B8FF;"> 120</span><span>},</span></span>
+<span class="giallo-l"><span>		},</span></span>
+<span class="giallo-l"><span>	}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>	htmlBuf, err</span><span style="color: #F97583;"> :=</span><span style="color: #B392F0;"> renderHTML</span><span>(invoice)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">	if</span><span> err</span><span style="color: #F97583;"> !=</span><span style="color: #79B8FF;"> nil</span><span> {</span></span>
+<span class="giallo-l"><span>		http.</span><span style="color: #B392F0;">Error</span><span>(w, err.</span><span style="color: #B392F0;">Error</span><span>(), http.StatusInternalServerError)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">		return</span></span>
+<span class="giallo-l"><span>	}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>	pdfBytes, err</span><span style="color: #F97583;"> :=</span><span style="color: #B392F0;"> htmlToPDF</span><span>(htmlBuf)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">	if</span><span> err</span><span style="color: #F97583;"> !=</span><span style="color: #79B8FF;"> nil</span><span> {</span></span>
+<span class="giallo-l"><span>		http.</span><span style="color: #B392F0;">Error</span><span>(w, err.</span><span style="color: #B392F0;">Error</span><span>(), http.StatusInternalServerError)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">		return</span></span>
+<span class="giallo-l"><span>	}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>	w.</span><span style="color: #B392F0;">Header</span><span>().</span><span style="color: #B392F0;">Set</span><span>(</span><span style="color: #9ECBFF;">&quot;Content-Type&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;application/pdf&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>	w.</span><span style="color: #B392F0;">Header</span><span>().</span><span style="color: #B392F0;">Set</span><span>(</span><span style="color: #9ECBFF;">&quot;Content-Disposition&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;inline; filename=invoice.pdf&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>	w.</span><span style="color: #B392F0;">WriteHeader</span><span>(http.StatusOK)</span></span>
+<span class="giallo-l"><span>	w.</span><span style="color: #B392F0;">Write</span><span>(pdfBytes)</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="server-entry-point"><a class="zola-anchor" href="#server-entry-point" aria-label="Anchor link for: server-entry-point">Server Entry Point</a></h2>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="go"><span class="giallo-l"><span style="color: #F97583;">func</span><span style="color: #B392F0;"> main</span><span>() {</span></span>
+<span class="giallo-l"><span>	http.</span><span style="color: #B392F0;">HandleFunc</span><span>(</span><span style="color: #9ECBFF;">&quot;/invoice&quot;</span><span>, invoiceHandler)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>	log.</span><span style="color: #B392F0;">Println</span><span>(</span><span style="color: #9ECBFF;">&quot;PDF service listening on :8080&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>	log.</span><span style="color: #B392F0;">Fatal</span><span>(http.</span><span style="color: #B392F0;">ListenAndServe</span><span>(</span><span style="color: #9ECBFF;">&quot;:8080&quot;</span><span>,</span><span style="color: #79B8FF;"> nil</span><span>))</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Then run ther serve</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">go</span><span style="color: #9ECBFF;"> run ./cmd/main/go</span></span></code></pre>
+<p>Open <a rel="external" href="http://localhost:8080/invoice">http://localhost:8080/invoice</a> with your browser</p>
+<h2 id="result"><a class="zola-anchor" href="#result" aria-label="Anchor link for: result">Result</a></h2>
+<p><img src="/goweasyresult.png" alt="Weayprint go integration" /></p>
+<h2 id="github"><a class="zola-anchor" href="#github" aria-label="Anchor link for: github">Github</a></h2>
+<p>You can find the <a rel="external" href="https://github.com/malnossi/goweasyprint">Source Code Here</a></p>
+<h2 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">Conclusion</a></h2>
+<p>By combining Go’s standard library with HTML templates and WeasyPrint, this architecture delivers a robust and idiomatic solution for generating PDFs from HTML in Go. The service is fully stateless, operates entirely in memory without relying on temporary files, and cleanly separates data, presentation, and rendering concerns through template-driven design and the use of a dedicated rendering engine. Because Go acts purely as an orchestrator and does not depend on renderer-specific logic, the approach remains flexible and renderer-agnostic. As a result, it scales naturally under load, integrates seamlessly into containerized and cloud-native deployments, and fits perfectly within modern microservice architectures where performance, simplicity, and maintainability are critical.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+<footer class="mt-12 flex flex-col" tabindex="-1" accesskey="_">
+  <div class="mb-2 flex flex-wrap">
+    <span class="block-bg mr-1.5 mb-1.5 rounded-lg px-5 py-1.5">Tags</span>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/go/">Go</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/weasyprint/">Weasyprint</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/pdf/">PDF</a>
+    
+  </div>
+</footer>
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/load-data-python-postgres/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Loading Data with Python into PostgreSQL with Psycopg 3</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/django-weasyprint/" accesskey="."
+    ><span>Create PDF files with Django &amp; Weasyprint</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time> Mohamed Nossirat
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+
+  <!-- Begin Body End inject -->
+  
+
+  <script src="https:&#x2F;&#x2F;cdnapp.websitepolicies.net&#x2F;widgets&#x2F;cookies&#x2F;mzad7vzz.js" defer></script>
+
+
+
+<script>
+  // If your cookie widget exposes callbacks, flip GA consent when accepted.
+  // Adjust to your provider’s API.
+  window.addEventListener('CookieConsentAccepted', function () {
+    if (window.gtag) {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  });
+</script>
+  <!-- End Body End inject -->
+</body>
+
+</html>

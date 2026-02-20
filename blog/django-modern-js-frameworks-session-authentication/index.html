@@ -1,0 +1,911 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Django &amp; Modern JS Frameworks Session Authentication</title>
+  <meta property="og:title" content="Django &amp; Modern JS Frameworks Session Authentication" />
+  <meta name="description" content="Django is one of the most popular backend web application frameworks that exists and it&apos;s written in Python. Vue.js is one of the most popular JavaScript tools for adding dynamic features to a web app…" />
+  <meta property="og:description" content="Django is one of the most popular backend web application frameworks that exists and it&apos;s written in Python. Vue.js is one of the most popular JavaScript tools for adding dynamic features to a web application.Django doesn&apos;t need Vue to run. Vue doesn&apos;t need Django to run. The combination gives devel…" />
+  <meta property="og:url" content="https://malnossi.github.io/blog/django-modern-js-frameworks-session-authentication/" />
+  <link rel="canonical" href="https://malnossi.github.io/blog/django-modern-js-frameworks-session-authentication/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2024-10-11T00:00:00+00:00" />
+  <meta property="article:tag" content="Django" />
+  <meta property="article:tag" content="Web" />
+  <meta property="article:tag" content="Javascript" />
+  <meta property="article:tag" content="Python" />
+  <meta property="og:image" content="https://malnossi.github.io/django-session.webp" />
+  <meta property="og:image:alt" content="" />
+  <meta property="og:image:width" content="1170" />
+  <meta property="og:image:height" content="694" />
+  <meta property="og:image:type" content="image/webp" />
+  <link rel="alternate" type="application/atom+xml" href="https://malnossi.github.io/atom.xml" title="Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://malnossi.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://malnossi.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #f4f4f5; --header: #e4e4e7;} :root.dark{--bg: #18181b; --header: #27272a;}</style>
+  <meta name="theme-color" data-light="#e4e4e7" data-dark="#27272a" content="#e4e4e7" />
+  <link rel="icon" type="image/x-icon" href="https://malnossi.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" type="image/png" href="https://malnossi.github.io/apple-touch-icon.png?h=58bee300054c5308feb3" />
+  <link rel="icon" type="image/png" href="https://malnossi.github.io/android-icon.png?h=8d80ec95446bd2c36826" />
+  <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+<meta name="author" content="Mohamed Nossirat©">
+<meta property="article:author" content="Mohamed Nossirat©">
+<meta name="twitter:creator" content="Mohamed Nossirat©">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+<script>
+  // (Optional) default deny until consent tool flips it to granted
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('consent', 'default', { analytics_storage: 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-8LBRDGLXJV', {
+    anonymize_ip: true
+  });
+</script>
+
+
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <button type="button" title="Go to home page [Alt + !]" accesskey="!"
+          onclick="window.location.href='https://malnossi.github.io/';"
+          class="btn-home h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-home,url(icons/home.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Open search [Alt + /]" accesskey="/"
+          onclick="window.zolaTheme.search.toggle();"
+          class="btn-search ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-search,url(icons/search.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/blog/"
+          >Blog</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/talks/"
+          >Talks</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/tags/"
+          >Tags</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+      <!-- Search -->
+<div id="linkita-search-wrapper" class="hidden">
+  <ul id="linkita-search-results"></ul>
+</div>
+<script>window.zolaTheme.search.init({ scripts: ["https://malnossi.github.io/elasticlunr.min.js", "https://malnossi.github.io/search_index.en.js"], arg: { w: "#linkita-search-wrapper", r: "#linkita-search-results" } });</script>
+
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Django &amp; Modern JS Frameworks Session Authentication</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2024-10-11T00:00:00+00:00">2024-10-11</time><span
+        class="middot"></span><time
+    datetime="PT0H8M0S">8&nbsp;min</time><span
+      class="middot"></span><span>Mohamed Nossirat</span>
+</div>
+
+  </header>
+  <figure class="mt-0 mb-12">
+    <img
+      class="h-auto w-full rounded-lg"
+      src="https://malnossi.github.io/django-session.webp"
+      width="1170"
+      height="694"
+    />
+  </figure>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#introduction">Introduction</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#json-web-tokens-jwt">JSON Web Tokens (JWT)</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#django-rest-framework-s-tokenauthentication">Django REST Framework&#x27;s TokenAuthentication</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#poject-setup">Poject Setup</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#backend">Backend</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#frontend">Frontend</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#login-view">Login View</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#dockerfile-1">Dockerfile</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#nginx">Nginx</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#dockerfile-2">Dockerfile</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#nginx-config-file">Nginx config file</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#docker-compose-file">Docker Compose File</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#build-and-run-the-docker-compose">Build and run the docker compose</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#django-rest-framework-settings">Django Rest Framework settings</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#django-rest-framework-authentication-endpoint">Django Rest Framework authentication endpoint</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#the-session-and-django-settings">The Session and Django settings</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#cross-site-request-forgery-protection-csrf">Cross Site Request Forgery protection (CSRF)</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#get-data-with-authenticated-user">Get data with authenticated user</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#result">Result</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#final-words">Final words</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h2>
+<p>When building a single-page application (SPA) with Django &amp; Django Rest Framework (DRF) alongside frameworks like React, Vue, or Angular, a common question developers face is: " <em>How should I handle authentication ?</em> "</p>
+<p>Several options are available:</p>
+<ul>
+<li>JSON Web Tokens (JWT)</li>
+<li>Django REST Framework's TokenAuthentication</li>
+</ul>
+<p>This can be confusing, even for experienced developers.</p>
+<p>However, I'd like to suggest a simpler alternative: just use Django’s built-in authentication system.</p>
+<blockquote>
+<p><strong>Disclaimer: I am not a security expert, and this article does not provide any security advice. For guidance tailored to your specific needs, please reach out to a qualified security professional.</strong></p>
+</blockquote>
+<h2 id="json-web-tokens-jwt"><a class="zola-anchor" href="#json-web-tokens-jwt" aria-label="Anchor link for: json-web-tokens-jwt">JSON Web Tokens (JWT)</a></h2>
+<p><a rel="external" href="https://auth0.com/learn/json-web-tokens/">JWT (JSON Web Token)</a> is a widely-used method for API authentication. If you're building a modern web application with Vue.js or React on the frontend and Django Rest Framework (DRF) on the backend, it's likely you'll consider JWT as a top option for implementing authentication.</p>
+<p>However, JWT is just one approach, and it's neither the simplest nor the most reliable. It isn’t supported natively by Django Rest Framework, which means you'll need extra libraries and configuration to set it up in your project.</p>
+<p>Additionally, implementing JWT securely can be quite challenging due to its complex design. As <a rel="external" href="https://groups.google.com/g/django-developers/c/6oS9R2GwO4k/m/Rep92xfsAwAJ">James Bennet</a>, a long-time Django project contributor, puts it:</p>
+<blockquote>
+<p><em>"JWT is over-complex, puts too much power in the attacker's hands, has too many configuration knobs, and makes poor cryptographic choices. This is why we see vulnerabilities in JWT libraries and JWT-using systems again and again and again."</em></p>
+</blockquote>
+<p>Here is some examples of <a rel="external" href="https://auth0.com/blog/critical-vulnerabilities-in-json-web-token-libraries/">JWT vulnerabilities</a> found in the wild.</p>
+<p>So on every request, we send the JWT via an HTTP header:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="plain"><span class="giallo-l"><span>Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dfJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTC2JjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c</span></span></code></pre>
+<p>We may not understand every technical aspect of JWTs, but the general idea is simple: a server issues a token, we include it in each request, and it grants us access to protected resources like <code>/api/something</code>.</p>
+<p>However, storing this token for repeated use poses a challenge. While native mobile apps offer secure storage options, web browsers rely on <code>localStorage</code> or <code>sessionStorage</code> both of which are insecure.</p>
+<p>These storage options are vulnerable to cross-site scripting (XSS) attacks. The only safe option in browsers is using cookies, although non-HTTP cookies (like those accessible via document.cookie) remain insecure since scripts can still read them. Storing JWTs in cookies might help, but it doesn't address deeper issues with JWTs.</p>
+<p>The most significant concern is that once a JWT is intercepted, it is <a rel="external" href="https://owasp.org/www-chapter-vancouver/assets/presentations/2020-01_Attacking_and_Securing_JWT.pdf">vulnerable to brute-force attacks</a>. For this reason, JWTs are best used as a short-term solution to acquire something more secure, such as a session ID or OAuth access token, which should be stored in cookies.</p>
+<p>Another major drawback of JWTs is that they cannot be easily invalidated. This creates challenges in handling situations like:</p>
+<ul>
+<li>Logging out</li>
+<li>Compromised accounts</li>
+<li>Password changes</li>
+<li>Permission updates</li>
+<li>User de-provisioning</li>
+</ul>
+<p>If you choose to use JWTs, ensure they are short-lived and promptly exchanged for a more secure method of authentication.</p>
+<h2 id="django-rest-framework-s-tokenauthentication"><a class="zola-anchor" href="#django-rest-framework-s-tokenauthentication" aria-label="Anchor link for: django-rest-framework-s-tokenauthentication">Django REST Framework's TokenAuthentication</a></h2>
+<p><a rel="external" href="https://www.django-rest-framework.org/">Django REST Framework</a> includes a built-in <a rel="external" href="https://www.django-rest-framework.org/api-guide/authentication/#tokenauthentication">TokenAuthentication</a> mechanism that generates unique tokens for each user and issues them through the built-in view <code>rest_framework.authtoken.views.obtain_auth_token</code>.</p>
+<p>When authentication is successful, this view returns a JSON response with the token, which can be sent in an HTTP header like this:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="plain"><span class="giallo-l"><span>Authorization:token 9944b09199c62bcf9418ad846dd0e4bbdfc6ee4b</span></span></code></pre>
+<p>While this method works, we face the same challenge in a browser environment: where do we securely store this token ?</p>
+<p>If only Django provided a secure token stored in cookies for use in every request ?</p>
+<p><em><strong>The good news is that if you can control the domain of both your backend and your frontend, you can use a much simpler method: Django sessions.</strong></em></p>
+<h2 id="poject-setup"><a class="zola-anchor" href="#poject-setup" aria-label="Anchor link for: poject-setup">Poject Setup</a></h2>
+<p>Create a new Django project</p>
+<h3 id="backend"><a class="zola-anchor" href="#backend" aria-label="Anchor link for: backend">Backend</a></h3>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">mkdir</span><span style="color: #79B8FF;"> -p</span><span style="color: #9ECBFF;"> ~/django-session-app</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">cd</span><span style="color: #9ECBFF;"> ~/django-session-app</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">mkdir</span><span style="color: #9ECBFF;"> server</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">cd</span><span style="color: #9ECBFF;"> server</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">python3</span><span style="color: #79B8FF;"> -m</span><span style="color: #9ECBFF;"> venv venv</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">source</span><span style="color: #9ECBFF;"> venv/bin/activate</span></span>
+<span class="giallo-l"><span>(</span><span style="color: #B392F0;">venv</span><span>)</span><span style="color: #B392F0;"> pip</span><span style="color: #9ECBFF;"> install django djangorestframework django-cors-headers</span></span>
+<span class="giallo-l"><span>(</span><span style="color: #B392F0;">venv</span><span>)</span><span style="color: #B392F0;"> django-admin</span><span style="color: #9ECBFF;"> startproject config .</span></span>
+<span class="giallo-l"><span>(</span><span style="color: #B392F0;">venv</span><span>)</span><span style="color: #B392F0;"> python</span><span style="color: #9ECBFF;"> manage.py createsuperuser</span><span style="color: #6A737D;"> # create your superuser for me --username:admin --password:admin</span></span>
+<span class="giallo-l"><span>(</span><span style="color: #B392F0;">venv</span><span>)</span><span style="color: #B392F0;"> touch</span><span style="color: #9ECBFF;"> Dockerfile</span></span></code></pre>
+<p>Folder structure</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">server/</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> config</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── asgi.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── __init__.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── settings.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── urls.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> └── wsgi.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> Dockerfile</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> manage.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">└──</span><span style="color: #9ECBFF;"> requirements.txt</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">2</span><span style="color: #9ECBFF;"> directories,</span><span style="color: #79B8FF;"> 12</span><span style="color: #9ECBFF;"> files</span></span>
+<span class="giallo-l"></span></code></pre><h4 id="dockerfile"><a class="zola-anchor" href="#dockerfile" aria-label="Anchor link for: dockerfile">Dockerfile</a></h4>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="docker"><span class="giallo-l"><span style="color: #6A737D;"># pull official base image</span></span>
+<span class="giallo-l"><span style="color: #F97583;">FROM</span><span> python:3.12-slim-bullseye</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;"># set work directory</span></span>
+<span class="giallo-l"><span style="color: #F97583;">WORKDIR</span><span> /app</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;"># set environment variables</span></span>
+<span class="giallo-l"><span style="color: #F97583;">ENV</span><span> PYTHONDONTWRITEBYTECODE 1</span></span>
+<span class="giallo-l"><span style="color: #F97583;">ENV</span><span> PYTHONUNBUFFERED 1</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;"># install dependencies</span></span>
+<span class="giallo-l"><span style="color: #F97583;">RUN</span><span> pip install --upgrade pip</span></span>
+<span class="giallo-l"><span style="color: #F97583;">COPY</span><span> ./requirements.txt .</span></span>
+<span class="giallo-l"><span style="color: #F97583;">RUN</span><span> pip install -r requirements.txt</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;"># copy project</span></span>
+<span class="giallo-l"><span style="color: #F97583;">COPY</span><span> . .</span></span></code></pre>
+<p>server's <code>requirements.txt</code></p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span>asgiref</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">=3.8.1</span></span>
+<span class="giallo-l"><span>Django</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">=5.1.1</span></span>
+<span class="giallo-l"><span>django-cors-headers</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">=4.4.0</span></span>
+<span class="giallo-l"><span>djangorestframework</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">=3.15.2</span></span>
+<span class="giallo-l"><span>sqlparse</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">=0.5.1</span></span></code></pre><h3 id="frontend"><a class="zola-anchor" href="#frontend" aria-label="Anchor link for: frontend">Frontend</a></h3>
+<p>For this example I will use Vuejs with Vuetify to get some styled components, you can do the same thing with React, Angular, Svelte etc...</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">npm</span><span style="color: #9ECBFF;"> create vuetify@latest</span></span></code></pre>
+<p>follow the instructions to scaffold a new vuetify project</p>
+<p>Folder structure</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">frontend/</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> index.html</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> jsconfig.json</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> package.json</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> pnpm-lock.yaml</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> public</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> └── favicon.ico</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> README.md</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> src</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── App.vue</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── assets</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> │   ├── logo.png</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> │   └── logo.svg</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── components</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> │   ├── AppFooter.vue</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> │   ├── HelloWorld.vue</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> │   └── README.md</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── main.js</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> └── plugins</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;">     ├── index.js</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;">     ├── README.md</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;">     └── vuetify.js</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">└──</span><span style="color: #9ECBFF;"> vite.config.mjs</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">5</span><span style="color: #9ECBFF;"> directories,</span><span style="color: #79B8FF;"> 17</span><span style="color: #9ECBFF;"> files</span></span></code></pre><h2 id="login-view"><a class="zola-anchor" href="#login-view" aria-label="Anchor link for: login-view">Login View</a></h2>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="html"><span class="giallo-l"><span>&lt;</span><span style="color: #85E89D;">template</span><span>&gt;</span></span>
+<span class="giallo-l"><span>  &lt;</span><span style="color: #85E89D;">v-app</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">v-main</span><span>&gt;</span></span>
+<span class="giallo-l"><span>      &lt;</span><span style="color: #85E89D;">v-container</span><span style="color: #B392F0;"> class</span><span>=</span><span style="color: #9ECBFF;">&quot;fill-height&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;</span><span style="color: #85E89D;">v-row</span><span style="color: #B392F0;"> justify</span><span>=</span><span style="color: #9ECBFF;">&quot;center&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;</span><span style="color: #85E89D;">v-col</span><span style="color: #B392F0;"> cols</span><span>=</span><span style="color: #9ECBFF;">&quot;12&quot;</span><span style="color: #B392F0;"> md</span><span>=</span><span style="color: #9ECBFF;">&quot;3&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;</span><span style="color: #85E89D;">v-card</span><span>&gt;</span></span>
+<span class="giallo-l"><span>              &lt;</span><span style="color: #85E89D;">v-card-text</span><span>&gt;</span></span>
+<span class="giallo-l"><span>                &lt;</span><span style="color: #85E89D;">v-form</span><span style="color: #B392F0;"> @submit.prevent</span><span>=</span><span style="color: #9ECBFF;">&quot;login&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>                  &lt;</span><span style="color: #85E89D;">v-text-field</span><span style="color: #B392F0;"> v-model</span><span>=</span><span style="color: #9ECBFF;">&quot;credentials.username&quot;</span><span style="color: #B392F0;"> variant</span><span>=</span><span style="color: #9ECBFF;">&quot;outlined&quot;</span><span style="color: #B392F0;"> label</span><span>=</span><span style="color: #9ECBFF;">&quot;Username&quot;</span><span>&gt;&lt;/</span><span style="color: #85E89D;">v-text-field</span><span>&gt;</span></span>
+<span class="giallo-l"><span>                  &lt;</span><span style="color: #85E89D;">v-text-field</span><span style="color: #B392F0;"> v-model</span><span>=</span><span style="color: #9ECBFF;">&quot;credentials.password&quot;</span><span style="color: #B392F0;"> variant</span><span>=</span><span style="color: #9ECBFF;">&quot;outlined&quot;</span><span style="color: #B392F0;"> label</span><span>=</span><span style="color: #9ECBFF;">&quot;Password&quot;</span><span>&gt;&lt;/</span><span style="color: #85E89D;">v-text-field</span><span>&gt;</span></span>
+<span class="giallo-l"><span>                  &lt;</span><span style="color: #85E89D;">v-btn</span><span style="color: #B392F0;"> type</span><span>=</span><span style="color: #9ECBFF;">&quot;submit&quot;</span><span style="color: #B392F0;"> block color</span><span>=</span><span style="color: #9ECBFF;">&quot;primary&quot;</span><span>&gt;Login&lt;/</span><span style="color: #85E89D;">v-btn</span><span>&gt;</span></span>
+<span class="giallo-l"><span>                &lt;/</span><span style="color: #85E89D;">v-form</span><span>&gt;</span></span>
+<span class="giallo-l"><span>              &lt;/</span><span style="color: #85E89D;">v-card-text</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;/</span><span style="color: #85E89D;">v-card</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;/</span><span style="color: #85E89D;">v-col</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;/</span><span style="color: #85E89D;">v-row</span><span>&gt;</span></span>
+<span class="giallo-l"><span>      &lt;/</span><span style="color: #85E89D;">v-container</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;/</span><span style="color: #85E89D;">v-main</span><span>&gt;</span></span>
+<span class="giallo-l"><span>  &lt;/</span><span style="color: #85E89D;">v-app</span><span>&gt;</span></span>
+<span class="giallo-l"><span>&lt;/</span><span style="color: #85E89D;">template</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&lt;</span><span style="color: #85E89D;">script</span><span style="color: #B392F0;"> setup</span><span>&gt;</span></span>
+<span class="giallo-l"><span style="color: #F97583;">import</span><span> { reactive }</span><span style="color: #F97583;"> from</span><span style="color: #9ECBFF;"> &#39;vue&#39;</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">const</span><span style="color: #79B8FF;"> credentials</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> reactive</span><span>({ username:</span><span style="color: #9ECBFF;"> &quot;&quot;</span><span>, password:</span><span style="color: #9ECBFF;"> &quot;&quot;</span><span> })</span></span>
+<span class="giallo-l"><span style="color: #F97583;">const</span><span style="color: #B392F0;"> login</span><span style="color: #F97583;"> =</span><span> ()</span><span style="color: #F97583;"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">  fetch</span><span>(</span><span style="color: #9ECBFF;">&quot;/api/login/&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span>      method:</span><span style="color: #9ECBFF;"> &quot;POST&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>      headers: {</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;Content-Type&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;application/json&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>      },</span></span>
+<span class="giallo-l"><span>      body:</span><span style="color: #79B8FF;"> JSON</span><span>.</span><span style="color: #B392F0;">stringify</span><span>(credentials)</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>  )</span></span>
+<span class="giallo-l"><span>  .</span><span style="color: #B392F0;">then</span><span>(</span><span style="color: #FFAB70;">response</span><span style="color: #F97583;">=&gt;</span><span>response.</span><span style="color: #B392F0;">json</span><span>())</span></span>
+<span class="giallo-l"><span>  .</span><span style="color: #B392F0;">then</span><span>(</span><span style="color: #FFAB70;">data</span><span style="color: #F97583;">=&gt;</span><span>console.</span><span style="color: #B392F0;">log</span><span>(data))</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span>&lt;/</span><span style="color: #85E89D;">script</span><span>&gt;</span></span></code></pre><h4 id="dockerfile-1"><a class="zola-anchor" href="#dockerfile-1" aria-label="Anchor link for: dockerfile-1">Dockerfile</a></h4>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="docker"><span class="giallo-l"><span style="color: #F97583;">FROM</span><span> node:lts-alpine</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;"># install simple http server for serving static content</span></span>
+<span class="giallo-l"><span style="color: #F97583;">RUN</span><span> npm install -g pnpm</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;"># make the &#39;app&#39; folder the current working directory</span></span>
+<span class="giallo-l"><span style="color: #F97583;">WORKDIR</span><span> /app</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;"># copy both &#39;package.json&#39; and &#39;package-lock.json&#39; (if available)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">COPY</span><span> package*.json ./</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;"># install project dependencies</span></span>
+<span class="giallo-l"><span style="color: #F97583;">RUN</span><span> pnpm install</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;"># copy project files and folders to the current working directory (i.e. &#39;app&#39; folder)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">COPY</span><span> . .</span></span></code></pre><h2 id="nginx"><a class="zola-anchor" href="#nginx" aria-label="Anchor link for: nginx">Nginx</a></h2>
+<p>I will use Nginx to reverse-proxy the server and the frontend, so the domain of the setup is the same for both.</p>
+<h4 id="dockerfile-2"><a class="zola-anchor" href="#dockerfile-2" aria-label="Anchor link for: dockerfile-2">Dockerfile</a></h4>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="docker"><span class="giallo-l"><span style="color: #F97583;">FROM</span><span> nginx:1.25</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">RUN</span><span> rm /etc/nginx/conf.d/default.conf</span></span>
+<span class="giallo-l"><span style="color: #F97583;">COPY</span><span> nginx.conf /etc/nginx/conf.d</span></span></code></pre><h4 id="nginx-config-file"><a class="zola-anchor" href="#nginx-config-file" aria-label="Anchor link for: nginx-config-file">Nginx config file</a></h4>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">upstream</span><span style="color: #9ECBFF;"> server {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    server</span><span style="color: #9ECBFF;"> server:8000</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">upstream</span><span style="color: #9ECBFF;"> client {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    server</span><span style="color: #9ECBFF;"> frontend:3000</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">server</span><span style="color: #9ECBFF;"> {</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    listen</span><span style="color: #79B8FF;"> 80</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    server_name</span><span style="color: #9ECBFF;"> django-session-app.localhost</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    location</span><span style="color: #9ECBFF;"> / {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">        proxy_pass</span><span style="color: #9ECBFF;"> http://client</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">        proxy_set_header</span><span style="color: #9ECBFF;"> X-Forwarded-For</span><span> $proxy_add_x_forwarded_for;</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">        proxy_set_header</span><span style="color: #9ECBFF;"> Host</span><span> $host;</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">        proxy_redirect</span><span style="color: #9ECBFF;"> off</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">        proxy_http_version</span><span style="color: #79B8FF;"> 1.1</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">        proxy_set_header</span><span style="color: #9ECBFF;"> Upgrade</span><span> $http_upgrade;</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">        proxy_set_header</span><span style="color: #9ECBFF;"> Connection &quot;Upgrade&quot;</span><span>;</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    location</span><span style="color: #9ECBFF;"> /api/ {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">        proxy_pass</span><span style="color: #9ECBFF;"> http://server</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">        proxy_set_header</span><span style="color: #9ECBFF;"> X-Forwarded-For</span><span> $proxy_add_x_forwarded_for;</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">        proxy_set_header</span><span style="color: #9ECBFF;"> Host</span><span> $host;</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">        proxy_redirect</span><span style="color: #9ECBFF;"> off</span><span>;</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    location</span><span style="color: #9ECBFF;"> /static/ {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">        proxy_pass</span><span style="color: #9ECBFF;"> http://server</span><span>;</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="docker-compose-file"><a class="zola-anchor" href="#docker-compose-file" aria-label="Anchor link for: docker-compose-file">Docker Compose File</a></h2>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #85E89D;">services</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  server</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    container_name</span><span>:</span><span style="color: #9ECBFF;"> server</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    build</span><span>:</span><span style="color: #9ECBFF;"> ./server</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    command</span><span>:</span><span style="color: #9ECBFF;"> python manage.py runserver 0.0.0.0:8000</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    expose</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #79B8FF;"> 8000</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    volumes</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #9ECBFF;"> ./server:/app/</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  frontend</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    container_name</span><span>:</span><span style="color: #9ECBFF;"> frontend</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    build</span><span>:</span><span style="color: #9ECBFF;"> ./frontend</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    command</span><span>:</span><span style="color: #9ECBFF;"> pnpm dev --host</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    expose</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #79B8FF;"> 3000</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    volumes</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #9ECBFF;"> ./frontend:/app/</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #9ECBFF;"> /app/node_modules</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  nginx</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    container_name</span><span>:</span><span style="color: #9ECBFF;"> reverse_proxy</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    build</span><span>:</span><span style="color: #9ECBFF;"> ./nginx</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    ports</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #9ECBFF;"> 80:80</span></span></code></pre><h2 id="build-and-run-the-docker-compose"><a class="zola-anchor" href="#build-and-run-the-docker-compose" aria-label="Anchor link for: build-and-run-the-docker-compose">Build and run the docker compose</a></h2>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">docker</span><span style="color: #9ECBFF;"> compose build</span><span> &amp;&amp;</span><span style="color: #B392F0;"> docker</span><span style="color: #9ECBFF;"> compose up</span><span style="color: #79B8FF;"> -d</span></span></code></pre>
+<p>gand then go to <a rel="external" href="http://django-session-app.localhost">http://django-session-app.localhost</a></p>
+<h2 id="django-rest-framework-settings"><a class="zola-anchor" href="#django-rest-framework-settings" aria-label="Anchor link for: django-rest-framework-settings">Django Rest Framework settings</a></h2>
+<p>Django Rest Framework comes with built-in session based authentication. To use it you have to add this in your Django settings module:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #79B8FF;">INSTALLED_APPS</span><span style="color: #F97583;"> =</span><span> [</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    ...</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;rest_framework&quot;</span></span>
+<span class="giallo-l"><span>]</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">REST_FRAMEWORK</span><span style="color: #F97583;"> =</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &#39;DEFAULT_AUTHENTICATION_CLASSES&#39;</span><span>: [</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &#39;rest_framework.authentication.SessionAuthentication&#39;</span><span>,</span></span>
+<span class="giallo-l"><span>    ],</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &#39;DEFAULT_PERMISSION_CLASSES&#39;</span><span>: [</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &#39;rest_framework.permissions.IsAuthenticated&#39;</span><span>,</span></span>
+<span class="giallo-l"><span>    ],</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Remember that authentication deals with recognizing the users that are connecting to your API, while permissions deals with giving access to some resources to the users.</p>
+<p>In the <code>DEFAULT_AUTHENTICATION_CLASSES</code> list you are configuring only the good old Django sessions to authenticate users. In the <code>DEFAULT_PERMISSION_CLASSES</code> list you are requiring that only authenticated users will access your endpoints.</p>
+<p>Django sessions are based by default on a session cookie stored on the client. There's no need for a "Token", an "Authorization" header or something like that.
+If you can store that session cookie on the client and send it on every request to your API you will authenticate the user.</p>
+<h2 id="django-rest-framework-authentication-endpoint"><a class="zola-anchor" href="#django-rest-framework-authentication-endpoint" aria-label="Anchor link for: django-rest-framework-authentication-endpoint">Django Rest Framework authentication endpoint</a></h2>
+<p>Now it's time to write a very simple view to let the users authenticate with a username/password.</p>
+<p>We'll need a serializer that will take the username and password from the request and will perform the actual authentication using Django authenication framework.</p>
+<p>Create a serializers.py file in your app and add this code to it:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.contrib.auth</span><span style="color: #F97583;"> import</span><span> authenticate</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> rest_framework</span><span style="color: #F97583;"> import</span><span> serializers</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> LoginSerializer</span><span>(</span><span style="color: #B392F0;">serializers</span><span>.</span><span style="color: #B392F0;">Serializer</span><span>):</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;&quot;&quot;</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    This serializer defines two fields for authentication:</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">      * username</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">      * password.</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    It will try to authenticate the user with when validated.</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;&quot;&quot;</span></span>
+<span class="giallo-l"><span>    username</span><span style="color: #F97583;"> =</span><span> serializers.CharField(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        label</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;Username&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        write_only</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">True</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"><span>    password</span><span style="color: #F97583;"> =</span><span> serializers.CharField(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        label</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;Password&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">        # This will be used when the DRF browsable API is enabled</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        style</span><span style="color: #F97583;">=</span><span>{</span><span style="color: #9ECBFF;">&#39;input_type&#39;</span><span>:</span><span style="color: #9ECBFF;"> &#39;password&#39;</span><span>},</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        trim_whitespace</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">False</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        write_only</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">True</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #B392F0;"> validate</span><span>(self, attrs):</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">        # Take username and password from request</span></span>
+<span class="giallo-l"><span>        username</span><span style="color: #F97583;"> =</span><span> attrs.get(</span><span style="color: #9ECBFF;">&#39;username&#39;</span><span>)</span></span>
+<span class="giallo-l"><span>        password</span><span style="color: #F97583;"> =</span><span> attrs.get(</span><span style="color: #9ECBFF;">&#39;password&#39;</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">        if</span><span> username</span><span style="color: #F97583;"> and</span><span> password:</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">            # Try to authenticate the user using Django auth framework.</span></span>
+<span class="giallo-l"><span>            user</span><span style="color: #F97583;"> =</span><span> authenticate(</span><span style="color: #FFAB70;">request</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">self</span><span>.context.get(</span><span style="color: #9ECBFF;">&#39;request&#39;</span><span>),</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">                                username</span><span style="color: #F97583;">=</span><span>username,</span><span style="color: #FFAB70;"> password</span><span style="color: #F97583;">=</span><span>password)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            if not</span><span> user:</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">                # If we don&#39;t have a regular user, raise a ValidationError</span></span>
+<span class="giallo-l"><span>                msg</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &#39;Access denied: wrong username or password.&#39;</span></span>
+<span class="giallo-l"><span style="color: #F97583;">                raise</span><span> serializers.ValidationError(msg,</span><span style="color: #FFAB70;"> code</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&#39;authorization&#39;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        else</span><span>:</span></span>
+<span class="giallo-l"><span>            msg</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &#39;Both &quot;username&quot; and &quot;password&quot; are required.&#39;</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            raise</span><span> serializers.ValidationError(msg,</span><span style="color: #FFAB70;"> code</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&#39;authorization&#39;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">        # We have a valid user, put it in the serializer&#39;s validated_data.</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">        # It will be used in the view.</span></span>
+<span class="giallo-l"><span>        attrs[</span><span style="color: #9ECBFF;">&#39;user&#39;</span><span>]</span><span style="color: #F97583;"> =</span><span> user</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        return</span><span> attrs</span></span></code></pre>
+<p>Then we can use this serializer in a login view. Add this to your views.py file:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> rest_framework</span><span style="color: #F97583;"> import</span><span> permissions</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> rest_framework</span><span style="color: #F97583;"> import</span><span> views</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> rest_framework.response</span><span style="color: #F97583;"> import</span><span> Response</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> .</span><span style="color: #F97583;"> import</span><span> serializers</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> LoginView</span><span>(</span><span style="color: #B392F0;">views</span><span>.</span><span style="color: #B392F0;">APIView</span><span>):</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # This view should be accessible also for unauthenticated users.</span></span>
+<span class="giallo-l"><span>    permission_classes</span><span style="color: #F97583;"> =</span><span> (permissions.AllowAny,)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #B392F0;"> post</span><span>(self, request, format</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">None</span><span>):</span></span>
+<span class="giallo-l"><span>        serializer</span><span style="color: #F97583;"> =</span><span> serializers.LoginSerializer(</span><span style="color: #FFAB70;">data</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">self</span><span>.request.data,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">            context</span><span style="color: #F97583;">=</span><span>{</span><span style="color: #9ECBFF;"> &#39;request&#39;</span><span>:</span><span style="color: #79B8FF;"> self</span><span>.request })</span></span>
+<span class="giallo-l"><span>        serializer.is_valid(</span><span style="color: #FFAB70;">raise_exception</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">True</span><span>)</span></span>
+<span class="giallo-l"><span>        user</span><span style="color: #F97583;"> =</span><span> serializer.validated_data[</span><span style="color: #9ECBFF;">&#39;user&#39;</span><span>]</span></span>
+<span class="giallo-l"><span>        login(request, user)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        return</span><span> Response(</span><span style="color: #79B8FF;">None</span><span>,</span><span style="color: #FFAB70;"> status</span><span style="color: #F97583;">=</span><span>status.</span><span style="color: #79B8FF;">HTTP_202_ACCEPTED</span><span>)</span></span></code></pre>
+<p>Mount your view in the project urls.py:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.contrib</span><span style="color: #F97583;"> import</span><span> admin</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.urls</span><span style="color: #F97583;"> import</span><span> path</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> .</span><span style="color: #F97583;"> import</span><span> views</span></span>
+<span class="giallo-l"><span>urlpatterns</span><span style="color: #F97583;"> =</span><span> [</span></span>
+<span class="giallo-l"><span>    path(</span><span style="color: #9ECBFF;">&#39;admin/&#39;</span><span>, admin.site.urls),</span></span>
+<span class="giallo-l"><span>    path(</span><span style="color: #9ECBFF;">&#39;api/login/&#39;</span><span>, views.LoginView.as_view()),</span></span>
+<span class="giallo-l"><span>]</span></span></code></pre><h2 id="the-session-and-django-settings"><a class="zola-anchor" href="#the-session-and-django-settings" aria-label="Anchor link for: the-session-and-django-settings">The Session and Django settings</a></h2>
+<p>When it comes to security, tried-and-true technologies are often the best choice because they’ve had plenty of time to expose and fix vulnerabilities. If we set a few more settings in Django, we'll enable additional security:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #79B8FF;">SESSION_COOKIE_HTTPONLY</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> True</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">SESSION_COOKIE_SECURE</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> True</span></span></code></pre>
+<p>For further readings about Django's session framework <a rel="external" href="https://docs.djangoproject.com/en/5.1/ref/settings/#sessions">see here</a></p>
+<p>Now go to the login page in the front and enter the user name and the password and click on Login. If every thing went good you will see the <code>sessionid</code> and the <code>csrftoken</code> in the browser's <code>Devtools</code> -&gt; <code>Application</code> -&gt; <code>Cookies</code>:</p>
+<div style="overflow-x: auto; max-width: 100%;">
+<table><thead><tr><th>Name</th><th>Value</th><th>Domain</th><th>Path</th><th>Expire/Max-Age</th><th>Size</th><th>HttpOnly</th><th>Secure</th><th>Samesite</th><th>Patrition key Site</th><th>Cross Site</th><th>Priority</th></tr></thead><tbody>
+<tr><td>sessionid</td><td>p21pms0oohese5l5f77lx7vzhyi7vquk</td><td>django-session-app.localhost</td><td>/</td><td>2024-10-25T11:29:06.595Z</td><td>41</td><td>✓</td><td>✓</td><td>Lax</td><td></td><td></td><td>Medium</td></tr>
+<tr><td>csrftoken</td><td>TMOR7cOrEqLrGd3C3FjxX684yyjacu3v</td><td>django-session-app.localhost</td><td>/</td><td>2024-10-25T11:29:06.595Z</td><td>41</td><td></td><td></td><td>Lax</td><td></td><td></td><td>Medium</td></tr>
+</tbody></table>
+</div>
+The user is correctly logged in and a session cookie named sessionid has been returned to our client. If we will persist that session cookie in each request, our user will be persistently authenticated.
+## Django Rest Framework Logout endpoint
+Next, we'll wire up a few views that let us logout :
+```python
+from rest_framework import permissions
+from rest_framework import views
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth import login,logout #new
+from . import serializers
+<p>class LoginView(views.APIView):
+# This view should be accessible also for unauthenticated users.
+permission_classes = (permissions.AllowAny,)</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="plain"><span class="giallo-l"><span>def post(self, request, format=None):</span></span>
+<span class="giallo-l"><span>    serializer = serializers.LoginSerializer(data=self.request.data,</span></span>
+<span class="giallo-l"><span>        context={ &#39;request&#39;: self.request })</span></span>
+<span class="giallo-l"><span>    serializer.is_valid(raise_exception=True)</span></span>
+<span class="giallo-l"><span>    user = serializer.validated_data[&#39;user&#39;]</span></span>
+<span class="giallo-l"><span>    login(request, user)</span></span>
+<span class="giallo-l"><span>    return Response(None, status=status.HTTP_202_ACCEPTED)</span></span></code></pre>
+<p>class LogoutView(views.APIView): # new
+# This view should be accessible only for authenticated users.
+def post(self, request, format=None):
+logout(request)
+return Response(None, status=status.HTTP_202_ACCEPTED)</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="plain"><span class="giallo-l"><span>Update the urls.py file like this:</span></span>
+<span class="giallo-l"><span>```python</span></span>
+<span class="giallo-l"><span>from django.contrib import admin</span></span>
+<span class="giallo-l"><span>from django.urls import path</span></span>
+<span class="giallo-l"><span>from . import views</span></span>
+<span class="giallo-l"><span>urlpatterns = [</span></span>
+<span class="giallo-l"><span>    path(&#39;admin/&#39;, admin.site.urls),</span></span>
+<span class="giallo-l"><span>    path(&#39;api/login/&#39;, views.LoginView.as_view()),</span></span>
+<span class="giallo-l"><span>    path(&#39;api/logout/&#39;, views.LogoutView.as_view()), # new</span></span>
+<span class="giallo-l"><span>]</span></span></code></pre>
+<p>And update the Login view in the front endlike this:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="html"><span class="giallo-l"><span>&lt;</span><span style="color: #85E89D;">template</span><span>&gt;</span></span>
+<span class="giallo-l"><span>  &lt;</span><span style="color: #85E89D;">v-app</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">v-main</span><span>&gt;</span></span>
+<span class="giallo-l"><span>      &lt;</span><span style="color: #85E89D;">v-container</span><span style="color: #B392F0;"> class</span><span>=</span><span style="color: #9ECBFF;">&quot;fill-height&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;</span><span style="color: #85E89D;">v-row</span><span style="color: #B392F0;"> justify</span><span>=</span><span style="color: #9ECBFF;">&quot;center&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;</span><span style="color: #85E89D;">v-col</span><span style="color: #B392F0;"> cols</span><span>=</span><span style="color: #9ECBFF;">&quot;12&quot;</span><span style="color: #B392F0;"> md</span><span>=</span><span style="color: #9ECBFF;">&quot;3&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;</span><span style="color: #85E89D;">v-card</span><span>&gt;</span></span>
+<span class="giallo-l"><span>              &lt;</span><span style="color: #85E89D;">v-card-text</span><span>&gt;</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">                &lt;!-- new --&gt;</span></span>
+<span class="giallo-l"><span>                &lt;</span><span style="color: #85E89D;">v-btn</span><span style="color: #B392F0;"> class</span><span>=</span><span style="color: #9ECBFF;">&quot;mb-3&quot;</span><span style="color: #B392F0;"> block color</span><span>=</span><span style="color: #9ECBFF;">&quot;error&quot;</span><span style="color: #B392F0;"> @click</span><span>=</span><span style="color: #9ECBFF;">&quot;logout&quot;</span><span style="color: #B392F0;"> v-if</span><span>=</span><span style="color: #9ECBFF;">&quot;isAuthenticated&quot;</span><span>&gt;Logout&lt;/</span><span style="color: #85E89D;">v-btn</span><span>&gt;</span></span>
+<span class="giallo-l"><span>                &lt;</span><span style="color: #85E89D;">v-form</span><span style="color: #B392F0;"> @submit.prevent</span><span>=</span><span style="color: #9ECBFF;">&quot;login&quot;</span><span style="color: #B392F0;"> v-if</span><span>=</span><span style="color: #9ECBFF;">&quot;!isAuthenticated&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>                  &lt;</span><span style="color: #85E89D;">v-text-field</span><span style="color: #B392F0;"> v-model</span><span>=</span><span style="color: #9ECBFF;">&quot;credentials.username&quot;</span><span style="color: #B392F0;"> variant</span><span>=</span><span style="color: #9ECBFF;">&quot;outlined&quot;</span><span style="color: #B392F0;"> label</span><span>=</span><span style="color: #9ECBFF;">&quot;Username&quot;</span><span>&gt;&lt;/</span><span style="color: #85E89D;">v-text-field</span><span>&gt;</span></span>
+<span class="giallo-l"><span>                  &lt;</span><span style="color: #85E89D;">v-text-field</span><span style="color: #B392F0;"> v-model</span><span>=</span><span style="color: #9ECBFF;">&quot;credentials.password&quot;</span><span style="color: #B392F0;"> variant</span><span>=</span><span style="color: #9ECBFF;">&quot;outlined&quot;</span><span style="color: #B392F0;"> label</span><span>=</span><span style="color: #9ECBFF;">&quot;Password&quot;</span><span>&gt;&lt;/</span><span style="color: #85E89D;">v-text-field</span><span>&gt;</span></span>
+<span class="giallo-l"><span>                  &lt;</span><span style="color: #85E89D;">v-btn</span><span style="color: #B392F0;"> type</span><span>=</span><span style="color: #9ECBFF;">&quot;submit&quot;</span><span style="color: #B392F0;"> block color</span><span>=</span><span style="color: #9ECBFF;">&quot;primary&quot;</span><span>&gt;Login&lt;/</span><span style="color: #85E89D;">v-btn</span><span>&gt;</span></span>
+<span class="giallo-l"><span>                &lt;/</span><span style="color: #85E89D;">v-form</span><span>&gt;</span></span>
+<span class="giallo-l"><span>              &lt;/</span><span style="color: #85E89D;">v-card-text</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;/</span><span style="color: #85E89D;">v-card</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;/</span><span style="color: #85E89D;">v-col</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;/</span><span style="color: #85E89D;">v-row</span><span>&gt;</span></span>
+<span class="giallo-l"><span>      &lt;/</span><span style="color: #85E89D;">v-container</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;/</span><span style="color: #85E89D;">v-main</span><span>&gt;</span></span>
+<span class="giallo-l"><span>  &lt;/</span><span style="color: #85E89D;">v-app</span><span>&gt;</span></span>
+<span class="giallo-l"><span>&lt;/</span><span style="color: #85E89D;">template</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&lt;</span><span style="color: #85E89D;">script</span><span style="color: #B392F0;"> setup</span><span>&gt;</span></span>
+<span class="giallo-l"><span style="color: #F97583;">import</span><span> { reactive, ref }</span><span style="color: #F97583;"> from</span><span style="color: #9ECBFF;"> &#39;vue&#39;</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #F97583;">const</span><span style="color: #79B8FF;"> isAuthenticated</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> ref</span><span>(</span><span style="color: #79B8FF;">false</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">const</span><span style="color: #79B8FF;"> credentials</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> reactive</span><span>({ username:</span><span style="color: #9ECBFF;"> &quot;&quot;</span><span>, password:</span><span style="color: #9ECBFF;"> &quot;&quot;</span><span> })</span></span>
+<span class="giallo-l"><span style="color: #F97583;">const</span><span style="color: #B392F0;"> login</span><span style="color: #F97583;"> =</span><span> ()</span><span style="color: #F97583;"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">  fetch</span><span>(</span><span style="color: #9ECBFF;">&quot;/api/login/&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span>      method:</span><span style="color: #9ECBFF;"> &quot;POST&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>      headers: {</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;Content-Type&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;application/json&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>      },</span></span>
+<span class="giallo-l"><span>      body:</span><span style="color: #79B8FF;"> JSON</span><span>.</span><span style="color: #B392F0;">stringify</span><span>(credentials)</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>  ).</span><span style="color: #B392F0;">then</span><span>(</span><span style="color: #FFAB70;">response</span><span style="color: #F97583;">=&gt;</span><span>{</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span>(response.ok){</span></span>
+<span class="giallo-l"><span>      isAuthenticated.value</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">true</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    return</span><span> response.</span><span style="color: #B392F0;">json</span><span>()</span></span>
+<span class="giallo-l"><span>  })</span></span>
+<span class="giallo-l"><span>  .</span><span style="color: #B392F0;">then</span><span>(</span><span style="color: #FFAB70;">data</span><span style="color: #F97583;">=&gt;</span><span>console.</span><span style="color: #B392F0;">log</span><span>(data)</span></span>
+<span class="giallo-l"><span>  )</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">// new</span></span>
+<span class="giallo-l"><span style="color: #F97583;">const</span><span style="color: #B392F0;"> logout</span><span style="color: #F97583;"> =</span><span> ()</span><span style="color: #F97583;"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">  fetch</span><span>(</span><span style="color: #9ECBFF;">&quot;/api/logout/&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span>      method:</span><span style="color: #9ECBFF;"> &quot;POST&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>      headers: {</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;Content-Type&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;application/json&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>      }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>  ).</span><span style="color: #B392F0;">then</span><span>(</span><span style="color: #FFAB70;">response</span><span style="color: #F97583;">=&gt;</span><span>{</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span>(response.ok){</span></span>
+<span class="giallo-l"><span>      isAuthenticated.value</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">false</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    return</span><span> response.</span><span style="color: #B392F0;">json</span><span>()</span></span>
+<span class="giallo-l"><span>  })</span></span>
+<span class="giallo-l"><span>  .</span><span style="color: #B392F0;">then</span><span>(</span><span style="color: #FFAB70;">data</span><span style="color: #F97583;">=&gt;</span><span>console.</span><span style="color: #B392F0;">log</span><span>(data)</span></span>
+<span class="giallo-l"><span>  )</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span>&lt;/</span><span style="color: #85E89D;">script</span><span>&gt;</span></span></code></pre>
+<p>Now clear the session cookies and login again, after that click on the logout button, we can see that we have an error in the console panel of the browser's Devtools.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="json"><span class="giallo-l"><span>{</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;detail&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;CSRF Failed: CSRF token missing.&quot;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="cross-site-request-forgery-protection-csrf"><a class="zola-anchor" href="#cross-site-request-forgery-protection-csrf" aria-label="Anchor link for: cross-site-request-forgery-protection-csrf">Cross Site Request Forgery protection (CSRF)</a></h2>
+<p>from Django documentation:</p>
+<blockquote>
+<p><em>The CSRF middleware and template tag provides easy-to-use protection against Cross Site Request Forgeries. This type of attack occurs when a malicious website contains a link, a form button or some JavaScript that is intended to perform some action on your website, using the credentials of a logged-in user who visits the malicious site in their browser. A related type of attack, ‘login CSRF’, where an attacking site tricks a user’s browser into logging into a site with someone else’s credentials, is also covered. The first defense against CSRF attacks is to ensure that GET requests (and other ‘safe’ methods, as defined by RFC 9110#section-9.2.1) are side effect free. Requests via ‘unsafe’ methods, such as POST, PUT, and DELETE, can then be protected by the steps outlined in How to use Django’s CSRF protection.</em></p>
+</blockquote>
+<p>for further information <a rel="external" href="https://docs.djangoproject.com/en/5.1/ref/csrf/">see here</a></p>
+<p>So we have to include the <code>X-CSRFToken</code> value in the request header for all post requests, let's update the logout function,</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="javascript"><span class="giallo-l"><span style="color: #F97583;">const</span><span style="color: #B392F0;"> logout</span><span style="color: #F97583;"> =</span><span> ()</span><span style="color: #F97583;"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">  fetch</span><span>(</span><span style="color: #9ECBFF;">&quot;/api/logout/&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span>      method:</span><span style="color: #9ECBFF;"> &quot;POST&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>      headers: {</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;Content-Type&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;application/json&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;X-CSRFToken&quot;</span><span>:</span><span style="color: #B392F0;">getCsrfToken</span><span>()</span><span style="color: #6A737D;"> // new</span></span>
+<span class="giallo-l"><span>      }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>  ).</span><span style="color: #B392F0;">then</span><span>(</span><span style="color: #FFAB70;">response</span><span style="color: #F97583;">=&gt;</span><span>{</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span>(response.ok){</span></span>
+<span class="giallo-l"><span>      isAuthenticated.value</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">false</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    return</span><span> response.</span><span style="color: #B392F0;">json</span><span>()</span></span>
+<span class="giallo-l"><span>  })</span></span>
+<span class="giallo-l"><span>  .</span><span style="color: #B392F0;">then</span><span>(</span><span style="color: #FFAB70;">data</span><span style="color: #F97583;">=&gt;</span><span>console.</span><span style="color: #B392F0;">log</span><span>(data)</span></span>
+<span class="giallo-l"><span>  )</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">// new</span></span>
+<span class="giallo-l"><span style="color: #F97583;">const</span><span style="color: #B392F0;"> getCsrfToken</span><span style="color: #F97583;"> =</span><span> ()</span><span style="color: #F97583;"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  const</span><span style="color: #79B8FF;"> cookie</span><span style="color: #F97583;"> =</span><span> document.cookie.</span><span style="color: #B392F0;">split</span><span>(</span><span style="color: #9ECBFF;">&#39;;&#39;</span><span>)[</span><span style="color: #79B8FF;">0</span><span>];</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  const</span><span style="color: #79B8FF;"> value</span><span style="color: #F97583;"> =</span><span> cookie.</span><span style="color: #B392F0;">split</span><span>(</span><span style="color: #9ECBFF;">&quot;=&quot;</span><span>)[</span><span style="color: #79B8FF;">1</span><span>]</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  return</span><span> value</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>You can see, when you click on the logout button, every thing goes as you want.</p>
+<h2 id="get-data-with-authenticated-user"><a class="zola-anchor" href="#get-data-with-authenticated-user" aria-label="Anchor link for: get-data-with-authenticated-user">Get data with authenticated user</a></h2>
+<p>Now we will add a view to our backend, only authenticated users will se a message say Hello, add to views.py file the following lines:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> SayHello</span><span>(</span><span style="color: #B392F0;">views</span><span>.</span><span style="color: #B392F0;">APIView</span><span>):</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # This view should be accessible only for authenticated users.</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #B392F0;"> get</span><span>(self, request, format</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">None</span><span>):</span></span>
+<span class="giallo-l"><span>        username</span><span style="color: #F97583;"> =</span><span> request.user.username</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        return</span><span> Response({</span><span style="color: #9ECBFF;">&quot;message&quot;</span><span>:</span><span style="color: #F97583;">f</span><span style="color: #9ECBFF;">&quot;Hello </span><span style="color: #79B8FF;">{</span><span>username</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;">&quot;</span><span>},</span><span style="color: #FFAB70;"> status</span><span style="color: #F97583;">=</span><span>status.</span><span style="color: #79B8FF;">HTTP_202_ACCEPTED</span><span>)</span></span></code></pre>
+<p>In the urls.py file:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.contrib</span><span style="color: #F97583;"> import</span><span> admin</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.urls</span><span style="color: #F97583;"> import</span><span> path</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> .</span><span style="color: #F97583;"> import</span><span> views</span></span>
+<span class="giallo-l"><span>urlpatterns</span><span style="color: #F97583;"> =</span><span> [</span></span>
+<span class="giallo-l"><span>    path(</span><span style="color: #9ECBFF;">&#39;admin/&#39;</span><span>, admin.site.urls),</span></span>
+<span class="giallo-l"><span>    path(</span><span style="color: #9ECBFF;">&#39;api/login/&#39;</span><span>, views.LoginView.as_view()),</span></span>
+<span class="giallo-l"><span>    path(</span><span style="color: #9ECBFF;">&#39;api/logout/&#39;</span><span>, views.LogoutView.as_view()),</span></span>
+<span class="giallo-l"><span>    path(</span><span style="color: #9ECBFF;">&#39;api/hello/&#39;</span><span>, views.SayHello.as_view()),</span><span style="color: #6A737D;"> # new</span></span>
+<span class="giallo-l"><span>]</span></span></code></pre>
+<p>And finally the login view</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="html"><span class="giallo-l"><span>&lt;</span><span style="color: #85E89D;">template</span><span>&gt;</span></span>
+<span class="giallo-l"><span>  &lt;</span><span style="color: #85E89D;">v-app</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">v-main</span><span>&gt;</span></span>
+<span class="giallo-l"><span>      &lt;</span><span style="color: #85E89D;">v-container</span><span style="color: #B392F0;"> class</span><span>=</span><span style="color: #9ECBFF;">&quot;fill-height&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;</span><span style="color: #85E89D;">v-row</span><span style="color: #B392F0;"> justify</span><span>=</span><span style="color: #9ECBFF;">&quot;center&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;</span><span style="color: #85E89D;">v-col</span><span style="color: #B392F0;"> cols</span><span>=</span><span style="color: #9ECBFF;">&quot;12&quot;</span><span style="color: #B392F0;"> md</span><span>=</span><span style="color: #9ECBFF;">&quot;3&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;</span><span style="color: #85E89D;">v-card</span><span>&gt;</span></span>
+<span class="giallo-l"><span>              &lt;</span><span style="color: #85E89D;">v-card-text</span><span>&gt;</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">                &lt;!-- new --&gt;</span></span>
+<span class="giallo-l"><span>                &lt;</span><span style="color: #85E89D;">v-btn</span><span style="color: #B392F0;"> class</span><span>=</span><span style="color: #9ECBFF;">&quot;mb-3&quot;</span><span style="color: #B392F0;"> block color</span><span>=</span><span style="color: #9ECBFF;">&quot;error&quot;</span><span style="color: #B392F0;"> @click</span><span>=</span><span style="color: #9ECBFF;">&quot;logout&quot;</span><span style="color: #B392F0;"> v-if</span><span>=</span><span style="color: #9ECBFF;">&quot;isAuthenticated&quot;</span><span>&gt;Logout&lt;/</span><span style="color: #85E89D;">v-btn</span><span>&gt;</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">                &lt;!-- new --&gt;</span></span>
+<span class="giallo-l"><span>                &lt;</span><span style="color: #85E89D;">h1</span><span style="color: #B392F0;"> class</span><span>=</span><span style="color: #9ECBFF;">&quot;title&quot;</span><span>&gt;{{ message }}&lt;/</span><span style="color: #85E89D;">h1</span><span>&gt;</span></span>
+<span class="giallo-l"><span>                &lt;</span><span style="color: #85E89D;">v-form</span><span style="color: #B392F0;"> @submit.prevent</span><span>=</span><span style="color: #9ECBFF;">&quot;login&quot;</span><span style="color: #B392F0;"> v-if</span><span>=</span><span style="color: #9ECBFF;">&quot;!isAuthenticated&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>                  &lt;</span><span style="color: #85E89D;">v-text-field</span><span style="color: #B392F0;"> v-model</span><span>=</span><span style="color: #9ECBFF;">&quot;credentials.username&quot;</span><span style="color: #B392F0;"> variant</span><span>=</span><span style="color: #9ECBFF;">&quot;outlined&quot;</span><span style="color: #B392F0;"> label</span><span>=</span><span style="color: #9ECBFF;">&quot;Username&quot;</span><span>&gt;&lt;/</span><span style="color: #85E89D;">v-text-field</span><span>&gt;</span></span>
+<span class="giallo-l"><span>                  &lt;</span><span style="color: #85E89D;">v-text-field</span><span style="color: #B392F0;"> v-model</span><span>=</span><span style="color: #9ECBFF;">&quot;credentials.password&quot;</span><span style="color: #B392F0;"> variant</span><span>=</span><span style="color: #9ECBFF;">&quot;outlined&quot;</span><span style="color: #B392F0;"> label</span><span>=</span><span style="color: #9ECBFF;">&quot;Password&quot;</span><span>&gt;&lt;/</span><span style="color: #85E89D;">v-text-field</span><span>&gt;</span></span>
+<span class="giallo-l"><span>                  &lt;</span><span style="color: #85E89D;">v-btn</span><span style="color: #B392F0;"> type</span><span>=</span><span style="color: #9ECBFF;">&quot;submit&quot;</span><span style="color: #B392F0;"> block color</span><span>=</span><span style="color: #9ECBFF;">&quot;primary&quot;</span><span>&gt;Login&lt;/</span><span style="color: #85E89D;">v-btn</span><span>&gt;</span></span>
+<span class="giallo-l"><span>                &lt;/</span><span style="color: #85E89D;">v-form</span><span>&gt;</span></span>
+<span class="giallo-l"><span>              &lt;/</span><span style="color: #85E89D;">v-card-text</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;/</span><span style="color: #85E89D;">v-card</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;/</span><span style="color: #85E89D;">v-col</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;/</span><span style="color: #85E89D;">v-row</span><span>&gt;</span></span>
+<span class="giallo-l"><span>      &lt;/</span><span style="color: #85E89D;">v-container</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;/</span><span style="color: #85E89D;">v-main</span><span>&gt;</span></span>
+<span class="giallo-l"><span>  &lt;/</span><span style="color: #85E89D;">v-app</span><span>&gt;</span></span>
+<span class="giallo-l"><span>&lt;/</span><span style="color: #85E89D;">template</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>&lt;</span><span style="color: #85E89D;">script</span><span style="color: #B392F0;"> setup</span><span>&gt;</span></span>
+<span class="giallo-l"><span style="color: #F97583;">import</span><span> { reactive, ref }</span><span style="color: #F97583;"> from</span><span style="color: #9ECBFF;"> &#39;vue&#39;</span><span>;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">const</span><span style="color: #79B8FF;"> message</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> ref</span><span>(</span><span style="color: #9ECBFF;">&quot;&quot;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">const</span><span style="color: #79B8FF;"> isAuthenticated</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> ref</span><span>(</span><span style="color: #79B8FF;">false</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">const</span><span style="color: #79B8FF;"> credentials</span><span style="color: #F97583;"> =</span><span style="color: #B392F0;"> reactive</span><span>({ username:</span><span style="color: #9ECBFF;"> &quot;&quot;</span><span>, password:</span><span style="color: #9ECBFF;"> &quot;&quot;</span><span> })</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">const</span><span style="color: #B392F0;"> login</span><span style="color: #F97583;"> =</span><span> ()</span><span style="color: #F97583;"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">  fetch</span><span>(</span><span style="color: #9ECBFF;">&quot;/api/login/&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span>      method:</span><span style="color: #9ECBFF;"> &quot;POST&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>      headers: {</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;Content-Type&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;application/json&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>      },</span></span>
+<span class="giallo-l"><span>      body:</span><span style="color: #79B8FF;"> JSON</span><span>.</span><span style="color: #B392F0;">stringify</span><span>(credentials)</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>  ).</span><span style="color: #B392F0;">then</span><span>(</span><span style="color: #FFAB70;">response</span><span style="color: #F97583;">=&gt;</span><span>{</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span>(response.ok){</span></span>
+<span class="giallo-l"><span>      isAuthenticated.value</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">true</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">      sayHello</span><span>()</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    return</span><span> response.</span><span style="color: #B392F0;">json</span><span>()</span></span>
+<span class="giallo-l"><span>  })</span></span>
+<span class="giallo-l"><span>  .</span><span style="color: #B392F0;">then</span><span>(</span><span style="color: #FFAB70;">data</span><span style="color: #F97583;">=&gt;</span><span>console.</span><span style="color: #B392F0;">log</span><span>(data)</span></span>
+<span class="giallo-l"><span>  )</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #F97583;">const</span><span style="color: #B392F0;"> sayHello</span><span style="color: #F97583;"> =</span><span> ()</span><span style="color: #F97583;"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">  fetch</span><span>(</span><span style="color: #9ECBFF;">&quot;/api/hello/&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span>      method:</span><span style="color: #9ECBFF;"> &quot;GET&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>      headers: {</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;Content-Type&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;application/json&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>      },</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>  ).</span><span style="color: #B392F0;">then</span><span>(</span><span style="color: #FFAB70;">response</span><span style="color: #F97583;">=&gt;</span><span>response.</span><span style="color: #B392F0;">json</span><span>())</span></span>
+<span class="giallo-l"><span>  .</span><span style="color: #B392F0;">then</span><span>(</span><span style="color: #FFAB70;">data</span><span style="color: #F97583;">=&gt;</span><span>{</span></span>
+<span class="giallo-l"><span>    message.value</span><span style="color: #F97583;"> =</span><span> data.message</span></span>
+<span class="giallo-l"><span>  }</span></span>
+<span class="giallo-l"><span>  )</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">//new</span></span>
+<span class="giallo-l"><span style="color: #F97583;">const</span><span style="color: #B392F0;"> logout</span><span style="color: #F97583;"> =</span><span> ()</span><span style="color: #F97583;"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">  fetch</span><span>(</span><span style="color: #9ECBFF;">&quot;/api/logout/&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span>      method:</span><span style="color: #9ECBFF;"> &quot;POST&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>      headers: {</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;Content-Type&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;application/json&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;X-CSRFToken&quot;</span><span>:</span><span style="color: #B392F0;">getCsrfToken</span><span>()</span><span style="color: #6A737D;"> // new</span></span>
+<span class="giallo-l"><span>      }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>  ).</span><span style="color: #B392F0;">then</span><span>(</span><span style="color: #FFAB70;">response</span><span style="color: #F97583;">=&gt;</span><span>{</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span>(response.ok){</span></span>
+<span class="giallo-l"><span>      isAuthenticated.value</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">false</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    return</span><span> response.</span><span style="color: #B392F0;">json</span><span>()</span></span>
+<span class="giallo-l"><span>  })</span></span>
+<span class="giallo-l"><span>  .</span><span style="color: #B392F0;">then</span><span>(</span><span style="color: #FFAB70;">data</span><span style="color: #F97583;">=&gt;</span><span>console.</span><span style="color: #B392F0;">log</span><span>(data)</span></span>
+<span class="giallo-l"><span>  )</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">const</span><span style="color: #B392F0;"> getCsrfToken</span><span style="color: #F97583;"> =</span><span> ()</span><span style="color: #F97583;"> =&gt;</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  const</span><span style="color: #79B8FF;"> cookie</span><span style="color: #F97583;"> =</span><span> document.cookie.</span><span style="color: #B392F0;">split</span><span>(</span><span style="color: #9ECBFF;">&#39;;&#39;</span><span>)[</span><span style="color: #79B8FF;">0</span><span>];</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  const</span><span style="color: #79B8FF;"> value</span><span style="color: #F97583;"> =</span><span> cookie.</span><span style="color: #B392F0;">split</span><span>(</span><span style="color: #9ECBFF;">&quot;=&quot;</span><span>)[</span><span style="color: #79B8FF;">1</span><span>]</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  return</span><span> value</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span>&lt;/</span><span style="color: #85E89D;">script</span><span>&gt;</span></span></code></pre><h2 id="result"><a class="zola-anchor" href="#result" aria-label="Anchor link for: result">Result</a></h2>
+<div align="center">
+<img src="/session-login.gif" width="100%"/>
+</div>
+<h2 id="final-words"><a class="zola-anchor" href="#final-words" aria-label="Anchor link for: final-words">Final words</a></h2>
+<p>In this article, you learned how to set up authentication for a Django Rest Framework (DRF) application using Django's built-in session framework. This method works well if you have control over both the frontend and backend, and they are served under the same primary domain. In such cases, browser cookies can effectively maintain the user session across multiple requests. This assumption is often valid, and using this approach is generally simpler to implement compared to token-based authentication methods.</p>
+<p>Be sure to check out my example project on <a rel="external" href="https://github.com/malnossi/django-session-app">Github</a>, either clone or fork it to see how everything works in practice.</p>
+<p>Enjoy working with Django Rest Framework!</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+<footer class="mt-12 flex flex-col" tabindex="-1" accesskey="_">
+  <div class="mb-2 flex flex-wrap">
+    <span class="block-bg mr-1.5 mb-1.5 rounded-lg px-5 py-1.5">Tags</span>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/django/">Django</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/web/">Web</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/javascript/">Javascript</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/python/">Python</a>
+    
+  </div>
+</footer>
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/server-side-events/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Pushing real-time updates to clients with Server-Sent Events (SSEs)</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/vuetify-dialog/" accesskey="."
+    ><span>Vue &amp; Vuetify Composable Confirm Dialogs</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time> Mohamed Nossirat
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+
+  <!-- Begin Body End inject -->
+  
+
+  <script src="https:&#x2F;&#x2F;cdnapp.websitepolicies.net&#x2F;widgets&#x2F;cookies&#x2F;mzad7vzz.js" defer></script>
+
+
+
+<script>
+  // If your cookie widget exposes callbacks, flip GA consent when accepted.
+  // Adjust to your provider’s API.
+  window.addEventListener('CookieConsentAccepted', function () {
+    if (window.gtag) {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  });
+</script>
+  <!-- End Body End inject -->
+</body>
+
+</html>

@@ -1,0 +1,367 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>How to update Queryset with Annotation in Django</title>
+  <meta property="og:title" content="How to update Queryset with Annotation in Django" />
+  <meta name="description" content="Update a Django queryset using annotations and subqueries, explain when this pattern is useful, and highlight common pitfalls to avoid." />
+  <meta property="og:description" content="Update a Django queryset using annotations and subqueries, explain when this pattern is useful, and highlight common pitfalls to avoid." />
+  <meta property="og:url" content="https://malnossi.github.io/blog/django-update-annotation/" />
+  <link rel="canonical" href="https://malnossi.github.io/blog/django-update-annotation/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-02-12T00:00:00+00:00" />
+  <meta property="article:tag" content="Django" />
+  <meta property="article:tag" content="ORM" />
+  <meta property="og:image" content="https://malnossi.github.io/django-annotated.png" />
+  <meta property="og:image:alt" content="" />
+  <meta property="og:image:width" content="1280" />
+  <meta property="og:image:height" content="720" />
+  <meta property="og:image:type" content="image/png" />
+  <link rel="alternate" type="application/atom+xml" href="https://malnossi.github.io/atom.xml" title="Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://malnossi.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://malnossi.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #f4f4f5; --header: #e4e4e7;} :root.dark{--bg: #18181b; --header: #27272a;}</style>
+  <meta name="theme-color" data-light="#e4e4e7" data-dark="#27272a" content="#e4e4e7" />
+  <link rel="icon" type="image/x-icon" href="https://malnossi.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" type="image/png" href="https://malnossi.github.io/apple-touch-icon.png?h=58bee300054c5308feb3" />
+  <link rel="icon" type="image/png" href="https://malnossi.github.io/android-icon.png?h=8d80ec95446bd2c36826" />
+  <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+<meta name="author" content="Mohamed Nossirat©">
+<meta property="article:author" content="Mohamed Nossirat©">
+<meta name="twitter:creator" content="Mohamed Nossirat©">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+<script>
+  // (Optional) default deny until consent tool flips it to granted
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('consent', 'default', { analytics_storage: 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-8LBRDGLXJV', {
+    anonymize_ip: true
+  });
+</script>
+
+
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <button type="button" title="Go to home page [Alt + !]" accesskey="!"
+          onclick="window.location.href='https://malnossi.github.io/';"
+          class="btn-home h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-home,url(icons/home.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Open search [Alt + /]" accesskey="/"
+          onclick="window.zolaTheme.search.toggle();"
+          class="btn-search ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-search,url(icons/search.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/blog/"
+          >Blog</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/talks/"
+          >Talks</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/tags/"
+          >Tags</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+      <!-- Search -->
+<div id="linkita-search-wrapper" class="hidden">
+  <ul id="linkita-search-results"></ul>
+</div>
+<script>window.zolaTheme.search.init({ scripts: ["https://malnossi.github.io/elasticlunr.min.js", "https://malnossi.github.io/search_index.en.js"], arg: { w: "#linkita-search-wrapper", r: "#linkita-search-results" } });</script>
+
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">How to update Queryset with Annotation in Django</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2026-02-12T00:00:00+00:00">2026-02-12</time><span
+        class="middot"></span><time
+    datetime="PT0H5M0S">5&nbsp;min</time><span
+      class="middot"></span><span>Mohamed Nossirat</span>
+</div>
+
+  </header>
+  <figure class="mt-0 mb-12">
+    <img
+      class="h-auto w-full rounded-lg"
+      src="https://malnossi.github.io/django-annotated.png"
+      width="1280"
+      height="720"
+    />
+  </figure>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#introduction">Introduction</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#the-problem">The Problem</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#the-intuitive-approach">The Intuitive Approach</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#loop-through-objects">Loop Through Objects</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#subquery">Subquery</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#common-pitfalls">Common Pitfalls</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#null-values">Null Values</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#performance-at-scale">Performance at Scale</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#conclusion">Conclusion</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><h1 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h1>
+<p>When working with related models in Django, it’s common to derive a parent model’s value from data stored in its child models. A classic example is tracking the overall progress of a <code>Project</code> based on the progress of its associated <code>Task</code> objects. At first glance, this seems straightforward: <em><strong>calculate the average progress of all tasks and store it on the project</strong></em>. However, the implementation details are more nuanced than they appear.</p>
+<p>In this article, we’ll walk through how to compute a project’s progress dynamically using Django’s ORM, explore why the most obvious solution can lead to incorrect or inconsistent results, and discuss a robust approach to keeping aggregated data in sync. Along the way, we’ll touch on model relationships, query annotations, signals, and the trade-offs between storing computed values versus calculating them on demand.</p>
+<p>By the end, you’ll not only understand how to implement this pattern correctly, but also gain insight into how Django handles related data under the hood and why being explicit about data consistency matters in real-world applications.</p>
+<h1 id="the-problem"><a class="zola-anchor" href="#the-problem" aria-label="Anchor link for: the-problem">The Problem</a></h1>
+<p>Let's say we have a project management system with two models:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.db</span><span style="color: #F97583;"> import</span><span> models</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> Project</span><span>(</span><span style="color: #B392F0;">models</span><span>.</span><span style="color: #B392F0;">Model</span><span>):</span></span>
+<span class="giallo-l"><span>    name</span><span style="color: #F97583;"> =</span><span> models.CharField(</span><span style="color: #FFAB70;">max_length</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">100</span><span>)</span></span>
+<span class="giallo-l"><span>    progress</span><span style="color: #F97583;"> =</span><span> models.DecimalField(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        max_digits</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">5</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        decimal_places</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">2</span><span>, </span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        default</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">0</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #79B8FF;"> __str__</span><span>(self):</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        return</span><span style="color: #79B8FF;"> self</span><span>.name</span></span>
+<span class="giallo-l"><span>    </span></span>
+<span class="giallo-l"><span style="color: #F97583;">    class</span><span style="color: #B392F0;"> Meta</span><span>:</span></span>
+<span class="giallo-l"><span>        db_table</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;projects&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> Task</span><span>(</span><span style="color: #B392F0;">models</span><span>.</span><span style="color: #B392F0;">Model</span><span>):</span></span>
+<span class="giallo-l"><span>    project</span><span style="color: #F97583;"> =</span><span> models.ForeignKey(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        to</span><span style="color: #F97583;">=</span><span>Project,</span><span style="color: #FFAB70;"> on_delete</span><span style="color: #F97583;">=</span><span>models.</span><span style="color: #79B8FF;">CASCADE</span><span>)</span></span>
+<span class="giallo-l"><span>        </span></span>
+<span class="giallo-l"><span>    title</span><span style="color: #F97583;"> =</span><span> models.CharField(</span><span style="color: #FFAB70;">max_length</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">100</span><span>)</span></span>
+<span class="giallo-l"><span>    progress</span><span style="color: #F97583;"> =</span><span> models.DecimalField(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        max_digits</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">5</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        decimal_places</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">2</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        default</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">0</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #79B8FF;"> __str__</span><span>(self):</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        return</span><span style="color: #79B8FF;"> self</span><span>.title</span></span>
+<span class="giallo-l"><span>    </span></span>
+<span class="giallo-l"><span style="color: #F97583;">    class</span><span style="color: #B392F0;"> Meta</span><span>:</span></span>
+<span class="giallo-l"><span>        db_table</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;tasks&quot;</span></span></code></pre>
+<p>Our goal: <strong>Update each project's progress to reflect the average progress of all its tasks.</strong></p>
+<h1 id="the-intuitive-approach"><a class="zola-anchor" href="#the-intuitive-approach" aria-label="Anchor link for: the-intuitive-approach">The Intuitive Approach</a></h1>
+<p>If you're familiar with Django's ORM, you might try something like this:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.db.models</span><span style="color: #F97583;"> import</span><span> Avg, F</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>Project.objects.annotate(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">    avg_progress</span><span style="color: #F97583;">=</span><span>Avg(</span><span style="color: #9ECBFF;">&quot;task__progress&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>).update(</span><span style="color: #FFAB70;">progress</span><span style="color: #F97583;">=</span><span>F(</span><span style="color: #9ECBFF;">&quot;avg_progress&quot;</span><span>))</span></span></code></pre>
+<p>This looks perfect, right? We annotate the average, then use <code>F()</code> to reference it in the update. Unfortunately, <strong>this doesn't work</strong>.</p>
+<p><strong>Why It Fails ?</strong></p>
+<p>Django's <code>update()</code> method cannot use fields created by <code>annotate()</code>. The reason is architectural: <code>update()</code> generates a single <code>SQL UPDATE</code> statement, while annotations require subqueries or joins that Django can't combine in this context.</p>
+<blockquote>
+<p>You won't find this documented explicitly because it's a limitation of how the ORM translates operations to SQL.</p>
+</blockquote>
+<h1 id="loop-through-objects"><a class="zola-anchor" href="#loop-through-objects" aria-label="Anchor link for: loop-through-objects">Loop Through Objects</a></h1>
+<p>The most straightforward approach:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.db.models</span><span style="color: #F97583;"> import</span><span> Avg</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">for</span><span> project</span><span style="color: #F97583;"> in</span><span> Project.objects.annotate(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">    avg_progress</span><span style="color: #F97583;">=</span><span>Avg(</span><span style="color: #9ECBFF;">&quot;task__progress&quot;</span><span>)):</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    project.progress</span><span style="color: #F97583;"> =</span><span> project.avg_progress</span></span>
+<span class="giallo-l"><span>    project.save()</span></span></code></pre>
+<p>This approach has the advantage of being simple and intuitive: the logic is easy to follow, it behaves predictably, and for small datasets it performs perfectly well without adding unnecessary complexity. However, its weaknesses become apparent as the system scales. Because it performs a separate database query for each project, it introduces the classic <em><strong>N+1</strong></em> query problem, which can significantly degrade performance with larger datasets. Additionally, recalculating and saving each project individually may trigger model signals on every save, adding further overhead and potentially causing unintended side effects. While suitable for small applications or low-traffic environments, this strategy does not scale gracefully and should be reconsidered for more demanding use cases.</p>
+<h1 id="subquery"><a class="zola-anchor" href="#subquery" aria-label="Anchor link for: subquery">Subquery</a></h1>
+<p>The most efficient solution uses Django's <code>Subquery</code></p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.db.models</span><span style="color: #F97583;"> import</span><span> Avg, OuterRef, Subquery</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>subquery</span><span style="color: #F97583;"> =</span><span> Project.objects.filter(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">    id</span><span style="color: #F97583;">=</span><span>OuterRef(</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>).annotate(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">    avg_prog</span><span style="color: #F97583;">=</span><span>Avg(</span><span style="color: #9ECBFF;">&quot;task__progress&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>).values(</span><span style="color: #9ECBFF;">&quot;avg_prog&quot;</span><span>)[:</span><span style="color: #79B8FF;">1</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>num_updated</span><span style="color: #F97583;"> =</span><span> Project.objects.update(</span><span style="color: #FFAB70;">progress</span><span style="color: #F97583;">=</span><span>Subquery(subquery))</span></span></code></pre>
+<p>This approach is far more efficient and scalable. By leveraging Django’s ORM features such as <code>Subquery</code> and <code>OuterRef</code>, the entire update can be executed in a single database query, making it performant even with large datasets. It avoids the <code>N+1</code> query problem entirely and keeps the logic clean, expressive, and idiomatic to Django. While the syntax is admittedly more advanced and may look intimidating at first glance, it remains elegant once understood. Another important distinction is that using <code>update()</code> does not trigger model <code>save()</code> methods or signals. In many cases, this is actually beneficial, as it avoids unnecessary side effects and improves performance, though it’s something to be aware of if your application depends on signals.</p>
+<p><strong>How It Works</strong></p>
+<p>At a high level, this solution pushes the aggregation logic down to the database layer. <code>OuterRef("id")</code> allows the subquery to reference the id of each project in the outer queryset being updated. The subquery then filters Task objects that belong to that specific project and calculates the average of their progress field. Finally, the outer <code>update()</code> call assigns the result of that subquery directly to the progress field of each project. The database handles the heavy lifting in one optimized query, ensuring both correctness and efficiency.</p>
+<p>The resulting SQL looks something like:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="sql"><span class="giallo-l"><span style="color: #F97583;">UPDATE</span><span style="color: #9ECBFF;"> &quot;projects&quot;</span><span> </span></span>
+<span class="giallo-l"><span style="color: #F97583;">SET</span><span style="color: #9ECBFF;"> &quot;progress&quot;</span><span style="color: #F97583;"> =</span><span> (</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    SELECT</span><span style="color: #79B8FF;"> AVG</span><span>(</span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;progress&quot;</span><span>) </span><span style="color: #F97583;">AS</span><span style="color: #9ECBFF;"> &quot;avg_prog&quot;</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    FROM</span><span style="color: #9ECBFF;"> &quot;projects&quot;</span><span> U0</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    INNER JOIN</span><span style="color: #9ECBFF;"> &quot;tasks&quot;</span><span style="color: #F97583;"> ON</span><span> (U0.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;project_id&quot;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    WHERE</span><span> U0.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;projects&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;id&quot;</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    GROUP BY</span><span> U0.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span> </span></span>
+<span class="giallo-l"><span style="color: #F97583;">    LIMIT</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"><span>)</span></span></code></pre><h1 id="common-pitfalls"><a class="zola-anchor" href="#common-pitfalls" aria-label="Anchor link for: common-pitfalls">Common Pitfalls</a></h1>
+<h2 id="null-values"><a class="zola-anchor" href="#null-values" aria-label="Anchor link for: null-values">Null Values</a></h2>
+<p>If some projects have no tasks, the average will be <code>NULL</code></p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.db.models</span><span style="color: #F97583;"> import</span><span> Avg, OuterRef, Subquery</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.db.models.functions</span><span style="color: #F97583;"> import</span><span> Coalesce</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>subquery</span><span style="color: #F97583;"> =</span><span> Project.objects.filter(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">    id</span><span style="color: #F97583;">=</span><span>OuterRef(</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>).annotate(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">    avg_prog</span><span style="color: #F97583;">=</span><span>Coalesce(Avg(</span><span style="color: #9ECBFF;">&quot;task__progress&quot;</span><span>),</span><span style="color: #79B8FF;"> 0</span><span>)</span><span style="color: #6A737D;">  # Default to 0</span></span>
+<span class="giallo-l"><span>).values(</span><span style="color: #9ECBFF;">&quot;avg_prog&quot;</span><span>)[:</span><span style="color: #79B8FF;">1</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>Project.objects.update(</span><span style="color: #FFAB70;">progress</span><span style="color: #F97583;">=</span><span>Subquery(subquery))</span></span></code></pre><h2 id="performance-at-scale"><a class="zola-anchor" href="#performance-at-scale" aria-label="Anchor link for: performance-at-scale">Performance at Scale</a></h2>
+<p>For very large datasets, think millions of records, even efficient ORM queries may not be enough. In such cases, you should consider more scalable patterns. <strong>Chunked updates</strong> help avoid long running transactions by processing records in batches. <strong>Background tasks</strong> with tools like <code>Celery</code> move heavy recalculations out of the request cycle, keeping your application responsive. <strong>Database triggers</strong> can automatically maintain aggregates at the database level, though they shift logic outside Django. Finally, <strong>denormalization</strong> such as storing running totals instead of recalculating averages can significantly improve performance by turning expensive aggregate queries into lightweight incremental updates.</p>
+<h1 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">Conclusion</a></h1>
+<p>Updating a parent model with aggregated data from its related children is a common Django pattern that often trips developers up. The most important lessons are simple: don’t try to combine <code>annotate()</code> with <code>update()</code>, use <code>Subquery()</code> and <code>OuterRef()</code> for efficient bulk updates, only loop through objects when working with small datasets or when signals are required, ensure your fields can safely store computed values, and always inspect the generated SQL to understand performance implications. The Subquery approach offers the ideal balance between Django’s ORM elegance and SQL-level efficiency, allowing you to keep aggregated fields in sync cleanly, predictably, and at scale.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+<footer class="mt-12 flex flex-col" tabindex="-1" accesskey="_">
+  <div class="mb-2 flex flex-wrap">
+    <span class="block-bg mr-1.5 mb-1.5 rounded-lg px-5 py-1.5">Tags</span>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/django/">Django</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/orm/">ORM</a>
+    
+  </div>
+</footer>
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/get-full-model-django-subquery/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Get full model instance from Django&#x27;s Subquery</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/export-postgres-with-django/" accesskey="."
+    ><span>Export PostgreSQL data to CSV with Django</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time> Mohamed Nossirat
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+
+  <!-- Begin Body End inject -->
+  
+
+  <script src="https:&#x2F;&#x2F;cdnapp.websitepolicies.net&#x2F;widgets&#x2F;cookies&#x2F;mzad7vzz.js" defer></script>
+
+
+
+<script>
+  // If your cookie widget exposes callbacks, flip GA consent when accepted.
+  // Adjust to your provider’s API.
+  window.addEventListener('CookieConsentAccepted', function () {
+    if (window.gtag) {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  });
+</script>
+  <!-- End Body End inject -->
+</body>
+
+</html>

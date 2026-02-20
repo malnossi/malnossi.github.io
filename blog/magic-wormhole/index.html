@@ -1,0 +1,332 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Magic Wormhole: The Simple, Secure Way to Teleport Files Between Computers</title>
+  <meta property="og:title" content="Magic Wormhole: The Simple, Secure Way to Teleport Files Between Computers" />
+  <meta name="description" content="If you are looking for easy, one-time, and secure file transfers, look no further than Magic Wormhole. This powerful tool allows you to send files directly from one computer to another without worryin…" />
+  <meta property="og:description" content="If you are looking for easy, one-time, and secure file transfers, look no further than Magic Wormhole. This powerful tool allows you to send files directly from one computer to another without worrying about cloud storage or prying eyes." />
+  <meta property="og:url" content="https://malnossi.github.io/blog/magic-wormhole/" />
+  <link rel="canonical" href="https://malnossi.github.io/blog/magic-wormhole/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-02-20T00:00:00+00:00" />
+  <meta property="article:tag" content="Python" />
+  <meta property="article:tag" content="Security" />
+  <meta property="og:image" content="https://malnossi.github.io/magic-wormhole.webp" />
+  <meta property="og:image:alt" content="" />
+  <meta property="og:image:width" content="860" />
+  <meta property="og:image:height" content="460" />
+  <meta property="og:image:type" content="image/webp" />
+  <link rel="alternate" type="application/atom+xml" href="https://malnossi.github.io/atom.xml" title="Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://malnossi.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://malnossi.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #f4f4f5; --header: #e4e4e7;} :root.dark{--bg: #18181b; --header: #27272a;}</style>
+  <meta name="theme-color" data-light="#e4e4e7" data-dark="#27272a" content="#e4e4e7" />
+  <link rel="icon" type="image/x-icon" href="https://malnossi.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" type="image/png" href="https://malnossi.github.io/apple-touch-icon.png?h=58bee300054c5308feb3" />
+  <link rel="icon" type="image/png" href="https://malnossi.github.io/android-icon.png?h=8d80ec95446bd2c36826" />
+  <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+<meta name="author" content="Mohamed Nossirat©">
+<meta property="article:author" content="Mohamed Nossirat©">
+<meta name="twitter:creator" content="Mohamed Nossirat©">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+<script>
+  // (Optional) default deny until consent tool flips it to granted
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('consent', 'default', { analytics_storage: 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-8LBRDGLXJV', {
+    anonymize_ip: true
+  });
+</script>
+
+
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <button type="button" title="Go to home page [Alt + !]" accesskey="!"
+          onclick="window.location.href='https://malnossi.github.io/';"
+          class="btn-home h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-home,url(icons/home.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Open search [Alt + /]" accesskey="/"
+          onclick="window.zolaTheme.search.toggle();"
+          class="btn-search ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-search,url(icons/search.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/blog/"
+          >Blog</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/talks/"
+          >Talks</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/tags/"
+          >Tags</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+      <!-- Search -->
+<div id="linkita-search-wrapper" class="hidden">
+  <ul id="linkita-search-results"></ul>
+</div>
+<script>window.zolaTheme.search.init({ scripts: ["https://malnossi.github.io/elasticlunr.min.js", "https://malnossi.github.io/search_index.en.js"], arg: { w: "#linkita-search-wrapper", r: "#linkita-search-results" } });</script>
+
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Magic Wormhole: The Simple, Secure Way to Teleport Files Between Computers</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2026-02-20T00:00:00+00:00">2026-02-20</time><span
+        class="middot"></span><time
+    datetime="PT0H5M0S">5&nbsp;min</time><span
+      class="middot"></span><span>Mohamed Nossirat</span>
+</div>
+
+  </header>
+  <figure class="mt-0 mb-12">
+    <img
+      class="h-auto w-full rounded-lg"
+      src="https://malnossi.github.io/magic-wormhole.webp"
+      width="860"
+      height="460"
+    />
+  </figure>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#introduction">Introduction</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#what-exactly-is-magic-wormhole">What Exactly is Magic Wormhole?</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#installation">Installation</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#how-it-works">How It Works</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#sharing-ssh-keys">Sharing SSH Keys</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#why-you-ll-love-it">Why You&#x27;ll Love It</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#notes-on-security-and-use-cases">Notes on Security and Use Cases</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#conclusion">Conclusion</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><h1 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h1>
+<p>We've all been there. You're with a friend, you have an 8GB file or a beloved Dreamcast ROM on your laptop, and you need to get it to their computer. The usual rituals begin: the frantic search for a USB stick, the agonizing wait for a Google Drive upload, or the fiddly setup of a shared folder. It feels like too much work for a simple, one-time transfer.</p>
+<p>There's a better way, and it lives right in your terminal. It's called <a rel="external" href="https://magic-wormhole.readthedocs.io/en/latest/"><em><strong>Magic Wormhole</strong></em></a>, and it's the closest thing to teleportation for your files.</p>
+<h1 id="what-exactly-is-magic-wormhole"><a class="zola-anchor" href="#what-exactly-is-magic-wormhole" aria-label="Anchor link for: what-exactly-is-magic-wormhole">What Exactly is Magic Wormhole?</a></h1>
+<p>Created by <a rel="external" href="https://x.com/lotharrr"><strong>Brian Warner</strong></a> and demonstrated at <a rel="external" href="https://www.youtube.com/watch?v=oFrTqQw0_3c"><strong>PyCon 2016</strong></a>, Magic Wormhole is a command-line tool that does one thing and does it brilliantly: it gets things from one computer to another, directly, safely, and simply.</p>
+<p>It’s not another cloud service. Think of it as a direct, secure pipe between two computers. You use it when you're talking to someone in person, over the phone, or via chat but their computer isn't connected to yours in any pre-arranged way. No accounts, no configurations, no central server storing your data. It's a <em><strong>"one-time"</strong></em> transfer: you send a file, they receive it, and the connection vanishes.</p>
+<p><em><strong>"Rather than upload your file to Dropbox and give the other person its link, you can just send it to them directly."</strong></em></p>
+<h1 id="installation"><a class="zola-anchor" href="#installation" aria-label="Anchor link for: installation">Installation</a></h1>
+<p>Getting Magic Wormhole on your machine is easy, regardless of your operating system.</p>
+<p><strong>Linux (Ubuntu/Debian/Raspbian):</strong></p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">sudo</span><span style="color: #9ECBFF;"> apt install magic-wormhole</span></span></code></pre>
+<p><strong>Linux (Fedora):</strong></p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">sudo</span><span style="color: #9ECBFF;"> dnf install magic-wormhole</span></span></code></pre>
+<p><strong>macOS:</strong></p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">brew</span><span style="color: #9ECBFF;"> install magic-wormhole</span></span></code></pre>
+<p><strong>Windows:</strong>
+The best way is to use pip inside a virtual environment:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">pip</span><span style="color: #9ECBFF;"> install magic-wormhole</span></span></code></pre>
+<blockquote>
+<p>For detailed instructions on other distros or potential dependencies, check the project's <a rel="external" href="https://github.com/magic-wormhole/magic-wormhole">official repository</a>.</p>
+</blockquote>
+<h1 id="how-it-works"><a class="zola-anchor" href="#how-it-works" aria-label="Anchor link for: how-it-works">How It Works</a></h1>
+<p>Its simplicity is its superpower. Here’s how you'd use it in real life:
+<strong>To Send a File:</strong> You open a terminal and type:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">wormhole</span><span style="color: #9ECBFF;"> send /path/to/file.[ext]</span></span></code></pre>
+<p>The tool springs to life. It prepares the file and then presents you with a unique, human-readable code phrase, like: <code>7-cactus-sunshine</code>.</p>
+<p><strong>To Receive:</strong> You tell your friend the code phrase. They open their own terminal and type:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">wormhole</span><span style="color: #9ECBFF;"> receive</span></span></code></pre>
+<p>The tool will prompt them for the code. They type in <code>7-cactus-sunshine</code>, hit Enter, and the transfer begins. The file flows directly from your computer to theirs. Once it's done, the code expires. That's it. One command and a simple, spoken phrase is all it takes.</p>
+<p>Or directly:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">wormhole</span><span style="color: #9ECBFF;"> receive 7-cactus-sunshine</span></span></code></pre><h1 id="sharing-ssh-keys"><a class="zola-anchor" href="#sharing-ssh-keys" aria-label="Anchor link for: sharing-ssh-keys">Sharing SSH Keys</a></h1>
+<p>In the world of DevOps, securely sharing SSH keys is a fundamental task. Whether you're onboarding a new teammate or granting access to a server, the process needs to be both safe and simple.</p>
+<p>That’s where Magic Wormhole comes in. It provides dedicated commands <code>wormhole ssh invite</code> and <code>wormhole ssh accept</code> designed specifically to make SSH public key exchange fast, secure, and hassle-free.</p>
+<p>When you want to grant a new user access to your server, the wormhole ssh invite command is a quick and secure solution.</p>
+<p>Open a terminal and run:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">wormhole</span><span style="color: #9ECBFF;"> ssh invite</span></span></code></pre>
+<p>You’ll then see a message like this:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">Now</span><span style="color: #9ECBFF;"> tell the other user to run:</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">wormhole</span><span style="color: #9ECBFF;"> ssh accept 2-norwegian-frighten</span></span></code></pre>
+<p>Simply share the generated code with the other user.</p>
+<p>Once they run the command, their public SSH key is automatically added to your <code>~/.ssh/authorized_keys</code> file giving them authorized access to your server.</p>
+<p>You can also specify which system user the key should belong to, making it flexible for multi user environments.</p>
+<p>If you’re on the receiving end of an invitation, you’ll use:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">wormhole</span><span style="color: #9ECBFF;"> ssh accept</span><span style="color: #F97583;"> &lt;</span><span style="color: #9ECBFF;">cod</span><span>e</span><span style="color: #F97583;">&gt;</span></span></code></pre>
+<p>If you have multiple public SSH keys, you may see something like this:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">Multiple</span><span style="color: #9ECBFF;"> public-keys found:</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">  0:</span><span style="color: #9ECBFF;"> id_first.pub</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">  1:</span><span style="color: #9ECBFF;"> id_secoind.pub</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">  2:</span><span style="color: #9ECBFF;"> id_third.pub</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Send</span><span style="color: #9ECBFF;"> which one?:</span></span></code></pre>
+<p>Simply choose the key you want to share.</p>
+<p>This securely sends your <strong>public SSH</strong> key to the server owner, allowing them to seamlessly add it to their <code>authorized_keys</code> file.</p>
+<p>With Magic Wormhole, sharing SSH keys becomes a smooth, secure DevOps workflow no risky email attachments, no insecure chat transfers, and no complicated setup.</p>
+<h1 id="why-you-ll-love-it"><a class="zola-anchor" href="#why-you-ll-love-it" aria-label="Anchor link for: why-you-ll-love-it">Why You'll Love It</a></h1>
+<ul>
+<li>
+<p><strong>Dead Simple to Use:</strong> If you can open a terminal and read a few words aloud, you can use Magic Wormhole. It's designed to be as easy as <code>rsync</code>, but for people who haven't pre-configured SSH keys.</p>
+</li>
+<li>
+<p><strong>Truly Secure:</strong> The entire transfer is end-to-end encrypted. The code phrase you speak isn't just a password; it's the key to decrypt the data. Only the person with the code can access the file. This makes it far more secure than sharing a public link.</p>
+</li>
+<li>
+<p><strong>No File Size Limits:</strong> Since it's a peer-to-peer transfer, you're only limited by your internet upload speed and the patience of your friend on the other end. That 8GB video file or entire folder of games is no problem.</p>
+</li>
+<li>
+<p><strong>Self-Hostable and Open Source:</strong> For the more experienced user, you're not locked into a proprietary service. The servers that help establish the initial connection are open-source, meaning you can even host your own.</p>
+</li>
+</ul>
+<h1 id="notes-on-security-and-use-cases"><a class="zola-anchor" href="#notes-on-security-and-use-cases" aria-label="Anchor link for: notes-on-security-and-use-cases">Notes on Security and Use Cases</a></h1>
+<p>While Magic Wormhole is encrypted, one author wisely notes a common sense guideline: <em><strong>"This is fine for the odd file, but I would never trust any sensitive data with a tool such as this. Follow the security guidelines where you work!"</strong></em> It's perfect for sharing game ROMs, e-books, large presentation files, or family videos. For top-secret corporate data, your organization's approved methods should always come first.</p>
+<p>For the Linux nerds who might ask, <em><strong>"Why not just use scp or rsync?"</strong></em>, the answer is simple: prior arrangements. Those tools require you to have pre-exchanged keys or know the recipient's IP address and username. Magic Wormhole requires nothing but a quick verbal exchange.</p>
+<h1 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">Conclusion</a></h1>
+<p>Magic Wormhole fills a specific but incredibly common gap. It's for the moments when you just need to get a file <strong>from point A to point B</strong> without the overhead of the cloud or the hassle of physical media. It's simple, secure, and satisfyingly magical.</p>
+<p>So next time a friend asks for a file, skip the USB hunt. Just open your terminal and whisper the magic words.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+<footer class="mt-12 flex flex-col" tabindex="-1" accesskey="_">
+  <div class="mb-2 flex flex-wrap">
+    <span class="block-bg mr-1.5 mb-1.5 rounded-lg px-5 py-1.5">Tags</span>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/python/">Python</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/security/">Security</a>
+    
+  </div>
+</footer>
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/get-full-model-django-subquery/" accesskey="."
+    ><span>Get full model instance from Django&#x27;s Subquery</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time> Mohamed Nossirat
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+
+  <!-- Begin Body End inject -->
+  
+
+  <script src="https:&#x2F;&#x2F;cdnapp.websitepolicies.net&#x2F;widgets&#x2F;cookies&#x2F;mzad7vzz.js" defer></script>
+
+
+
+<script>
+  // If your cookie widget exposes callbacks, flip GA consent when accepted.
+  // Adjust to your provider’s API.
+  window.addEventListener('CookieConsentAccepted', function () {
+    if (window.gtag) {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  });
+</script>
+  <!-- End Body End inject -->
+</body>
+
+</html>

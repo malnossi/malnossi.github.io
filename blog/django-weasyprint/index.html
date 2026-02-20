@@ -1,0 +1,664 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Create PDF files with Django &amp; Weasyprint</title>
+  <meta property="og:title" content="Create PDF files with Django &amp; Weasyprint" />
+  <meta name="description" content="In this article you’ll learn how to integrate WeasyPrint with Django to build a robust invoice-generating application. We walk through the installation, project setup, template design, view logic and …" />
+  <meta property="og:description" content="In this article you’ll learn how to integrate WeasyPrint with Django to build a robust invoice-generating application. We walk through the installation, project setup, template design, view logic and PDF production, giving you a complete blueprint to deliver downloadable or printable invoices in you…" />
+  <meta property="og:url" content="https://malnossi.github.io/blog/django-weasyprint/" />
+  <link rel="canonical" href="https://malnossi.github.io/blog/django-weasyprint/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2025-11-05T00:00:00+00:00" />
+  <meta property="article:tag" content="Django" />
+  <meta property="article:tag" content="Weasyprint" />
+  <meta property="article:tag" content="PDF" />
+  <meta property="og:image" content="https://malnossi.github.io/django-weasyprint.png" />
+  <meta property="og:image:alt" content="" />
+  <meta property="og:image:width" content="1536" />
+  <meta property="og:image:height" content="1024" />
+  <meta property="og:image:type" content="image/png" />
+  <link rel="alternate" type="application/atom+xml" href="https://malnossi.github.io/atom.xml" title="Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://malnossi.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://malnossi.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #f4f4f5; --header: #e4e4e7;} :root.dark{--bg: #18181b; --header: #27272a;}</style>
+  <meta name="theme-color" data-light="#e4e4e7" data-dark="#27272a" content="#e4e4e7" />
+  <link rel="icon" type="image/x-icon" href="https://malnossi.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" type="image/png" href="https://malnossi.github.io/apple-touch-icon.png?h=58bee300054c5308feb3" />
+  <link rel="icon" type="image/png" href="https://malnossi.github.io/android-icon.png?h=8d80ec95446bd2c36826" />
+  <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+<meta name="author" content="Mohamed Nossirat©">
+<meta property="article:author" content="Mohamed Nossirat©">
+<meta name="twitter:creator" content="Mohamed Nossirat©">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+<script>
+  // (Optional) default deny until consent tool flips it to granted
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('consent', 'default', { analytics_storage: 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-8LBRDGLXJV', {
+    anonymize_ip: true
+  });
+</script>
+
+
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <button type="button" title="Go to home page [Alt + !]" accesskey="!"
+          onclick="window.location.href='https://malnossi.github.io/';"
+          class="btn-home h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-home,url(icons/home.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Open search [Alt + /]" accesskey="/"
+          onclick="window.zolaTheme.search.toggle();"
+          class="btn-search ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-search,url(icons/search.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/blog/"
+          >Blog</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/talks/"
+          >Talks</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/tags/"
+          >Tags</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+      <!-- Search -->
+<div id="linkita-search-wrapper" class="hidden">
+  <ul id="linkita-search-results"></ul>
+</div>
+<script>window.zolaTheme.search.init({ scripts: ["https://malnossi.github.io/elasticlunr.min.js", "https://malnossi.github.io/search_index.en.js"], arg: { w: "#linkita-search-wrapper", r: "#linkita-search-results" } });</script>
+
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Create PDF files with Django &amp; Weasyprint</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2025-11-05T00:00:00+00:00">2025-11-05</time><span
+        class="middot"></span><time
+    datetime="PT0H4M0S">4&nbsp;min</time><span
+      class="middot"></span><span>Mohamed Nossirat</span>
+</div>
+
+  </header>
+  <figure class="mt-0 mb-12">
+    <img
+      class="h-auto w-full rounded-lg"
+      src="https://malnossi.github.io/django-weasyprint.png"
+      width="1536"
+      height="1024"
+    />
+  </figure>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#introduction">Introduction</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#project-setup">Project Setup</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#the-models">The models</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#template-design">Template Design</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#view-to-generate-pdf">View to generate PDF</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#putting-it-all-together">Putting it all together</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#overview">Overview</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#additional-concerns">Additional Concerns</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#github">Github</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#conclusion">Conclusion</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h2>
+<p>When building business-oriented web applications with <a rel="external" href="https://www.djangoproject.com">Django</a>, a common requirement is to generate PDF documents; for example invoices, quotes, receipts or reports. While Django handles the HTML web interface easily, turning HTML + CSS into a polished PDF can be tricky. That’s where <a rel="external" href="https://weasyprint.org">WeasyPrint</a> comes in: it’s a library that renders HTML and CSS to PDF and works nicely in a Django context.</p>
+<p>In this article we’ll build a simple <strong>"Invoice Generator"</strong> application: you’ll define a model for Invoice, render an invoice template in HTML, then provide a Django view that uses WeasyPrint to generate a downloadable PDF. We’ll cover project structure, installation, template design, view logic and tips for integration (handling static files, stylesheets, page breaks etc). At the end you’ll have a reusable setup you can adapt for any kind of document generation.</p>
+<h2 id="project-setup"><a class="zola-anchor" href="#project-setup" aria-label="Anchor link for: project-setup">Project Setup</a></h2>
+<p>Create a virtual environment. Then install Django and WeasyPrint, here I use <a rel="external" href="https://docs.astral.sh/uv/">uv python package and project manager</a></p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">mkdir</span><span style="color: #9ECBFF;"> djangoweasyprint</span><span> &amp;&amp;</span><span style="color: #79B8FF;"> cd</span><span style="color: #9ECBFF;"> djangoweasyprint</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">uv</span><span style="color: #9ECBFF;"> init .</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">uv</span><span style="color: #9ECBFF;"> add django weasyprit</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">source</span><span style="color: #9ECBFF;"> .venv/bin/activate</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">django-admin</span><span style="color: #9ECBFF;"> startproject config .</span></span></code></pre>
+<p><em>Note: On Linux (Debian/Ubuntu) you may need to install system dependencies such as <code>libpango1.0-0</code>, <code>libcairo2</code>, <code>libffi-dev</code> etc:</em></p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">sudo</span><span style="color: #9ECBFF;"> apt install libpango-1.0-0 libpangoft2-1.0-0 libharfbuzz-subset0 libffi-dev</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #79B8FF;">.</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> README.md</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> config</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── __init__.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── asgi.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── settings.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── urls.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> └── wsgi.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> manage.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> pyproject.toml</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">└──</span><span style="color: #9ECBFF;"> uv.lock</span></span></code></pre>
+<p>In your Django <code>settings.py</code>, ensure your <code>STATIC_URL</code> and <code>STATIC_ROOT</code> or <code>STATICFILES_DIRS</code> are properly configured so that assets like CSS, fonts or images used in the invoice template can be resolved when generating the PDF.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #6A737D;"># // more code above</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">TEMPLATES</span><span style="color: #F97583;"> =</span><span> [</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;BACKEND&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;django.template.backends.django.DjangoTemplates&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;DIRS&quot;</span><span>: [</span><span style="color: #79B8FF;">BASE_DIR</span><span style="color: #F97583;"> /</span><span style="color: #9ECBFF;"> &quot;templates&quot;</span><span>],</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;APP_DIRS&quot;</span><span>:</span><span style="color: #79B8FF;"> True</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;OPTIONS&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            &quot;context_processors&quot;</span><span>: [</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                &quot;django.template.context_processors.request&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                &quot;django.contrib.auth.context_processors.auth&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                &quot;django.contrib.messages.context_processors.messages&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>            ],</span></span>
+<span class="giallo-l"><span>        },</span></span>
+<span class="giallo-l"><span>    },</span></span>
+<span class="giallo-l"><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;"># //</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #79B8FF;">STATIC_URL</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;static/&quot;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">STATICFILES_DIRS</span><span style="color: #F97583;"> =</span><span> [</span><span style="color: #79B8FF;">BASE_DIR</span><span style="color: #F97583;"> /</span><span style="color: #9ECBFF;"> &quot;static&quot;</span><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;"># //</span></span></code></pre>
+<p>Now create the <code>billing</code> app in django</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">python</span><span style="color: #9ECBFF;"> manage.py startapp billing</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">mkdir</span><span style="color: #79B8FF;"> -p</span><span style="color: #9ECBFF;"> billing/templates/billing</span><span> </span></span>
+<span class="giallo-l"><span style="color: #B392F0;">mkdir</span><span style="color: #79B8FF;"> -p</span><span style="color: #9ECBFF;"> billing/static/billing/{css,img}</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">touch</span><span style="color: #9ECBFF;"> billing/templates/billing/invoice_detail.html</span><span> </span></span>
+<span class="giallo-l"><span style="color: #B392F0;">rouch</span><span style="color: #9ECBFF;"> billing/static/billing/css/billing.css</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #79B8FF;">.</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> README.md</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> billing</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── __init__.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── admin.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── apps.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── migrations</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> │   └── __init__.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── models.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── static</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> │   └── billing</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> │       ├── css</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> │       │   └── billing.css</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> │       └── img</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── templates</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> │   └── billing</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> │       └── invoice_detail.html</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── tests.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> └── views.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> config</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── __init__.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── asgi.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── settings.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> ├── urls.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">│  </span><span style="color: #9ECBFF;"> └── wsgi.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> manage.py</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">├──</span><span style="color: #9ECBFF;"> pyproject.toml</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">└──</span><span style="color: #9ECBFF;"> uv.lock</span></span></code></pre>
+<p>Add the <code>billing</code> app to the <code>settings.py</code> <code>INSTALLED_APPS</code></p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #79B8FF;">INSTALLED_APPS</span><span style="color: #F97583;"> =</span><span> [</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;django.contrib.admin&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;django.contrib.auth&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;django.contrib.contenttypes&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;django.contrib.sessions&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;django.contrib.messages&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;django.contrib.staticfiles&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;billing&quot;</span><span>,</span><span style="color: #6A737D;"> # new</span></span>
+<span class="giallo-l"><span>]</span></span></code></pre><h2 id="the-models"><a class="zola-anchor" href="#the-models" aria-label="Anchor link for: the-models">The models</a></h2>
+<p>In <code>billing/models.py</code>, you can define a simple <code>Invoice</code> and <code>InvoiceItem</code> model. For instance:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.db</span><span style="color: #F97583;"> import</span><span> models</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> Invoice</span><span>(</span><span style="color: #B392F0;">models</span><span>.</span><span style="color: #B392F0;">Model</span><span>):</span></span>
+<span class="giallo-l"><span>    number</span><span style="color: #F97583;"> =</span><span> models.CharField(</span><span style="color: #FFAB70;">max_length</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">20</span><span>,</span><span style="color: #FFAB70;"> unique</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">True</span><span>)</span></span>
+<span class="giallo-l"><span>    date</span><span style="color: #F97583;"> =</span><span> models.DateField(</span><span style="color: #FFAB70;">auto_now_add</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">True</span><span>)</span></span>
+<span class="giallo-l"><span>    client_name</span><span style="color: #F97583;"> =</span><span> models.CharField(</span><span style="color: #FFAB70;">max_length</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">200</span><span>)</span></span>
+<span class="giallo-l"><span>    client_address</span><span style="color: #F97583;"> =</span><span> models.TextField()</span></span>
+<span class="giallo-l"><span>    total</span><span style="color: #F97583;"> =</span><span> models.DecimalField(</span><span style="color: #FFAB70;">max_digits</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">10</span><span>,</span><span style="color: #FFAB70;"> decimal_places</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">2</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # … other fields: VAT, terms, etc.</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #79B8FF;"> __str__</span><span>(self):</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        return f</span><span style="color: #9ECBFF;">&quot;Invoice </span><span style="color: #79B8FF;">{self</span><span>.number</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;"> - </span><span style="color: #79B8FF;">{self</span><span>.client_name</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;">&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> InvoiceItem</span><span>(</span><span style="color: #B392F0;">models</span><span>.</span><span style="color: #B392F0;">Model</span><span>):</span></span>
+<span class="giallo-l"><span>    invoice</span><span style="color: #F97583;"> =</span><span> models.ForeignKey(Invoice,</span><span style="color: #FFAB70;"> on_delete</span><span style="color: #F97583;">=</span><span>models.</span><span style="color: #79B8FF;">CASCADE</span><span>,</span><span style="color: #FFAB70;"> related_name</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&#39;items&#39;</span><span>)</span></span>
+<span class="giallo-l"><span>    description</span><span style="color: #F97583;"> =</span><span> models.CharField(</span><span style="color: #FFAB70;">max_length</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">255</span><span>)</span></span>
+<span class="giallo-l"><span>    quantity</span><span style="color: #F97583;"> =</span><span> models.IntegerField(</span><span style="color: #FFAB70;">default</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">1</span><span>)</span></span>
+<span class="giallo-l"><span>    unit_price</span><span style="color: #F97583;"> =</span><span> models.DecimalField(</span><span style="color: #FFAB70;">max_digits</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">10</span><span>,</span><span style="color: #FFAB70;"> decimal_places</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">2</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">    @</span><span style="color: #79B8FF;">property</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #B392F0;"> line_total</span><span>(self):</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        return</span><span style="color: #79B8FF;"> self</span><span>.quantity</span><span style="color: #F97583;"> *</span><span style="color: #79B8FF;"> self</span><span>.unit_price</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #79B8FF;"> __str__</span><span>(self):</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        return f</span><span style="color: #9ECBFF;">&quot;</span><span style="color: #79B8FF;">{self</span><span>.description</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;"> (</span><span style="color: #79B8FF;">{self</span><span>.quantity</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;"> × </span><span style="color: #79B8FF;">{self</span><span>.unit_price</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;">)&quot;</span></span></code></pre>
+<p>This gives you a foreign-key relation: each invoice has many invoice items.</p>
+<p>Remember to run <code>python manage.py makemigrations</code> and <code>python manage.py migrate</code>.</p>
+<h2 id="template-design"><a class="zola-anchor" href="#template-design" aria-label="Anchor link for: template-design">Template Design</a></h2>
+<p>In <code>billing/templates/billing/invoice_detail.html</code>, craft an <code>HTML</code> representation of the invoice. Because WeasyPrint renders <code>HTML+CSS</code>, you can design the layout exactly how you’d want the PDF to look (header, footer, table of items, totals, page break control, etc). Example:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="html"><span class="giallo-l"><span>{%load static%}</span></span>
+<span class="giallo-l"><span>&lt;!</span><span style="color: #85E89D;">DOCTYPE</span><span style="color: #B392F0;"> html</span><span>&gt;</span></span>
+<span class="giallo-l"><span>&lt;</span><span style="color: #85E89D;">html</span><span style="color: #B392F0;"> lang</span><span>=</span><span style="color: #9ECBFF;">&quot;en&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>  &lt;</span><span style="color: #85E89D;">head</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">meta</span><span style="color: #B392F0;"> charset</span><span>=</span><span style="color: #9ECBFF;">&quot;utf-8&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">title</span><span>&gt;Invoice&lt;/</span><span style="color: #85E89D;">title</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">link</span><span style="color: #B392F0;"> rel</span><span>=</span><span style="color: #9ECBFF;">&quot;stylesheet&quot;</span><span style="color: #B392F0;"> href</span><span>=</span><span style="color: #9ECBFF;">&quot;{% static &#39;billing/css/billing.css&#39; %}&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">meta</span><span style="color: #B392F0;"> name</span><span>=</span><span style="color: #9ECBFF;">&quot;description&quot;</span><span style="color: #B392F0;"> content</span><span>=</span><span style="color: #9ECBFF;">&quot;Invoice demo sample&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>  &lt;/</span><span style="color: #85E89D;">head</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>  &lt;</span><span style="color: #85E89D;">body</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">h1</span><span>&gt;Invoice&lt;/</span><span style="color: #85E89D;">h1</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">aside</span><span>&gt;</span></span>
+<span class="giallo-l"><span>      &lt;</span><span style="color: #85E89D;">address</span><span style="color: #B392F0;"> id</span><span>=</span><span style="color: #9ECBFF;">&quot;from&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        WeasyPrint</span></span>
+<span class="giallo-l"><span>        26 rue Emile Decorps</span></span>
+<span class="giallo-l"><span>        69100 Villeurbanne</span></span>
+<span class="giallo-l"><span>        France</span></span>
+<span class="giallo-l"><span>      &lt;/</span><span style="color: #85E89D;">address</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>      &lt;</span><span style="color: #85E89D;">address</span><span style="color: #B392F0;"> id</span><span>=</span><span style="color: #9ECBFF;">&quot;to&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        Our awesome developers</span></span>
+<span class="giallo-l"><span>        From all around the world</span></span>
+<span class="giallo-l"><span>        Earth</span></span>
+<span class="giallo-l"><span>      &lt;/</span><span style="color: #85E89D;">address</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;/</span><span style="color: #85E89D;">aside</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">dl</span><span style="color: #B392F0;"> id</span><span>=</span><span style="color: #9ECBFF;">&quot;informations&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>      &lt;</span><span style="color: #85E89D;">dt</span><span>&gt;Invoice number&lt;/</span><span style="color: #85E89D;">dt</span><span>&gt;</span></span>
+<span class="giallo-l"><span>      &lt;</span><span style="color: #85E89D;">dd</span><span>&gt;{{ invoice.number }}&lt;/</span><span style="color: #85E89D;">dd</span><span>&gt;</span></span>
+<span class="giallo-l"><span>      &lt;</span><span style="color: #85E89D;">dt</span><span>&gt;Date&lt;/</span><span style="color: #85E89D;">dt</span><span>&gt;</span></span>
+<span class="giallo-l"><span>      &lt;</span><span style="color: #85E89D;">dd</span><span>&gt;{{ invoice.date }}&lt;/</span><span style="color: #85E89D;">dd</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;/</span><span style="color: #85E89D;">dl</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">table</span><span>&gt;</span></span>
+<span class="giallo-l"><span>      &lt;</span><span style="color: #85E89D;">thead</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;</span><span style="color: #85E89D;">tr</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;</span><span style="color: #85E89D;">th</span><span>&gt;Description&lt;/</span><span style="color: #85E89D;">th</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;</span><span style="color: #85E89D;">th</span><span>&gt;Price&lt;/</span><span style="color: #85E89D;">th</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;</span><span style="color: #85E89D;">th</span><span>&gt;Quantity&lt;/</span><span style="color: #85E89D;">th</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;</span><span style="color: #85E89D;">th</span><span>&gt;Subtotal&lt;/</span><span style="color: #85E89D;">th</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;/</span><span style="color: #85E89D;">tr</span><span>&gt;</span></span>
+<span class="giallo-l"><span>      &lt;/</span><span style="color: #85E89D;">thead</span><span>&gt;</span></span>
+<span class="giallo-l"><span>      &lt;</span><span style="color: #85E89D;">tbody</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        {% for item in invoice.items.all %}</span></span>
+<span class="giallo-l"><span>        &lt;</span><span style="color: #85E89D;">tr</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;</span><span style="color: #85E89D;">td</span><span>&gt;{{ item.description }}&lt;/</span><span style="color: #85E89D;">td</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;</span><span style="color: #85E89D;">td</span><span>&gt;{{ item.unit_price }}&lt;/</span><span style="color: #85E89D;">td</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;</span><span style="color: #85E89D;">td</span><span>&gt;{{ item.quantity }}&lt;/</span><span style="color: #85E89D;">td</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;</span><span style="color: #85E89D;">td</span><span>&gt;{{ item.line_total }}&lt;/</span><span style="color: #85E89D;">td</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;/</span><span style="color: #85E89D;">tr</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        {% endfor %}</span></span>
+<span class="giallo-l"><span>      &lt;/</span><span style="color: #85E89D;">tbody</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;/</span><span style="color: #85E89D;">table</span><span>&gt;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    &lt;</span><span style="color: #85E89D;">footer</span><span>&gt;</span></span>
+<span class="giallo-l"><span>      &lt;</span><span style="color: #85E89D;">table</span><span style="color: #B392F0;"> id</span><span>=</span><span style="color: #9ECBFF;">&quot;total&quot;</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;</span><span style="color: #85E89D;">thead</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;</span><span style="color: #85E89D;">tr</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;</span><span style="color: #85E89D;">th</span><span>&gt;Due by&lt;/</span><span style="color: #85E89D;">th</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;</span><span style="color: #85E89D;">th</span><span>&gt;Total due&lt;/</span><span style="color: #85E89D;">th</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;/</span><span style="color: #85E89D;">tr</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;/</span><span style="color: #85E89D;">thead</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;</span><span style="color: #85E89D;">tbody</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;</span><span style="color: #85E89D;">tr</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;</span><span style="color: #85E89D;">td</span><span>&gt;{{ invoice.date }}&lt;/</span><span style="color: #85E89D;">td</span><span>&gt;</span></span>
+<span class="giallo-l"><span>            &lt;</span><span style="color: #85E89D;">td</span><span>&gt;€{{ invoice.total }}&lt;/</span><span style="color: #85E89D;">td</span><span>&gt;</span></span>
+<span class="giallo-l"><span>          &lt;/</span><span style="color: #85E89D;">tr</span><span>&gt;</span></span>
+<span class="giallo-l"><span>        &lt;/</span><span style="color: #85E89D;">tbody</span><span>&gt;</span></span>
+<span class="giallo-l"><span>      &lt;/</span><span style="color: #85E89D;">table</span><span>&gt;</span></span>
+<span class="giallo-l"><span>    &lt;/</span><span style="color: #85E89D;">footer</span><span>&gt;</span></span>
+<span class="giallo-l"><span>  &lt;/</span><span style="color: #85E89D;">body</span><span>&gt;</span></span>
+<span class="giallo-l"><span>&lt;/</span><span style="color: #85E89D;">html</span><span>&gt;</span></span></code></pre>
+<p>in the <code>billing/static/billing/css/billing.css</code>, you might include styles such as:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="css"><span class="giallo-l"><span style="color: #F97583;">@font-face</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  font-family</span><span>: Pacifico;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  src</span><span>:</span><span style="color: #79B8FF;"> url</span><span>(</span><span style="color: #FFAB70;">pacifico.ttf</span><span>);</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #F97583;">@font-face</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  font-family</span><span>: Source Sans Pro;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  font-weight</span><span>:</span><span style="color: #79B8FF;"> 400</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  src</span><span>:</span><span style="color: #79B8FF;"> url</span><span>(</span><span style="color: #FFAB70;">SourceSans3-Regular.ttf</span><span>);</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #F97583;">@font-face</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  font-family</span><span>: Source Sans Pro;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  font-weight</span><span>:</span><span style="color: #79B8FF;"> 700</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  src</span><span>:</span><span style="color: #79B8FF;"> url</span><span>(</span><span style="color: #FFAB70;">SourceSans3-Bold.ttf</span><span>);</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">@page</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  font-family</span><span>: Pacifico;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  margin</span><span>:</span><span style="color: #79B8FF;"> 3</span><span style="color: #F97583;">cm</span><span>;</span></span>
+<span class="giallo-l"><span>  @</span><span style="color: #79B8FF;">bottom-left</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    color</span><span>:</span><span style="color: #79B8FF;"> #1ee494</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    content</span><span>:</span><span style="color: #9ECBFF;"> &#39;♥ Thank you!&#39;</span><span>;</span></span>
+<span class="giallo-l"><span>  }</span></span>
+<span class="giallo-l"><span style="color: #F97583;">  @bottom-right</span><span> {</span></span>
+<span class="giallo-l"><span>    color: </span><span style="color: #FDAEB7;font-style: italic;">#a9a;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    content</span><span>: &#39;contact</span><span style="color: #F97583;">@courtbouillon</span><span>.org | courtbouillon.org&#39;;</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    font-size</span><span>: 9pt;</span></span>
+<span class="giallo-l"><span>  }</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #85E89D;">html</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  color</span><span>:</span><span style="color: #79B8FF;"> #14213d</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  font-family</span><span>: Source Sans Pro;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  font-size</span><span>:</span><span style="color: #79B8FF;"> 11</span><span style="color: #F97583;">pt</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  line-height</span><span>:</span><span style="color: #79B8FF;"> 1.6</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">body</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  margin</span><span>:</span><span style="color: #79B8FF;"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #85E89D;">h1</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  color</span><span>:</span><span style="color: #79B8FF;"> #1ee494</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  font-family</span><span>: Pacifico;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  font-size</span><span>:</span><span style="color: #79B8FF;"> 40</span><span style="color: #F97583;">pt</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  margin</span><span>:</span><span style="color: #79B8FF;"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #85E89D;">aside</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  display</span><span>:</span><span style="color: #79B8FF;"> flex</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  margin</span><span>:</span><span style="color: #79B8FF;"> 2</span><span style="color: #F97583;">em</span><span style="color: #79B8FF;"> 0 4</span><span style="color: #F97583;">em</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">aside address</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  font-style</span><span>:</span><span style="color: #79B8FF;"> normal</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  white-space</span><span>:</span><span style="color: #79B8FF;"> pre-line</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">aside address</span><span style="color: #B392F0;">#from</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  color</span><span>:</span><span style="color: #79B8FF;"> #a9a</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  flex</span><span>:</span><span style="color: #79B8FF;"> 1</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">aside address</span><span style="color: #B392F0;">#to</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  text-align</span><span>:</span><span style="color: #79B8FF;"> right</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #85E89D;">dl</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  position</span><span>:</span><span style="color: #79B8FF;"> absolute</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  right</span><span>:</span><span style="color: #79B8FF;"> 0</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  text-align</span><span>:</span><span style="color: #79B8FF;"> right</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  top</span><span>:</span><span style="color: #79B8FF;"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">dt</span><span>,</span><span style="color: #85E89D;"> dd</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  display</span><span>:</span><span style="color: #79B8FF;"> inline</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  margin</span><span>:</span><span style="color: #79B8FF;"> 0</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">dt</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  color</span><span>:</span><span style="color: #79B8FF;"> #a9a</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">dt</span><span style="color: #B392F0;">::before</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  content</span><span>:</span><span style="color: #9ECBFF;"> &#39;&#39;</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  display</span><span>:</span><span style="color: #79B8FF;"> block</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">dt</span><span style="color: #B392F0;">::after</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  content</span><span>:</span><span style="color: #9ECBFF;"> &#39;:&#39;</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #85E89D;">table</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  border-collapse</span><span>:</span><span style="color: #79B8FF;"> collapse</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  width</span><span>:</span><span style="color: #79B8FF;"> 100</span><span style="color: #F97583;">%</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">th</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  border-bottom</span><span>:</span><span style="color: #79B8FF;"> .2</span><span style="color: #F97583;">mm</span><span style="color: #79B8FF;"> solid #a9a</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  color</span><span>:</span><span style="color: #79B8FF;"> #a9a</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  font-size</span><span>:</span><span style="color: #79B8FF;"> 10</span><span style="color: #F97583;">pt</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  font-weight</span><span>:</span><span style="color: #79B8FF;"> 400</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  padding-bottom</span><span>:</span><span style="color: #79B8FF;"> .25</span><span style="color: #F97583;">cm</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  text-transform</span><span>:</span><span style="color: #79B8FF;"> uppercase</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">td</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  padding-top</span><span>:</span><span style="color: #79B8FF;"> 7</span><span style="color: #F97583;">mm</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">td</span><span style="color: #B392F0;">:last-of-type</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  color</span><span>:</span><span style="color: #79B8FF;"> #1ee494</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  font-weight</span><span>:</span><span style="color: #79B8FF;"> bold</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  text-align</span><span>:</span><span style="color: #79B8FF;"> right</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">th</span><span>,</span><span style="color: #85E89D;"> td</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  text-align</span><span>:</span><span style="color: #79B8FF;"> center</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">th</span><span style="color: #B392F0;">:first-of-type</span><span>,</span><span style="color: #85E89D;"> td</span><span style="color: #B392F0;">:first-of-type</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  text-align</span><span>:</span><span style="color: #79B8FF;"> left</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">th</span><span style="color: #B392F0;">:last-of-type</span><span>,</span><span style="color: #85E89D;"> td</span><span style="color: #B392F0;">:last-of-type</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  text-align</span><span>:</span><span style="color: #79B8FF;"> right</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">footer</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  content</span><span>:</span><span style="color: #9ECBFF;"> &#39;&#39;</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  display</span><span>:</span><span style="color: #79B8FF;"> block</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  height</span><span>:</span><span style="color: #79B8FF;"> 6</span><span style="color: #F97583;">cm</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">table</span><span style="color: #B392F0;">#total</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  background</span><span>:</span><span style="color: #79B8FF;"> #f6f6f6</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  border-color</span><span>:</span><span style="color: #79B8FF;"> #f6f6f6</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  border-style</span><span>:</span><span style="color: #79B8FF;"> solid</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  border-width</span><span>:</span><span style="color: #79B8FF;"> 2</span><span style="color: #F97583;">cm</span><span style="color: #79B8FF;"> 3</span><span style="color: #F97583;">cm</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  bottom</span><span>:</span><span style="color: #79B8FF;"> 0</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  font-size</span><span>:</span><span style="color: #79B8FF;"> 20</span><span style="color: #F97583;">pt</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  margin</span><span>:</span><span style="color: #79B8FF;"> 0 -3</span><span style="color: #F97583;">cm</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  position</span><span>:</span><span style="color: #79B8FF;"> absolute</span><span>;</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">  width</span><span>:</span><span style="color: #79B8FF;"> 18</span><span style="color: #F97583;">cm</span><span>;</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="view-to-generate-pdf"><a class="zola-anchor" href="#view-to-generate-pdf" aria-label="Anchor link for: view-to-generate-pdf">View to generate PDF</a></h2>
+<p>In <code>billing/views.py</code>, create a view that fetches the invoice instance, renders the <code>HTML</code> template with context, then calls WeasyPrint to write the PDF and returns a HttpResponse of type application/pdf.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.shortcuts</span><span style="color: #F97583;"> import</span><span> get_object_or_404</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.http</span><span style="color: #F97583;"> import</span><span> HttpResponse</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.template.loader</span><span style="color: #F97583;"> import</span><span> render_to_string</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> weasyprint</span><span style="color: #F97583;"> import</span><span style="color: #79B8FF;"> HTML</span><span>,</span><span style="color: #79B8FF;"> CSS</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> .models</span><span style="color: #F97583;"> import</span><span> Invoice</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">def</span><span style="color: #B392F0;"> invoice_pdf_view</span><span>(request, pk):</span></span>
+<span class="giallo-l"><span>    invoice</span><span style="color: #F97583;"> =</span><span> get_object_or_404(Invoice,</span><span style="color: #FFAB70;"> pk</span><span style="color: #F97583;">=</span><span>pk)</span></span>
+<span class="giallo-l"><span>    html_string</span><span style="color: #F97583;"> =</span><span> render_to_string(</span><span style="color: #9ECBFF;">&quot;billing/invoice_detail.html&quot;</span><span>, {</span><span style="color: #9ECBFF;">&quot;invoice&quot;</span><span>: invoice})</span></span>
+<span class="giallo-l"><span>    html</span><span style="color: #F97583;"> =</span><span> HTML(</span><span style="color: #FFAB70;">string</span><span style="color: #F97583;">=</span><span>html_string,</span><span style="color: #FFAB70;"> base_url</span><span style="color: #F97583;">=</span><span>request.build_absolute_uri())</span></span>
+<span class="giallo-l"><span>    pdf_bytes</span><span style="color: #F97583;"> =</span><span> html.write_pdf()</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    response</span><span style="color: #F97583;"> =</span><span> HttpResponse(pdf_bytes,</span><span style="color: #FFAB70;"> content_type</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;application/pdf&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    response[</span><span style="color: #9ECBFF;">&quot;Content-Disposition&quot;</span><span>]</span><span style="color: #F97583;"> = f</span><span style="color: #9ECBFF;">&quot;inline; filename=invoice_</span><span style="color: #79B8FF;">{</span><span>invoice.number</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;">.pdf&quot;</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    return</span><span> response</span></span></code></pre>
+<blockquote>
+<p>Important: Notice the base_url=request.build_absolute_uri() (or use base_url=settings.STATIC_ROOT depending on your setup) so that relative static URLs in the template resolve correctly. Without that, images or CSS may not load in the PDF.</p>
+</blockquote>
+<p>Remember in your urls.py to map:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.urls</span><span style="color: #F97583;"> import</span><span> path</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> .views</span><span style="color: #F97583;"> import</span><span> invoice_pdf_view</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>urlpatterns</span><span style="color: #F97583;"> =</span><span> [</span></span>
+<span class="giallo-l"><span>    path(</span><span style="color: #9ECBFF;">&#39;invoice/&lt;int:pk&gt;/pdf/&#39;</span><span>, invoice_pdf_view,</span><span style="color: #FFAB70;"> name</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&#39;invoice_pdf&#39;</span><span>),</span></span>
+<span class="giallo-l"><span>]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;"># iin the main urls.py</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.contrib</span><span style="color: #F97583;"> import</span><span> admin</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.urls</span><span style="color: #F97583;"> import</span><span> path, include</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>urlpatterns</span><span style="color: #F97583;"> =</span><span> [path(</span><span style="color: #9ECBFF;">&quot;admin/&quot;</span><span>, admin.site.urls), path(</span><span style="color: #9ECBFF;">&quot;&quot;</span><span>, include(</span><span style="color: #9ECBFF;">&quot;billing.urls&quot;</span><span>))]</span></span></code></pre>
+<p>Add the <code>Invoice</code> and the <code>InvoiceItem</code> to the <code>admin.py</code> file</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.contrib</span><span style="color: #F97583;"> import</span><span> admin</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> .models</span><span style="color: #F97583;"> import</span><span> Invoice, InvoiceItem</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;"># Register your models here.</span></span>
+<span class="giallo-l"><span>admin.site.register(Invoice)</span></span>
+<span class="giallo-l"><span>admin.site.register(InvoiceItem)</span></span></code></pre>
+<p>Create a <code>superuser</code> and add some Incoices and InvoiceItems</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">python</span><span style="color: #9ECBFF;"> manage.py createsuperuser</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># after the creation of the superuser</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">python</span><span style="color: #9ECBFF;"> manage.py runserver</span></span></code></pre><h2 id="putting-it-all-together"><a class="zola-anchor" href="#putting-it-all-together" aria-label="Anchor link for: putting-it-all-together">Putting it all together</a></h2>
+<ol>
+<li>Create your Invoice data via Django admin or via your app.</li>
+<li>Navigate to the URL <code>/invoice/&lt;pk&gt;/pdf/</code> and you should get a generated PDF of the invoice, styled according to your template.</li>
+</ol>
+<h2 id="overview"><a class="zola-anchor" href="#overview" aria-label="Anchor link for: overview">Overview</a></h2>
+<p><img src="/pdf-result.png" alt="Overview" /></p>
+<h2 id="additional-concerns"><a class="zola-anchor" href="#additional-concerns" aria-label="Anchor link for: additional-concerns">Additional Concerns</a></h2>
+<ol>
+<li><strong>Large documents &amp; performance:</strong> If you have many invoices or a batch of PDF exports, you might offload generation to a background task (e.g., Celery) and store the PDF file. The <a rel="external" href="https://github.com/fdemmer/django-weasyprint/blob/main/README.rst">django-weasyprint</a> <code>README</code> includes an example of a Celery task.</li>
+<li><strong>Docker/Alpine:</strong> If you deploy in Docker (especially Alpine), ensure you install the native libraries for Pango/Cairo/Harfbuzz.</li>
+</ol>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #79B8FF;">RUN</span><span> apk add</span><span style="color: #FDAEB7;font-style: italic;"> --</span><span>no</span><span style="color: #F97583;">-</span><span>cache jpeg</span><span style="color: #F97583;">-</span><span>dev zlib</span><span style="color: #F97583;">-</span><span>dev git gcc musl</span><span style="color: #F97583;">-</span><span>dev python3</span><span style="color: #F97583;">-</span><span>dev postgresql</span><span style="color: #F97583;">-</span><span>dev</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">RUN</span><span> apk add py3</span><span style="color: #F97583;">-</span><span>pip py3</span><span style="color: #F97583;">-</span><span>pillow py3</span><span style="color: #F97583;">-</span><span>cffi py3</span><span style="color: #F97583;">-</span><span>brotli gcc musl</span><span style="color: #F97583;">-</span><span>dev python3</span><span style="color: #F97583;">-</span><span>dev pango</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">RUN</span><span> apk add py3</span><span style="color: #F97583;">-</span><span>pip gcc musl</span><span style="color: #F97583;">-</span><span>dev python3</span><span style="color: #F97583;">-</span><span>dev pango zlib</span><span style="color: #F97583;">-</span><span>dev jpeg</span><span style="color: #F97583;">-</span><span>dev openjpeg</span><span style="color: #F97583;">-</span><span>dev g</span><span style="color: #FDAEB7;font-style: italic;">++</span><span> libffi</span><span style="color: #F97583;">-</span><span>dev</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">RUN</span><span> apk add</span><span style="color: #FDAEB7;font-style: italic;"> --</span><span>no</span><span style="color: #F97583;">-</span><span>cache</span><span style="color: #FDAEB7;font-style: italic;"> --</span><span>virtual .build</span><span style="color: #F97583;">-</span><span>deps build</span><span style="color: #F97583;">-</span><span>base linux</span><span style="color: #F97583;">-</span><span>headers</span></span></code></pre><h2 id="github"><a class="zola-anchor" href="#github" aria-label="Anchor link for: github">Github</a></h2>
+<p><a rel="external" href="https://github.com/malnossi/djangoweasyprint">Django &amp; Weasyprint</a></p>
+<h2 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">Conclusion</a></h2>
+<p>Integrating WeasyPrint with Django gives you a powerful combination for HTML-to-PDF document generation ideal for invoices, reports, receipts and more. By designing your template in HTML/CSS, you retain full styling control and avoid more cumbersome PDF libraries.</p>
+<p>Take-aways:</p>
+<ul>
+<li>See the <a rel="external" href="https://doc.courtbouillon.org/weasyprint/stable/">Weasyprint Documentation</a> for more examples and use cases.</li>
+<li>You can Use the <a rel="external" href="https://github.com/fdemmer/django-weasyprint">django-weasyprint</a> package for a Django-friendly wrapper.</li>
+<li>Install the required system dependencies (Pango, Cairo, Harfbuzz) especially on non-standard Linux distros.</li>
+<li>Ensure static/media URLs resolve in the PDF context by using <code>base_url</code> or a custom URL fetcher.</li>
+<li>Choose between inline download vs saving to disk or background tasks depending on your workflow.</li>
+</ul>
+<p>Armed with this setup, you can now incorporate PDF invoice generation into your Django application with confidence, offering users polished downloadable documents with minimal overhead.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+<footer class="mt-12 flex flex-col" tabindex="-1" accesskey="_">
+  <div class="mb-2 flex flex-wrap">
+    <span class="block-bg mr-1.5 mb-1.5 rounded-lg px-5 py-1.5">Tags</span>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/django/">Django</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/weasyprint/">Weasyprint</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/pdf/">PDF</a>
+    
+  </div>
+</footer>
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/golang-weasyprint/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Building an HTTP PDF Generation Service in Go Using HTML Templates and WeasyPrint</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/beyond-django-bulk-create/" accesskey="."
+    ><span>Fast &amp; Efficient Bulk Create with Django and PostgreSQL</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time> Mohamed Nossirat
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+
+  <!-- Begin Body End inject -->
+  
+
+  <script src="https:&#x2F;&#x2F;cdnapp.websitepolicies.net&#x2F;widgets&#x2F;cookies&#x2F;mzad7vzz.js" defer></script>
+
+
+
+<script>
+  // If your cookie widget exposes callbacks, flip GA consent when accepted.
+  // Adjust to your provider’s API.
+  window.addEventListener('CookieConsentAccepted', function () {
+    if (window.gtag) {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  });
+</script>
+  <!-- End Body End inject -->
+</body>
+
+</html>

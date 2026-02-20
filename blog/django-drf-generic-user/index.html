@@ -1,0 +1,517 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Django &amp; DRF Model Generic Auth Stuff</title>
+  <meta property="og:title" content="Django &amp; DRF Model Generic Auth Stuff" />
+  <meta name="description" content="Tracking who created or updated a record is vital for auditing. This article shows how to automatically populate created_by and updated_by fields in Django REST Framework by leveraging HiddenFields, r…" />
+  <meta property="og:description" content="Tracking who created or updated a record is vital for auditing. This article shows how to automatically populate created_by and updated_by fields in Django REST Framework by leveraging HiddenFields, reducing boilerplate and improving data integrity" />
+  <meta property="og:url" content="https://malnossi.github.io/blog/django-drf-generic-user/" />
+  <link rel="canonical" href="https://malnossi.github.io/blog/django-drf-generic-user/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2025-07-26T00:00:00+00:00" />
+  <meta property="article:tag" content="Django" />
+  <meta property="article:tag" content="Web" />
+  <meta property="article:tag" content="Python" />
+  <meta property="article:tag" content="DRF" />
+  <meta property="og:image" content="https://malnossi.github.io/djangodrf.png" />
+  <meta property="og:image:alt" content="" />
+  <meta property="og:image:width" content="1280" />
+  <meta property="og:image:height" content="720" />
+  <meta property="og:image:type" content="image/png" />
+  <link rel="alternate" type="application/atom+xml" href="https://malnossi.github.io/atom.xml" title="Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://malnossi.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://malnossi.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #f4f4f5; --header: #e4e4e7;} :root.dark{--bg: #18181b; --header: #27272a;}</style>
+  <meta name="theme-color" data-light="#e4e4e7" data-dark="#27272a" content="#e4e4e7" />
+  <link rel="icon" type="image/x-icon" href="https://malnossi.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" type="image/png" href="https://malnossi.github.io/apple-touch-icon.png?h=58bee300054c5308feb3" />
+  <link rel="icon" type="image/png" href="https://malnossi.github.io/android-icon.png?h=8d80ec95446bd2c36826" />
+  <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+<meta name="author" content="Mohamed Nossirat©">
+<meta property="article:author" content="Mohamed Nossirat©">
+<meta name="twitter:creator" content="Mohamed Nossirat©">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+<script>
+  // (Optional) default deny until consent tool flips it to granted
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('consent', 'default', { analytics_storage: 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-8LBRDGLXJV', {
+    anonymize_ip: true
+  });
+</script>
+
+
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <button type="button" title="Go to home page [Alt + !]" accesskey="!"
+          onclick="window.location.href='https://malnossi.github.io/';"
+          class="btn-home h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-home,url(icons/home.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Open search [Alt + /]" accesskey="/"
+          onclick="window.zolaTheme.search.toggle();"
+          class="btn-search ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-search,url(icons/search.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/blog/"
+          >Blog</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/talks/"
+          >Talks</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/tags/"
+          >Tags</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+      <!-- Search -->
+<div id="linkita-search-wrapper" class="hidden">
+  <ul id="linkita-search-results"></ul>
+</div>
+<script>window.zolaTheme.search.init({ scripts: ["https://malnossi.github.io/elasticlunr.min.js", "https://malnossi.github.io/search_index.en.js"], arg: { w: "#linkita-search-wrapper", r: "#linkita-search-results" } });</script>
+
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Django &amp; DRF Model Generic Auth Stuff</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2025-07-26T00:00:00+00:00">2025-07-26</time><span
+        class="middot"></span><time
+    datetime="PT0H4M0S">4&nbsp;min</time><span
+      class="middot"></span><span>Mohamed Nossirat</span>
+</div>
+
+  </header>
+  <figure class="mt-0 mb-12">
+    <img
+      class="h-auto w-full rounded-lg"
+      src="https://malnossi.github.io/djangodrf.png"
+      width="1280"
+      height="720"
+    />
+  </figure>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#introduction">Introduction</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#alright-let-s-start-to-code">Alright, let&#x27;s start to code</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#core-audit-mixin">Core Audit Mixin</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#example-model">Example Model</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#migrations">Migrations</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#set-auth-user-to-the-model">Set Auth User to the Model</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#first-solution">First Solution</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#second-solution">Second solution</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#github-repository">Github Repository</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#conclusion">Conclusion</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h2>
+<p>Recently, I worked on a project using Django and Django Rest Framework (DRF). One of the key functional requirements of the project was to track the history of model modifications by keeping information about the user who created each record and the user who last updated it.</p>
+<p>Specifically, we needed to implement a mechanism that would automatically record:</p>
+<ol>
+<li>The creator of the model (created_by).</li>
+<li>The user who performed the last modification (updated_by),</li>
+</ol>
+<p>each time the data was updated.</p>
+<p>Very basic and classic requirement</p>
+<h2 id="alright-let-s-start-to-code"><a class="zola-anchor" href="#alright-let-s-start-to-code" aria-label="Anchor link for: alright-let-s-start-to-code">Alright, let's start to code</a></h2>
+<h3 id="core-audit-mixin"><a class="zola-anchor" href="#core-audit-mixin" aria-label="Anchor link for: core-audit-mixin">Core Audit Mixin</a></h3>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #6A737D;"># common/models.py</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.conf</span><span style="color: #F97583;"> import</span><span> settings</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.db</span><span style="color: #F97583;"> import</span><span> models</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.utils</span><span style="color: #F97583;"> import</span><span> timezone</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>User</span><span style="color: #F97583;"> =</span><span> settings.</span><span style="color: #79B8FF;">AUTH_USER_MODEL</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> AuditModelMixin</span><span>(</span><span style="color: #B392F0;">models</span><span>.</span><span style="color: #B392F0;">Model</span><span>):</span></span>
+<span class="giallo-l"><span>    created_at</span><span style="color: #F97583;"> =</span><span> models.DateTimeField(</span><span style="color: #FFAB70;">default</span><span style="color: #F97583;">=</span><span>timezone.now,</span><span style="color: #FFAB70;"> editable</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">False</span><span>)</span></span>
+<span class="giallo-l"><span>    updated_at</span><span style="color: #F97583;"> =</span><span> models.DateTimeField(</span><span style="color: #FFAB70;">auto_now</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">True</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    created_by</span><span style="color: #F97583;"> =</span><span> models.ForeignKey(</span></span>
+<span class="giallo-l"><span>        User,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        related_name</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;</span><span style="color: #79B8FF;">%(class)s</span><span style="color: #9ECBFF;">_created&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        on_delete</span><span style="color: #F97583;">=</span><span>models.</span><span style="color: #79B8FF;">SET_NULL</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        null</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">True</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        blank</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">True</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        editable</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">False</span><span>,</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"><span>    updated_by</span><span style="color: #F97583;"> =</span><span> models.ForeignKey(</span></span>
+<span class="giallo-l"><span>        User,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        related_name</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;</span><span style="color: #79B8FF;">%(class)s</span><span style="color: #9ECBFF;">_updated&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        on_delete</span><span style="color: #F97583;">=</span><span>models.</span><span style="color: #79B8FF;">SET_NULL</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        null</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">True</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        blank</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">True</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        editable</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">False</span><span>,</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    class</span><span style="color: #B392F0;"> Meta</span><span>:</span></span>
+<span class="giallo-l"><span>        abstract</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> True</span></span></code></pre><h3 id="example-model"><a class="zola-anchor" href="#example-model" aria-label="Anchor link for: example-model">Example Model</a></h3>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #6A737D;"># todos/models.py</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.db</span><span style="color: #F97583;"> import</span><span> models</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;"># Create your models here.</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"># apps/todos/models.py</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.db</span><span style="color: #F97583;"> import</span><span> models</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> common.models</span><span style="color: #F97583;"> import</span><span> AuditModelMixin</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> Todo</span><span>(</span><span style="color: #B392F0;">AuditModelMixin</span><span>):</span></span>
+<span class="giallo-l"><span>    title</span><span style="color: #F97583;"> =</span><span> models.CharField(</span><span style="color: #FFAB70;">max_length</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">255</span><span>)</span></span>
+<span class="giallo-l"><span>    done</span><span style="color: #F97583;"> =</span><span> models.BooleanField(</span><span style="color: #FFAB70;">default</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">False</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #79B8FF;"> __str__</span><span>(self):</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        return</span><span style="color: #79B8FF;"> self</span><span>.title</span></span>
+<span class="giallo-l"></span></code></pre><h3 id="migrations"><a class="zola-anchor" href="#migrations" aria-label="Anchor link for: migrations">Migrations</a></h3>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">python</span><span style="color: #9ECBFF;"> manage.py makemigrations</span><span> &amp;&amp;</span><span style="color: #B392F0;"> python</span><span style="color: #9ECBFF;"> manage.py mograte</span></span></code></pre><h2 id="set-auth-user-to-the-model"><a class="zola-anchor" href="#set-auth-user-to-the-model" aria-label="Anchor link for: set-auth-user-to-the-model">Set Auth User to the Model</a></h2>
+<h3 id="first-solution"><a class="zola-anchor" href="#first-solution" aria-label="Anchor link for: first-solution">First Solution</a></h3>
+<h4 id="the-serializer"><a class="zola-anchor" href="#the-serializer" aria-label="Anchor link for: the-serializer">The serializer</a></h4>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #6A737D;"># todos/serializers.py</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> rest_framework</span><span style="color: #F97583;"> import</span><span> serializers</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> .models</span><span style="color: #F97583;"> import</span><span> Todo</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> TodoSerializer</span><span>(</span><span style="color: #B392F0;">serializers</span><span>.</span><span style="color: #B392F0;">ModelSerializer</span><span>):</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    class</span><span style="color: #B392F0;"> Meta</span><span>:</span></span>
+<span class="giallo-l"><span>        model</span><span style="color: #F97583;"> =</span><span> Todo</span></span>
+<span class="giallo-l"><span>        fields</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;__all__&quot;</span></span>
+<span class="giallo-l"><span>        read_only_fields</span><span style="color: #F97583;"> =</span><span> (</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            &quot;id&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            &quot;created_at&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            &quot;updated_at&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            &quot;created_by&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            &quot;updated_by&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>        )</span></span></code></pre><h4 id="the-viewset"><a class="zola-anchor" href="#the-viewset" aria-label="Anchor link for: the-viewset">The ViewSet</a></h4>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #6A737D;"># todos/views.py</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> rest_framework</span><span style="color: #F97583;"> import</span><span> viewsets, permissions</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> .models</span><span style="color: #F97583;"> import</span><span> Todo</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> .serializers</span><span style="color: #F97583;"> import</span><span> TodoSerializer</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> TodoViewSet</span><span>(</span><span style="color: #B392F0;">viewsets</span><span>.</span><span style="color: #B392F0;">ModelViewSet</span><span>):</span></span>
+<span class="giallo-l"><span>    queryset</span><span style="color: #F97583;"> =</span><span> Todo.objects.all()</span></span>
+<span class="giallo-l"><span>    serializer_class</span><span style="color: #F97583;"> =</span><span> TodoSerializer</span></span>
+<span class="giallo-l"><span>    permission_classes</span><span style="color: #F97583;"> =</span><span> [permissions.IsAuthenticated]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #B392F0;"> perform_create</span><span>(self, serializer):</span></span>
+<span class="giallo-l"><span>        serializer.save(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">            created_by</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">self</span><span>.request.user,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">            updated_by</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">self</span><span>.request.user</span></span>
+<span class="giallo-l"><span>        )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #B392F0;"> perform_update</span><span>(self, serializer):</span></span>
+<span class="giallo-l"><span>        serializer.save(</span><span style="color: #FFAB70;">updated_by</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">self</span><span>.request.user)</span></span></code></pre>
+<p>create two users or superuser; here for this example I created a adminuser and a classicuser for the test</p>
+<p>Set the urls in the todos app and in the main urls.py file</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #6A737D;"># todos/urls.py</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> rest_framework</span><span style="color: #F97583;"> import</span><span> routers</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> .</span><span style="color: #F97583;"> import</span><span> views</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>router</span><span style="color: #F97583;"> =</span><span> routers.DefaultRouter()</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>router.register(</span><span style="color: #FFAB70;">prefix</span><span style="color: #F97583;">=r</span><span style="color: #9ECBFF;">&quot;</span><span style="color: #DBEDFF;">todos</span><span style="color: #9ECBFF;">&quot;</span><span>,</span><span style="color: #FFAB70;"> viewset</span><span style="color: #F97583;">=</span><span>views.TodoViewSet,</span><span style="color: #FFAB70;"> basename</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;todos&quot;</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>urlpatterns</span><span style="color: #F97583;"> =</span><span> router.urls</span></span>
+<span class="giallo-l"></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #6A737D;"># config/urls.py</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.contrib</span><span style="color: #F97583;"> import</span><span> admin</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.urls</span><span style="color: #F97583;"> import</span><span> path, include</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>urlpatterns</span><span style="color: #F97583;"> =</span><span> [path(</span><span style="color: #9ECBFF;">&quot;admin/&quot;</span><span>, admin.site.urls), path(</span><span style="color: #9ECBFF;">&quot;&quot;</span><span>, include(</span><span style="color: #9ECBFF;">&quot;todos.urls&quot;</span><span>))]</span></span></code></pre>
+<p>Run the dev server</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">python</span><span style="color: #9ECBFF;"> manage.py runserver</span></span></code></pre>
+<blockquote>
+<p>Go to <a rel="external" href="http://localhost:8000/admin/">http://localhost:8000/admin/</a> and login as adminuser then go to <a rel="external" href="http://localhost:8000/todos/">http://localhost:8000/todos/</a> and add a Todo entry.[]</p>
+</blockquote>
+<p>The reponse should be something like this</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="json"><span class="giallo-l"><span>{</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 1</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2025-07-26T12:34:42.100587Z&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;updated_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2025-07-26T12:34:42.100951Z&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Do the code&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;done&quot;</span><span>:</span><span style="color: #79B8FF;"> false</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;created_by&quot;</span><span>:</span><span style="color: #79B8FF;"> 2</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;updated_by&quot;</span><span>:</span><span style="color: #79B8FF;"> 2</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Now Logout and re-login with another user; here I will log in with the classic user and modify the first todo to put done to true
+the response should be like this</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="json"><span class="giallo-l"><span>{</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 1</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2025-07-26T12:34:42.100587Z&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;updated_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2025-07-26T12:38:34.335263Z&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Do the code&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;done&quot;</span><span>:</span><span style="color: #79B8FF;"> true</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;created_by&quot;</span><span>:</span><span style="color: #79B8FF;"> 2</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;updated_by&quot;</span><span>:</span><span style="color: #79B8FF;"> 3</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>So the To do was created by the user with the id 2 and modified by the user with the id 3</p>
+<p>Every thing works as expected</p>
+<blockquote>
+<p>I don’t like this solution because I have to override every viewset. A better approach might be to create a parent viewset class that inherits from the other viewsets and overrides the perform_create and perform_update methods. However, I don’t like placing business logic in the view layer; I prefer handling these modifications in the serializer layer.</p>
+</blockquote>
+<h3 id="second-solution"><a class="zola-anchor" href="#second-solution" aria-label="Anchor link for: second-solution">Second solution</a></h3>
+<h4 id="the-serializers"><a class="zola-anchor" href="#the-serializers" aria-label="Anchor link for: the-serializers">The serializers</a></h4>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #6A737D;"># common/serializers.py</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> rest_framework</span><span style="color: #F97583;"> import</span><span> serializers</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> AuditSerializerMixin</span><span>(</span><span style="color: #B392F0;">serializers</span><span>.</span><span style="color: #B392F0;">Serializer</span><span>):</span></span>
+<span class="giallo-l"><span>    created_by</span><span style="color: #F97583;"> =</span><span> serializers.HiddenField(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        default</span><span style="color: #F97583;">=</span><span>serializers.CreateOnlyDefault(serializers.CurrentUserDefault())</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"><span>    updated_by</span><span style="color: #F97583;"> =</span><span> serializers.HiddenField(</span><span style="color: #FFAB70;">default</span><span style="color: #F97583;">=</span><span>serializers.CurrentUserDefault())</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #6A737D;"># todos/serializers.py</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> rest_framework</span><span style="color: #F97583;"> import</span><span> serializers</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> common.serializers</span><span style="color: #F97583;"> import</span><span> AuditSerializerMixin</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> .models</span><span style="color: #F97583;"> import</span><span> Todo</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> TodoSerializer</span><span>(</span><span style="color: #B392F0;">AuditSerializerMixin</span><span>,</span><span style="color: #B392F0;"> serializers</span><span>.</span><span style="color: #B392F0;">ModelSerializer</span><span>):</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    class</span><span style="color: #B392F0;"> Meta</span><span>:</span></span>
+<span class="giallo-l"><span>        model</span><span style="color: #F97583;"> =</span><span> Todo</span></span>
+<span class="giallo-l"><span>        fields</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;__all__&quot;</span></span>
+<span class="giallo-l"><span>        read_only_fields</span><span style="color: #F97583;"> =</span><span> (</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            &quot;id&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            &quot;created_at&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            &quot;updated_at&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            &quot;created_by&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            &quot;updated_by&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>        )</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #6A737D;"># todos/views.py</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> rest_framework</span><span style="color: #F97583;"> import</span><span> viewsets, permissions</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> .models</span><span style="color: #F97583;"> import</span><span> Todo</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> .serializers</span><span style="color: #F97583;"> import</span><span> TodoSerializer</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> TodoViewSet</span><span>(</span><span style="color: #B392F0;">viewsets</span><span>.</span><span style="color: #B392F0;">ModelViewSet</span><span>):</span></span>
+<span class="giallo-l"><span>    queryset</span><span style="color: #F97583;"> =</span><span> Todo.objects.all()</span></span>
+<span class="giallo-l"><span>    serializer_class</span><span style="color: #F97583;"> =</span><span> TodoSerializer</span></span>
+<span class="giallo-l"><span>    permission_classes</span><span style="color: #F97583;"> =</span><span> [permissions.IsAuthenticated]</span></span></code></pre>
+<p>No create another Todo entry the response should be like this</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="json"><span class="giallo-l"><span>{</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 2</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2025-07-26T12:52:47.821956Z&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;updated_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2025-07-26T12:52:47.822179Z&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;This is the second Test&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;done&quot;</span><span>:</span><span style="color: #79B8FF;"> false</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<blockquote>
+<p>We can notice that the created_at and the updated_at no longer presented in the respone;
+serializers.HiddenField is a DRF field that is never exposed to the client (it’s not required in request data and not shown in browsable API forms).
+Instead, it is filled automatically by a default value or function provided in its default argument.</p>
+</blockquote>
+<blockquote>
+<p>The Role of CurrentUserDefault and CreateOnlyDefault</p>
+<ul>
+<li>CurrentUserDefault(): A DRF default class that returns request.user automatically.</li>
+<li>CreateOnlyDefault(default): A wrapper that ensures the default value is only set when creating objects, and not overwritten during updates.</li>
+</ul>
+</blockquote>
+<p>So to solve this problem we can override the to_representation method on the AuditSerializerMixin like this</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #6A737D;"># common/serializers.py</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> rest_framework</span><span style="color: #F97583;"> import</span><span> serializers</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> AuditSerializerMixin</span><span>(</span><span style="color: #B392F0;">serializers</span><span>.</span><span style="color: #B392F0;">Serializer</span><span>):</span></span>
+<span class="giallo-l"><span>    created_by</span><span style="color: #F97583;"> =</span><span> serializers.HiddenField(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        default</span><span style="color: #F97583;">=</span><span>serializers.CreateOnlyDefault(serializers.CurrentUserDefault())</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"><span>    updated_by</span><span style="color: #F97583;"> =</span><span> serializers.HiddenField(</span><span style="color: #FFAB70;">default</span><span style="color: #F97583;">=</span><span>serializers.CurrentUserDefault())</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #B392F0;"> to_representation</span><span>(self, instance):</span></span>
+<span class="giallo-l"><span>        rep</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> super</span><span>().to_representation(instance)</span></span>
+<span class="giallo-l"><span>        rep[</span><span style="color: #9ECBFF;">&quot;created_by&quot;</span><span>]</span><span style="color: #F97583;"> =</span><span> instance.created_by.id</span></span>
+<span class="giallo-l"><span>        rep[</span><span style="color: #9ECBFF;">&quot;updated_by&quot;</span><span>]</span><span style="color: #F97583;"> =</span><span> instance.updated_by.id</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        return</span><span> rep</span></span></code></pre>
+<p>re create another Todo entry and every thing will work, the response should be something like this</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="json"><span class="giallo-l"><span>{</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 3</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2025-07-26T13:00:19.686324Z&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;updated_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2025-07-26T13:00:19.686846Z&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;This will Work&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;done&quot;</span><span>:</span><span style="color: #79B8FF;"> true</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;created_by&quot;</span><span>:</span><span style="color: #79B8FF;"> 3</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;updated_by&quot;</span><span>:</span><span style="color: #79B8FF;"> 3</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre>
+<p>Now login as the adminuser and modify the Todo with the id 3 and put the done to false
+the response should be like this</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="json"><span class="giallo-l"><span>{</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 3</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2025-07-26T13:00:19.686324Z&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;updated_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2025-07-26T13:04:16.150382Z&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;This will Work&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;done&quot;</span><span>:</span><span style="color: #79B8FF;"> false</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;created_by&quot;</span><span>:</span><span style="color: #79B8FF;"> 3</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;updated_by&quot;</span><span>:</span><span style="color: #79B8FF;"> 2</span></span>
+<span class="giallo-l"><span>}</span></span></code></pre><h2 id="github-repository"><a class="zola-anchor" href="#github-repository" aria-label="Anchor link for: github-repository">Github Repository</a></h2>
+<p><a rel="external" href="https://github.com/malnossi/djangodrfdryaudit">Django Drf Audit</a></p>
+<h2 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">Conclusion</a></h2>
+<p>The HiddenField approach in Django Rest Framework is a cleaner and more maintainable solution for automatically managing audit fields like created_by and updated_by. Unlike the traditional method of overriding perform_create and perform_update in each ViewSet, this approach moves the responsibility to the serialization layer, which is the natural place for handling data preparation and validation before it reaches the database. This not only reduces boilerplate code and keeps ViewSets focused solely on request handling and permissions, but also strengthens data integrity, as these fields are completely hidden from the client and cannot be tampered with. By leveraging CurrentUserDefault and CreateOnlyDefault, the serializer ensures that created_by is set only once during object creation while updated_by is updated on every modification, guaranteeing consistent behavior across all endpoints. Ultimately, this architecture aligns with DRF’s design philosophy by making the serializer the single source of truth for how data is processed, resulting in a more scalable, secure, and DRY codebase.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+<footer class="mt-12 flex flex-col" tabindex="-1" accesskey="_">
+  <div class="mb-2 flex flex-wrap">
+    <span class="block-bg mr-1.5 mb-1.5 rounded-lg px-5 py-1.5">Tags</span>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/django/">Django</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/web/">Web</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/python/">Python</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/drf/">DRF</a>
+    
+  </div>
+</footer>
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/golang-vuetify-embedded/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Embedding a Vuetify Frontend into a Go Web Server</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/django-vite-integration/" accesskey="."
+    ><span>Integrate Django and Vite based Frontend</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time> Mohamed Nossirat
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+
+  <!-- Begin Body End inject -->
+  
+
+  <script src="https:&#x2F;&#x2F;cdnapp.websitepolicies.net&#x2F;widgets&#x2F;cookies&#x2F;mzad7vzz.js" defer></script>
+
+
+
+<script>
+  // If your cookie widget exposes callbacks, flip GA consent when accepted.
+  // Adjust to your provider’s API.
+  window.addEventListener('CookieConsentAccepted', function () {
+    if (window.gtag) {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  });
+</script>
+  <!-- End Body End inject -->
+</body>
+
+</html>

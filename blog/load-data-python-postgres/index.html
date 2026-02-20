@@ -1,0 +1,619 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Loading Data with Python into PostgreSQL with Psycopg 3</title>
+  <meta property="og:title" content="Loading Data with Python into PostgreSQL with Psycopg 3" />
+  <meta name="description" content="Explore the best way to import messy data from remote source into PostgreSQL using Python and Psycopg3. The data is big, fetched from a remote source, and needs to be cleaned and transformed." />
+  <meta property="og:description" content="Explore the best way to import messy data from remote source into PostgreSQL using Python and Psycopg3. The data is big, fetched from a remote source, and needs to be cleaned and transformed." />
+  <meta property="og:url" content="https://malnossi.github.io/blog/load-data-python-postgres/" />
+  <link rel="canonical" href="https://malnossi.github.io/blog/load-data-python-postgres/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-01-14T00:00:00+00:00" />
+  <meta property="article:tag" content="Python" />
+  <meta property="article:tag" content="PostgreSQL" />
+  <meta property="article:tag" content="Data" />
+  <meta property="og:image" content="https://malnossi.github.io/python-sql.png" />
+  <meta property="og:image:alt" content="" />
+  <meta property="og:image:width" content="750" />
+  <meta property="og:image:height" content="440" />
+  <meta property="og:image:type" content="image/png" />
+  <link rel="alternate" type="application/atom+xml" href="https://malnossi.github.io/atom.xml" title="Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://malnossi.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://malnossi.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #f4f4f5; --header: #e4e4e7;} :root.dark{--bg: #18181b; --header: #27272a;}</style>
+  <meta name="theme-color" data-light="#e4e4e7" data-dark="#27272a" content="#e4e4e7" />
+  <link rel="icon" type="image/x-icon" href="https://malnossi.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" type="image/png" href="https://malnossi.github.io/apple-touch-icon.png?h=58bee300054c5308feb3" />
+  <link rel="icon" type="image/png" href="https://malnossi.github.io/android-icon.png?h=8d80ec95446bd2c36826" />
+  <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+<meta name="author" content="Mohamed Nossirat©">
+<meta property="article:author" content="Mohamed Nossirat©">
+<meta name="twitter:creator" content="Mohamed Nossirat©">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+<script>
+  // (Optional) default deny until consent tool flips it to granted
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('consent', 'default', { analytics_storage: 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-8LBRDGLXJV', {
+    anonymize_ip: true
+  });
+</script>
+
+
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <button type="button" title="Go to home page [Alt + !]" accesskey="!"
+          onclick="window.location.href='https://malnossi.github.io/';"
+          class="btn-home h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-home,url(icons/home.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Open search [Alt + /]" accesskey="/"
+          onclick="window.zolaTheme.search.toggle();"
+          class="btn-search ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-search,url(icons/search.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/blog/"
+          >Blog</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/talks/"
+          >Talks</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/tags/"
+          >Tags</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+      <!-- Search -->
+<div id="linkita-search-wrapper" class="hidden">
+  <ul id="linkita-search-results"></ul>
+</div>
+<script>window.zolaTheme.search.init({ scripts: ["https://malnossi.github.io/elasticlunr.min.js", "https://malnossi.github.io/search_index.en.js"], arg: { w: "#linkita-search-wrapper", r: "#linkita-search-results" } });</script>
+
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Loading Data with Python into PostgreSQL with Psycopg 3</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2026-01-14T00:00:00+00:00">2026-01-14</time><span
+        class="middot"></span><time
+    datetime="PT0H5M0S">5&nbsp;min</time><span
+      class="middot"></span><span>Mohamed Nossirat</span>
+</div>
+
+  </header>
+  <figure class="mt-0 mb-12">
+    <img
+      class="h-auto w-full rounded-lg"
+      src="https://malnossi.github.io/python-sql.png"
+      width="750"
+      height="440"
+    />
+  </figure>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#introduction">Introduction</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#setup-the-api">Setup the APi</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#fetch-the-data">Fetch the Data</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#create-a-table-in-the-database">Create a Table in the Database</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#profile-decorator">Profile Decorator</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#benchmark">Benchmark</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#insert-rows-one-by-one">Insert Rows One by One</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#execute-many">Execute Many</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#execute-many-from-iterator">Execute Many From Iterator</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#copy">COPY</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#key-takeaways">Key takeaways</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#conclusion">Conclusion</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><h1 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h1>
+<p>As data engineers, or the glorified plumbers of the digital world, our job is to wrestle data from far-flung sources into our databases. Some days, this means working with nicely formatted JSON or YAML. More often, it means dealing with Excel spreadsheets with merged cells or hidden columns, or CSV files that are functioning in unexpected ways.
+The data that comes from enterprise systems and legacy apps comes with exotic character sets that have no bearing on anything since the 90's.</p>
+<p>Sometimes we work with more up-to-date services that come with decent APIs. More often than that, we're SSH'-ing into ancient SFTP servers because S3 bucket permissions are a nightmare, FTP sites that are essentially time machines, or setting up Windows-exclusive proprietary software just to access that corporate stash because, according to the IT guy, it's “perfectly secure and user-friendly.”</p>
+<p>This is the reality of data pipelines, the constant adaptation for every imaginable format, protocol, or idiosyncrasy devised by organizations as a means of data storage and transfer.</p>
+<h1 id="setup-the-api"><a class="zola-anchor" href="#setup-the-api" aria-label="Anchor link for: setup-the-api">Setup the APi</a></h1>
+<p>I found this great <a rel="external" href="https://punkapi-alxiw.amvera.io/v3/beers?page=1">public API for beers</a>, so we are going to import data to a beer table in the database.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="json"><span class="giallo-l"><span style="color: #6A737D;">// curl https://punkapi-alxiw.amvera.io/v3/beers?page=1</span></span>
+<span class="giallo-l"><span>[</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 1</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;name&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Punk IPA 2007 - 2010&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;tagline&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Post Modern Classic. Spiky. Tropical. Hoppy.&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;first_brewed&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;04/2007&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;description&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Our flagship beer that kick started the craft beer revolution. This is James and Martin&#39;s original take on an American IPA, subverted with punchy New Zealand hops. Layered with new world hops to create an all-out riot of grapefruit, pineapple and lychee before a spiky, mouth-puckering bitter finish.&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;image&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;001.png&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;abv&quot;</span><span>:</span><span style="color: #79B8FF;"> 6</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;ibu&quot;</span><span>:</span><span style="color: #79B8FF;"> 60</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;target_fg&quot;</span><span>:</span><span style="color: #79B8FF;"> 1010</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;target_og&quot;</span><span>:</span><span style="color: #79B8FF;"> 1056</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;ebc&quot;</span><span>:</span><span style="color: #79B8FF;"> 17</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;srm&quot;</span><span>:</span><span style="color: #79B8FF;"> 8.5</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;ph&quot;</span><span>:</span><span style="color: #79B8FF;"> 4.4</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;attenuation_level&quot;</span><span>:</span><span style="color: #79B8FF;"> 82.14</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    &quot;volume&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">      &quot;value&quot;</span><span>:</span><span style="color: #79B8FF;"> 20</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">      &quot;unit&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;litres&quot;</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span style="color: #6A737D;"> //</span></span>
+<span class="giallo-l"><span>]</span></span></code></pre>
+<p>I trimmed the output for brevity, but there is a lot of information about beers here. In this article we want to import all of the fields before <code>brewers_tips</code> to a table in the database.</p>
+<p>The field <code>volume</code> is nested. We want to extract only the value from the field, and save it to a field called volume in the table.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span>volume</span><span style="color: #F97583;"> =</span><span> beer[</span><span style="color: #9ECBFF;">&#39;volume&#39;</span><span>][</span><span style="color: #9ECBFF;">&#39;value&#39;</span><span>]</span></span></code></pre>
+<p>The field <code>first_brewed</code> contains only year and month, and in some cases, only the year. We want to transform the value to a valid date. For example, the value 09/2007 will be transformed to date 2007-09-01. The value 2006 will be transformed to date 2016-01-01.</p>
+<p>Let's write a simple function to transform the text value in the field, to a Python <code>datetime.date</code>:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">import</span><span> datetime</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">def</span><span style="color: #B392F0;"> parse_first_brewed</span><span>(text:</span><span style="color: #79B8FF;"> str</span><span>) -&gt; datetime.date:</span></span>
+<span class="giallo-l"><span>    parts</span><span style="color: #F97583;"> =</span><span> text.split(</span><span style="color: #9ECBFF;">&#39;/&#39;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span style="color: #79B8FF;"> len</span><span>(parts)</span><span style="color: #F97583;"> ==</span><span style="color: #79B8FF;"> 2</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        return</span><span> datetime.date(</span><span style="color: #79B8FF;">int</span><span>(parts[</span><span style="color: #79B8FF;">1</span><span>]),</span><span style="color: #79B8FF;"> int</span><span>(parts[</span><span style="color: #79B8FF;">0</span><span>]),</span><span style="color: #79B8FF;"> 1</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    elif</span><span style="color: #79B8FF;"> len</span><span>(parts)</span><span style="color: #F97583;"> ==</span><span style="color: #79B8FF;"> 1</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        return</span><span> datetime.date(</span><span style="color: #79B8FF;">int</span><span>(parts[</span><span style="color: #79B8FF;">0</span><span>]),</span><span style="color: #79B8FF;"> 1</span><span>,</span><span style="color: #79B8FF;"> 1</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    else</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        assert</span><span style="color: #79B8FF;"> False</span><span>,</span><span style="color: #9ECBFF;"> &#39;Unknown date format&#39;</span></span></code></pre><h1 id="fetch-the-data"><a class="zola-anchor" href="#fetch-the-data" aria-label="Anchor link for: fetch-the-data">Fetch the Data</a></h1>
+<p>The API provides paged results. To encapsulate the paging, we create a generator that yields beers one by one:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> typing</span><span style="color: #F97583;"> import</span><span> Iterator, Dict, Any</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> urllib.parse</span><span style="color: #F97583;"> import</span><span> urlencode</span></span>
+<span class="giallo-l"><span style="color: #F97583;">import</span><span> requests</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">def</span><span style="color: #B392F0;"> iter_beers_from_api</span><span>(page_size:</span><span style="color: #79B8FF;"> int</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> 30</span><span>) -&gt; Iterator[Dict[</span><span style="color: #79B8FF;">str</span><span>, Any]]:</span></span>
+<span class="giallo-l"><span>    session</span><span style="color: #F97583;"> =</span><span> requests.Session()</span></span>
+<span class="giallo-l"><span>    page</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    while</span><span style="color: #79B8FF;"> True</span><span>:</span></span>
+<span class="giallo-l"><span>        response</span><span style="color: #F97583;"> =</span><span> session.get(</span><span style="color: #9ECBFF;">&#39;https://punkapi-alxiw.amvera.io/v3/beers?&#39;</span><span style="color: #F97583;"> +</span><span> urlencode({</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            &#39;page&#39;</span><span>: page,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            &#39;per_page&#39;</span><span>: page_size</span></span>
+<span class="giallo-l"><span>        }))</span></span>
+<span class="giallo-l"><span>        response.raise_for_status()</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        data</span><span style="color: #F97583;"> =</span><span> response.json()</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        if not</span><span> data:</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            break</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">        yield from</span><span> data</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        page</span><span style="color: #F97583;"> +=</span><span style="color: #79B8FF;"> 1</span></span></code></pre><h1 id="create-a-table-in-the-database"><a class="zola-anchor" href="#create-a-table-in-the-database" aria-label="Anchor link for: create-a-table-in-the-database">Create a Table in the Database</a></h1>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="yaml"><span class="giallo-l"><span style="color: #85E89D;">services</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">  db</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    image</span><span>:</span><span style="color: #9ECBFF;"> postgres:17</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    environment</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #9ECBFF;"> POSTGRES_USER=test</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #9ECBFF;"> POSTGRES_PASSWORD=test</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #9ECBFF;"> POSTGRES_DB=test</span></span>
+<span class="giallo-l"><span style="color: #85E89D;">    ports</span><span>:</span></span>
+<span class="giallo-l"><span>      -</span><span style="color: #9ECBFF;"> 5432:5432</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">docker</span><span style="color: #9ECBFF;"> compsoe up</span><span style="color: #79B8FF;"> -d</span></span></code></pre>
+<p>To connect from Python to a PostgreSQL database, we use <a rel="external" href="https://www.psycopg.org/psycopg3/docs/index.html">psycopg3</a>:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">mkdir</span><span style="color: #9ECBFF;"> pythonpostgresql</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">cd</span><span style="color: #9ECBFF;"> pythonpostgresql</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">uv</span><span style="color: #9ECBFF;"> init .</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">uv</span><span style="color: #9ECBFF;"> add &quot;psycopg[binary]&quot;</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">import</span><span> psycopg</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>connection</span><span style="color: #F97583;"> =</span><span> psycopg.connect(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">    host</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;localhost&quot;</span><span>, </span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">    dbname</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;test&quot;</span><span>, </span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">    user</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;test&quot;</span><span>, </span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">    password</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;test&quot;</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>connection.autocommit</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> True</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">def</span><span style="color: #B392F0;"> create_staging_table</span><span>(cursor) -&gt;</span><span style="color: #79B8FF;"> None</span><span>:</span></span>
+<span class="giallo-l"><span>    cursor.execute(</span><span style="color: #9ECBFF;">&quot;&quot;&quot;</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        DROP TABLE IF EXISTS staging_beers;</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        CREATE UNLOGGED TABLE staging_beers (</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            id                  INTEGER,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            name                TEXT,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            tagline             TEXT,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            first_brewed        DATE,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            description         TEXT,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            image               TEXT,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            abv                 DECIMAL,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            ibu                 DECIMAL,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            target_fg           DECIMAL,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            target_og           DECIMAL,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            ebc                 DECIMAL,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            srm                 DECIMAL,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            ph                  DECIMAL,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            attenuation_level   DECIMAL,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            brewers_tips        TEXT,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            contributed_by      TEXT,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            volume              INTEGER</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        );</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;&quot;&quot;</span><span>)</span></span></code></pre>
+<p>Using the connection we created before, this is how the function is used:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">&gt;&gt;&gt; with</span><span> connection.cursor()</span><span style="color: #F97583;"> as</span><span> cursor:</span></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;&gt;&gt;</span><span> create_staging_table(cursor)</span></span></code></pre><h1 id="profile-decorator"><a class="zola-anchor" href="#profile-decorator" aria-label="Anchor link for: profile-decorator">Profile Decorator</a></h1>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">import</span><span> time</span></span>
+<span class="giallo-l"><span style="color: #F97583;">import</span><span> tracemalloc</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> functools</span><span style="color: #F97583;"> import</span><span> wraps</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">def</span><span style="color: #B392F0;"> profile</span><span>(fn):</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    @wraps</span><span>(fn)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #B392F0;"> inner</span><span>(</span><span style="color: #F97583;">*</span><span>args,</span><span style="color: #F97583;"> **</span><span>kwargs):</span></span>
+<span class="giallo-l"><span>        fn_kwargs_str</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;, &quot;</span><span>.join(</span><span style="color: #F97583;">f</span><span style="color: #9ECBFF;">&quot;</span><span style="color: #79B8FF;">{</span><span>k</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;">=</span><span style="color: #79B8FF;">{</span><span>v</span><span style="color: #F97583;">!r</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;">&quot;</span><span style="color: #F97583;"> for</span><span> k, v</span><span style="color: #F97583;"> in</span><span> kwargs.items())</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        print</span><span>(</span><span style="color: #F97583;">f</span><span style="color: #9ECBFF;">&quot;</span><span style="color: #79B8FF;">\n{</span><span>fn.</span><span style="color: #79B8FF;">__name__}</span><span style="color: #9ECBFF;">(</span><span style="color: #79B8FF;">{</span><span>fn_kwargs_str</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;">)&quot;</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">        # Start memory tracking</span></span>
+<span class="giallo-l"><span>        tracemalloc.start()</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">        # Measure time</span></span>
+<span class="giallo-l"><span>        t0</span><span style="color: #F97583;"> =</span><span> time.perf_counter()</span></span>
+<span class="giallo-l"><span>        retval</span><span style="color: #F97583;"> =</span><span> fn(</span><span style="color: #F97583;">*</span><span>args,</span><span style="color: #F97583;"> **</span><span>kwargs)</span></span>
+<span class="giallo-l"><span>        elapsed</span><span style="color: #F97583;"> =</span><span> time.perf_counter()</span><span style="color: #F97583;"> -</span><span> t0</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">        # Stop memory tracking</span></span>
+<span class="giallo-l"><span>        current, peak</span><span style="color: #F97583;"> =</span><span> tracemalloc.get_traced_memory()</span></span>
+<span class="giallo-l"><span>        tracemalloc.stop()</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        print</span><span>(</span><span style="color: #F97583;">f</span><span style="color: #9ECBFF;">&quot;Time   </span><span style="color: #79B8FF;">{</span><span>elapsed</span><span style="color: #F97583;">:.4f</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;">s&quot;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        print</span><span>(</span><span style="color: #F97583;">f</span><span style="color: #9ECBFF;">&quot;Memory </span><span style="color: #79B8FF;">{</span><span>peak</span><span style="color: #F97583;"> /</span><span style="color: #79B8FF;"> 1024</span><span style="color: #F97583;"> /</span><span style="color: #79B8FF;"> 1024</span><span style="color: #F97583;">:.4f</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;"> MiB (peak)&quot;</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">        return</span><span> retval</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    return</span><span> inner</span></span></code></pre><h1 id="benchmark"><a class="zola-anchor" href="#benchmark" aria-label="Anchor link for: benchmark">Benchmark</a></h1>
+<p>At the time of writing, the beers API contains only 415 beers. To work on a large dataset, we duplicate it 100 times and store it in-memory. The resulting dataset contains 41,500 beers:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">&gt;&gt;&gt;</span><span> beers</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> list</span><span>(iter_beers_from_api())</span><span style="color: #F97583;"> *</span><span style="color: #79B8FF;"> 100</span></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;&gt;&gt;</span><span style="color: #79B8FF;"> len</span><span>(beers)</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">41</span><span>,</span><span style="color: #79B8FF;">500</span></span></code></pre>
+<p>In a real life situation you would use the function iter_beers_from_api directly:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">&gt;&gt;&gt;</span><span> process(iter_beers_from_api())</span></span></code></pre><h2 id="insert-rows-one-by-one"><a class="zola-anchor" href="#insert-rows-one-by-one" aria-label="Anchor link for: insert-rows-one-by-one">Insert Rows One by One</a></h2>
+<p>To establish a baseline we start with the simplest approach, insert rows one by one:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #B392F0;">@profile</span></span>
+<span class="giallo-l"><span style="color: #F97583;">def</span><span style="color: #B392F0;"> insert_one_by_one</span><span>(conn, beers: Iterator[Dict[</span><span style="color: #79B8FF;">str</span><span>, Any]]):</span></span>
+<span class="giallo-l"><span>    </span></span>
+<span class="giallo-l"><span style="color: #F97583;">    with</span><span> conn.cursor()</span><span style="color: #F97583;"> as</span><span> cur:</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">        # Reset table</span></span>
+<span class="giallo-l"><span>        cur.execute(</span><span style="color: #9ECBFF;">&quot;TRUNCATE TABLE staging_beers&quot;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">        # Insert each beer</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        for</span><span> beer</span><span style="color: #F97583;"> in</span><span> beers:</span></span>
+<span class="giallo-l"><span>            cur.execute(</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                &quot;&quot;&quot;</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                INSERT INTO staging_beers VALUES (</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(id)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(name)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(tagline)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(first_brewed)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(description)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(image)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(abv)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(ibu)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(target_fg)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(target_og)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(ebc)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(srm)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(ph)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(attenuation_level)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(brewers_tips)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(contributed_by)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    %(volume)s</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                );</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            &quot;&quot;&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>                {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">                    **</span><span>beer,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                    &quot;first_brewed&quot;</span><span>: parse_first_brewed(beer[</span><span style="color: #9ECBFF;">&quot;first_brewed&quot;</span><span>]),</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                    &quot;volume&quot;</span><span>: beer[</span><span style="color: #9ECBFF;">&quot;volume&quot;</span><span>][</span><span style="color: #9ECBFF;">&quot;value&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                },</span></span>
+<span class="giallo-l"><span>            )</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">insert_one_by_one</span><span>()</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Time</span><span style="color: #9ECBFF;">   5.9616s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Memory</span><span style="color: #79B8FF;"> 0.0553</span><span style="color: #9ECBFF;"> MiB</span><span> (peak)</span></span></code></pre><h2 id="execute-many"><a class="zola-anchor" href="#execute-many" aria-label="Anchor link for: execute-many">Execute Many</a></h2>
+<p>Psycopg3 provides a way to insert many rows at once using <a rel="external" href="https://www.psycopg.org/psycopg3/docs/api/cursors.html#psycopg.Cursor.executemany">executemany</a>. From the docs:</p>
+<blockquote>
+<p>Execute the same command with a sequence of input data.</p>
+</blockquote>
+<p>Let's try to import the data using executemany:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #B392F0;">@profile</span></span>
+<span class="giallo-l"><span style="color: #F97583;">def</span><span style="color: #B392F0;"> insert_executemany</span><span>(connection, beers: Iterator[Dict[</span><span style="color: #79B8FF;">str</span><span>, Any]]) -&gt;</span><span style="color: #79B8FF;"> None</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    with</span><span> connection.cursor()</span><span style="color: #F97583;"> as</span><span> cursor:</span></span>
+<span class="giallo-l"><span>        create_staging_table(cursor)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        all_beers</span><span style="color: #F97583;"> =</span><span> [</span></span>
+<span class="giallo-l"><span>            {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">                **</span><span>beer,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                &quot;first_brewed&quot;</span><span>: parse_first_brewed(beer[</span><span style="color: #9ECBFF;">&quot;first_brewed&quot;</span><span>]),</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                &quot;volume&quot;</span><span>: beer[</span><span style="color: #9ECBFF;">&quot;volume&quot;</span><span>][</span><span style="color: #9ECBFF;">&quot;value&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>            }</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            for</span><span> beer</span><span style="color: #F97583;"> in</span><span> beers</span></span>
+<span class="giallo-l"><span>        ]</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        cursor.executemany(</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            &quot;&quot;&quot;</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            INSERT INTO staging_beers VALUES (</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(id)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(name)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(tagline)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(first_brewed)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(description)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(image)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(abv)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(ibu)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(target_fg)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(target_og)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(ebc)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(srm)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(ph)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(attenuation_level)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(brewers_tips)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(contributed_by)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(volume)s</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            );</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;&quot;&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>            all_beers,</span></span>
+<span class="giallo-l"><span>        )</span></span></code></pre>
+<p>The function looks very similar to the previous function, and the transformations are the same. The main difference here is that we first transform all of the data in-memory, and only then import it to the database.</p>
+<p>Running this function produces the following output:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">insert_executemany</span><span>()</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Time</span><span style="color: #9ECBFF;">   1.3268s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Memory</span><span style="color: #79B8FF;"> 20.1006</span><span style="color: #9ECBFF;"> MiB</span><span> (peak)</span></span></code></pre>
+<p>This is disappointing. The timing is just better, but the function now consumes 20MiB of memory.</p>
+<h2 id="execute-many-from-iterator"><a class="zola-anchor" href="#execute-many-from-iterator" aria-label="Anchor link for: execute-many-from-iterator">Execute Many From Iterator</a></h2>
+<p>The previous method consumed a lot of memory because the transformed data was stored in-memory before being processed by psycopg.</p>
+<p>Let's see if we can use an iterator to avoid storing the data in-memory:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #B392F0;">@profile</span></span>
+<span class="giallo-l"><span style="color: #F97583;">def</span><span style="color: #B392F0;"> insert_executemany_iterator</span><span>(connection, beers: Iterator[Dict[</span><span style="color: #79B8FF;">str</span><span>, Any]]) -&gt;</span><span style="color: #79B8FF;"> None</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    with</span><span> connection.cursor()</span><span style="color: #F97583;"> as</span><span> cursor:</span></span>
+<span class="giallo-l"><span>        create_staging_table(cursor)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        all_beers</span><span style="color: #F97583;"> =</span><span> (</span></span>
+<span class="giallo-l"><span>            {</span></span>
+<span class="giallo-l"><span style="color: #F97583;">                **</span><span>beer,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                &quot;first_brewed&quot;</span><span>: parse_first_brewed(beer[</span><span style="color: #9ECBFF;">&quot;first_brewed&quot;</span><span>]),</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                &quot;volume&quot;</span><span>: beer[</span><span style="color: #9ECBFF;">&quot;volume&quot;</span><span>][</span><span style="color: #9ECBFF;">&quot;value&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>            }</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            for</span><span> beer</span><span style="color: #F97583;"> in</span><span> beers</span></span>
+<span class="giallo-l"><span>        )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        cursor.executemany(</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            &quot;&quot;&quot;</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            INSERT INTO staging_beers VALUES (</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(id)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(name)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(tagline)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(first_brewed)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(description)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(image)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(abv)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(ibu)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(target_fg)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(target_og)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(ebc)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(srm)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(ph)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(attenuation_level)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(brewers_tips)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(contributed_by)s</span><span style="color: #9ECBFF;">,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                %(volume)s</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">            );</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;&quot;&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>            all_beers,</span></span>
+<span class="giallo-l"><span>        )</span></span></code></pre>
+<p>The difference here is that the transformed data is "streamed" into executemany using an iterator.</p>
+<p>This function produces the following result:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">insert_executemany_iterator</span><span>()</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Time</span><span style="color: #9ECBFF;">   1.3047s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Memory</span><span style="color: #79B8FF;"> 0.1355</span><span style="color: #9ECBFF;"> MiB</span><span> (peak)</span></span></code></pre>
+<p>Our "streaming" solution worked as expected and we managed to bring the memory to 0.1355 MiB. The timing however, remains roughly the same.</p>
+<h2 id="copy"><a class="zola-anchor" href="#copy" aria-label="Anchor link for: copy">COPY</a></h2>
+<p>The official PostgreSQL documentation includes a dedicated section on Populating a Database, which highlights that the most efficient method for loading large amounts of data is the COPY command. In Python, the psycopg library offers a convenient interface for this through the <a rel="external" href="https://www.psycopg.org/psycopg3/docs/api/cursors.html#psycopg.Cursor.copy"><code>copy</code></a> function.
+See <a rel="external" href="https://www.psycopg.org/psycopg3/docs/basic/copy.html#copy">Using COPY TO and COPY FROM</a> for information about COPY.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #B392F0;">@profile</span></span>
+<span class="giallo-l"><span style="color: #F97583;">def</span><span style="color: #B392F0;"> insert_via_copy</span><span>(conn, beers: Iterator[Dict[</span><span style="color: #79B8FF;">str</span><span>, Any]]):</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    with</span><span> conn.cursor()</span><span style="color: #F97583;"> as</span><span> cur:</span></span>
+<span class="giallo-l"><span>        cur.execute(</span><span style="color: #9ECBFF;">&quot;TRUNCATE TABLE staging_beers&quot;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">        # Begin a COPY FROM STDIN (text) operation:</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">        # Note: we specify the column list and a delimiter.</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        with</span><span> cur.copy(</span><span style="color: #9ECBFF;">&quot;COPY staging_beers FROM STDIN&quot;</span><span>)</span><span style="color: #F97583;"> as</span><span> copy:</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            for</span><span> beer</span><span style="color: #F97583;"> in</span><span> beers:</span></span>
+<span class="giallo-l"><span>                copy.write_row(</span></span>
+<span class="giallo-l"><span>                    (</span></span>
+<span class="giallo-l"><span>                        beer[</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                        beer[</span><span style="color: #9ECBFF;">&quot;name&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                        beer[</span><span style="color: #9ECBFF;">&quot;tagline&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                        parse_first_brewed(beer[</span><span style="color: #9ECBFF;">&quot;first_brewed&quot;</span><span>]),</span></span>
+<span class="giallo-l"><span>                        beer[</span><span style="color: #9ECBFF;">&quot;description&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                        beer[</span><span style="color: #9ECBFF;">&quot;image&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                        beer[</span><span style="color: #9ECBFF;">&quot;abv&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                        beer[</span><span style="color: #9ECBFF;">&quot;ibu&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                        beer[</span><span style="color: #9ECBFF;">&quot;target_fg&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                        beer[</span><span style="color: #9ECBFF;">&quot;target_og&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                        beer[</span><span style="color: #9ECBFF;">&quot;ebc&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                        beer[</span><span style="color: #9ECBFF;">&quot;srm&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                        beer[</span><span style="color: #9ECBFF;">&quot;ph&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                        beer[</span><span style="color: #9ECBFF;">&quot;attenuation_level&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                        beer[</span><span style="color: #9ECBFF;">&quot;brewers_tips&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                        beer[</span><span style="color: #9ECBFF;">&quot;contributed_by&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                        beer[</span><span style="color: #9ECBFF;">&quot;volume&quot;</span><span>][</span><span style="color: #9ECBFF;">&quot;value&quot;</span><span>],</span></span>
+<span class="giallo-l"><span>                    )</span></span>
+<span class="giallo-l"><span>                )</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">insert_via_copy</span><span>()</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Time</span><span style="color: #9ECBFF;">   0.2015s</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">Memory</span><span style="color: #79B8FF;"> 0.0752</span><span style="color: #9ECBFF;"> MiB</span><span> (peak)</span></span></code></pre><h1 id="key-takeaways"><a class="zola-anchor" href="#key-takeaways" aria-label="Anchor link for: key-takeaways">Key takeaways</a></h1>
+<p>PostgreSQL’s COPY FROM STDIN vastly outperforms row-by-row inserts and even batched inserts. This is because COPY minimizes per-statement overhead and streaming avoids large in-memory buffers. “The COPY option is the most efficient. Then the executemany. Then the execute”. In other words, the hierarchy is COPY &gt;&gt; executemany &gt;&gt; one-by-one in terms of speed.</p>
+<h1 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">Conclusion</a></h1>
+<p>The choice of insertion method has a huge impact when loading large datasets. Our examples illustrate that:</p>
+<ul>
+<li>For small datasets (a few dozen rows), the simplicity of one-by-one inserts is fine. The overhead is negligible.</li>
+<li>For medium datasets, executemany can help reduce Python overhead, but still isn’t truly bulk-loading.</li>
+<li>For large datasets (thousands+ rows), prefer PostgreSQL’s COPY. Psycopg makes it easy to stream rows directly into COPY ... FROM STDIN with copy.write_row, yielding order-of-magnitude speedups and minimal memory usage.</li>
+</ul>
+<p>A few additional best practices highlighted by the code:</p>
+<ul>
+<li>Use a single requests.Session for API calls to reuse connections.</li>
+<li>Normalize or clean data before insert (e.g. parse dates) to avoid database errors.</li>
+<li>For staging tables where durability isn’t needed, use UNLOGGED tables. These skip WAL logging and can be much faster (often &gt;50% faster) for bulk loads.</li>
+</ul>
+<blockquote>
+<p>Remember that COPY bypasses normal ORM or trigger mechanisms (not shown here), so any auto-generated timestamps or foreign-key cascades won’t run. Design your pipeline accordingly.</p>
+</blockquote>
+<p>By combining streaming fetch (iterators), careful parsing, and PostgreSQL’s efficient COPY command, we can build a robust ingestion process that handles “messy” remote data at scale with high performance.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+<footer class="mt-12 flex flex-col" tabindex="-1" accesskey="_">
+  <div class="mb-2 flex flex-wrap">
+    <span class="block-bg mr-1.5 mb-1.5 rounded-lg px-5 py-1.5">Tags</span>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/python/">Python</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/postgresql/">PostgreSQL</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/data/">Data</a>
+    
+  </div>
+</footer>
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/export-postgres-with-django/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Export PostgreSQL data to CSV with Django</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/golang-weasyprint/" accesskey="."
+    ><span>Building an HTTP PDF Generation Service in Go Using HTML Templates and WeasyPrint</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time> Mohamed Nossirat
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+
+  <!-- Begin Body End inject -->
+  
+
+  <script src="https:&#x2F;&#x2F;cdnapp.websitepolicies.net&#x2F;widgets&#x2F;cookies&#x2F;mzad7vzz.js" defer></script>
+
+
+
+<script>
+  // If your cookie widget exposes callbacks, flip GA consent when accepted.
+  // Adjust to your provider’s API.
+  window.addEventListener('CookieConsentAccepted', function () {
+    if (window.gtag) {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  });
+</script>
+  <!-- End Body End inject -->
+</body>
+
+</html>

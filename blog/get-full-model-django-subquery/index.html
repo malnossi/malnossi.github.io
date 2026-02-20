@@ -1,0 +1,572 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Get full model instance from Django&#x27;s Subquery</title>
+  <meta property="og:title" content="Get full model instance from Django&apos;s Subquery" />
+  <meta name="description" content="Django&apos;s Subquery returns Scalars, Learn How to return a full model instance" />
+  <meta property="og:description" content="Django&apos;s Subquery returns Scalars, Learn How to return a full model instance" />
+  <meta property="og:url" content="https://malnossi.github.io/blog/get-full-model-django-subquery/" />
+  <link rel="canonical" href="https://malnossi.github.io/blog/get-full-model-django-subquery/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-02-19T00:00:00+00:00" />
+  <meta property="article:tag" content="Django" />
+  <meta property="article:tag" content="ORM" />
+  <meta property="og:image" content="https://malnossi.github.io/django-subquery-full.webp" />
+  <meta property="og:image:alt" content="" />
+  <meta property="og:image:width" content="1000" />
+  <meta property="og:image:height" content="420" />
+  <meta property="og:image:type" content="image/webp" />
+  <link rel="alternate" type="application/atom+xml" href="https://malnossi.github.io/atom.xml" title="Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://malnossi.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://malnossi.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #f4f4f5; --header: #e4e4e7;} :root.dark{--bg: #18181b; --header: #27272a;}</style>
+  <meta name="theme-color" data-light="#e4e4e7" data-dark="#27272a" content="#e4e4e7" />
+  <link rel="icon" type="image/x-icon" href="https://malnossi.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" type="image/png" href="https://malnossi.github.io/apple-touch-icon.png?h=58bee300054c5308feb3" />
+  <link rel="icon" type="image/png" href="https://malnossi.github.io/android-icon.png?h=8d80ec95446bd2c36826" />
+  <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+<meta name="author" content="Mohamed Nossirat©">
+<meta property="article:author" content="Mohamed Nossirat©">
+<meta name="twitter:creator" content="Mohamed Nossirat©">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+<script>
+  // (Optional) default deny until consent tool flips it to granted
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('consent', 'default', { analytics_storage: 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-8LBRDGLXJV', {
+    anonymize_ip: true
+  });
+</script>
+
+
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <button type="button" title="Go to home page [Alt + !]" accesskey="!"
+          onclick="window.location.href='https://malnossi.github.io/';"
+          class="btn-home h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-home,url(icons/home.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Open search [Alt + /]" accesskey="/"
+          onclick="window.zolaTheme.search.toggle();"
+          class="btn-search ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-search,url(icons/search.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/blog/"
+          >Blog</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/talks/"
+          >Talks</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/tags/"
+          >Tags</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+      <!-- Search -->
+<div id="linkita-search-wrapper" class="hidden">
+  <ul id="linkita-search-results"></ul>
+</div>
+<script>window.zolaTheme.search.init({ scripts: ["https://malnossi.github.io/elasticlunr.min.js", "https://malnossi.github.io/search_index.en.js"], arg: { w: "#linkita-search-wrapper", r: "#linkita-search-results" } });</script>
+
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Get full model instance from Django&#x27;s Subquery</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2026-02-19T00:00:00+00:00">2026-02-19</time><span
+        class="middot"></span><time
+    datetime="PT0H7M0S">7&nbsp;min</time><span
+      class="middot"></span><span>Mohamed Nossirat</span>
+</div>
+
+  </header>
+  <figure class="mt-0 mb-12">
+    <img
+      class="h-auto w-full rounded-lg"
+      src="https://malnossi.github.io/django-subquery-full.webp"
+      width="1000"
+      height="420"
+    />
+  </figure>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#introduction">Introduction</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#models">Models</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#the-naive-subquery-approach">The Naïve Subquery Approach</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#jsonobject-to-the-rescue">JSONObject to the rescue</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#rethinking-the-problem">Rethinking the Problem</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#conclusion">Conclusion</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><h1 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h1>
+<p>A large part of my recent work involves writing APIs for analytics. Not simplistic examples. Rather, the kind of queries where it's clear that someone had a perfect command of <code>SQL</code> and where you then have to convince the <code>ORM</code> to behave in the same way.</p>
+<p>Recently, this has led me to build a lot of <code>annotations</code> based on <code>Subquery</code>.</p>
+<p>If you've ever worked with <code>Subquery</code> in Django, you're probably familiar with its main limitation: it can only return a single column. Which is perfectly reasonable. Until you want to retrieve a complete object.</p>
+<p>There have been several times when I've thought to myself, <em><strong>"There must be a clean way to retrieve the entire related model from this, right?"</strong></em> The obvious answer is <strong>NO</strong>. At least, not directly. But after a lot of experimentation and a few minor existential crises over querysets, I finally found a pattern that allows you to retrieve complete instances via a single subquery.</p>
+<p>No hacks. No raw SQL. Just a slightly different way of exploiting how the ORM composes its queries.</p>
+<p>To make this more concrete, I'll start simply and build the explanation gradually.</p>
+<h1 id="models"><a class="zola-anchor" href="#models" aria-label="Anchor link for: models">Models</a></h1>
+<p>Let's start with two simple but realistic models.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.db</span><span style="color: #F97583;"> import</span><span> models</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> Post</span><span>(</span><span style="color: #B392F0;">models</span><span>.</span><span style="color: #B392F0;">Model</span><span>):</span></span>
+<span class="giallo-l"><span>    title</span><span style="color: #F97583;"> =</span><span> models.CharField(</span><span style="color: #FFAB70;">max_length</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">255</span><span>)</span></span>
+<span class="giallo-l"><span>    created_at</span><span style="color: #F97583;"> =</span><span> models.DateTimeField(</span><span style="color: #FFAB70;">auto_now_add</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">True</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> Comment</span><span>(</span><span style="color: #B392F0;">models</span><span>.</span><span style="color: #B392F0;">Model</span><span>):</span></span>
+<span class="giallo-l"><span>    post</span><span style="color: #F97583;"> =</span><span> models.ForeignKey(Post,</span><span style="color: #FFAB70;"> on_delete</span><span style="color: #F97583;">=</span><span>models.</span><span style="color: #79B8FF;">CASCADE</span><span>,</span><span style="color: #FFAB70;"> related_name</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;comments&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    author</span><span style="color: #F97583;"> =</span><span> models.CharField(</span><span style="color: #FFAB70;">max_length</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">255</span><span>)</span></span>
+<span class="giallo-l"><span>    body</span><span style="color: #F97583;"> =</span><span> models.TextField()</span></span>
+<span class="giallo-l"><span>    created_at</span><span style="color: #F97583;"> =</span><span> models.DateTimeField(</span><span style="color: #FFAB70;">auto_now_add</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">True</span><span>)</span></span></code></pre>
+<p>Now imagine the requirement, For every Post, annotate its most recent Comment.</p>
+<p>In SQL, this might look like:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="sql"><span class="giallo-l"><span style="color: #F97583;">SELECT</span><span> p.</span><span style="color: #F97583;">*</span><span>, c.</span><span style="color: #F97583;">*</span></span>
+<span class="giallo-l"><span style="color: #F97583;">FROM</span><span> post p</span></span>
+<span class="giallo-l"><span style="color: #F97583;">LEFT JOIN</span><span> LATERAL (</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    SELECT *</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    FROM</span><span> comment c</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    WHERE</span><span style="color: #79B8FF;"> c</span><span>.</span><span style="color: #79B8FF;">post_id</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> p</span><span>.</span><span style="color: #79B8FF;">id</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    ORDER BY</span><span style="color: #79B8FF;"> c</span><span>.</span><span style="color: #79B8FF;">created_at</span><span style="color: #F97583;"> DESC</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    LIMIT</span><span style="color: #79B8FF;"> 1</span></span>
+<span class="giallo-l"><span>) c </span><span style="color: #F97583;">ON</span><span> TRUE;</span></span></code></pre>
+<p>Very natural in SQL. But in Django? <em>Let’s try.</em></p>
+<h1 id="the-naive-subquery-approach"><a class="zola-anchor" href="#the-naive-subquery-approach" aria-label="Anchor link for: the-naive-subquery-approach">The Naïve Subquery Approach</a></h1>
+<p>Django gives us <code>OuterRef</code> and <code>Subquery</code>, which let us write correlated subqueries.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.db.models</span><span style="color: #F97583;"> import</span><span> OuterRef, Subquery</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>latest_comment_qs</span><span style="color: #F97583;"> =</span><span> Comment.objects.filter(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">    post</span><span style="color: #F97583;">=</span><span>OuterRef(</span><span style="color: #9ECBFF;">&quot;pk&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>).order_by(</span><span style="color: #9ECBFF;">&quot;-created_at&quot;</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>posts</span><span style="color: #F97583;"> =</span><span> Post.objects.annotate(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">    latest_comment_id</span><span style="color: #F97583;">=</span><span>Subquery(</span></span>
+<span class="giallo-l"><span>        latest_comment_qs.values(</span><span style="color: #9ECBFF;">&quot;pk&quot;</span><span>)[:</span><span style="color: #79B8FF;">1</span><span>]</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"><span>)</span></span></code></pre>
+<p>Output:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="json"><span class="giallo-l"><span>[</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 1</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;post 1&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282055+00:00&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;latest_comment_id&quot;</span><span>:</span><span style="color: #79B8FF;"> 7</span></span>
+<span class="giallo-l"><span>    },</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 2</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;post 2&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282266+00:00&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;latest_comment_id&quot;</span><span>:</span><span style="color: #79B8FF;"> 6</span></span>
+<span class="giallo-l"><span>    },</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 3</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;post 3&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282273+00:00&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;latest_comment_id&quot;</span><span>:</span><span style="color: #79B8FF;"> 8</span></span>
+<span class="giallo-l"><span>    },</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 4</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;post 4&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282277+00:00&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;latest_comment_id&quot;</span><span>:</span><span style="color: #79B8FF;"> 9</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>]</span></span></code></pre>
+<p>This works perfectly. Each Post now has:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span>post.latest_comment_id</span></span></code></pre>
+<p>But notice something important: We only get the <code>pk</code>. Why?</p>
+<p>Because <code>Subquery</code> must return exactly one column. This is not arbitrary. SQL subqueries used as expressions must resolve to a scalar value. Django is simply enforcing that constraint.</p>
+<p>So if we try:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span>latest_comment_qs.values(</span><span style="color: #9ECBFF;">&quot;pk&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;author&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;body&quot;</span><span>)</span></span></code></pre>
+<p>Django rightfully complains. At this point, most people conclude: <em><strong>“Okay. I can only annotate scalar values.”</strong></em> But that conclusion is slightly premature.</p>
+<h1 id="jsonobject-to-the-rescue"><a class="zola-anchor" href="#jsonobject-to-the-rescue" aria-label="Anchor link for: jsonobject-to-the-rescue">JSONObject to the rescue</a></h1>
+<p>This was the moment I had my first truly clever,if slightly devious, idea. How do you combine two values into one? Simple: you tuck them neatly into a JSON object, of course!</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.db.models.functions</span><span style="color: #F97583;"> import</span><span> JSONObject</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>latest_comment_qs</span><span style="color: #F97583;"> =</span><span> Comment.objects.filter(</span><span style="color: #FFAB70;">post</span><span style="color: #F97583;">=</span><span>OuterRef(</span><span style="color: #9ECBFF;">&quot;pk&quot;</span><span>)).order_by(</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;-created_at&quot;</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"><span>    json_obj</span><span style="color: #F97583;"> =</span><span> JSONObject(</span><span style="color: #FFAB70;">author</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;author&quot;</span><span>,</span><span style="color: #FFAB70;"> body</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;body&quot;</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    posts</span><span style="color: #F97583;"> =</span><span> Post.objects.annotate(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        latest_comment</span><span style="color: #F97583;">=</span><span>Subquery(latest_comment_qs.values_list(json_obj,</span><span style="color: #FFAB70;">flat</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">True</span><span>)[:</span><span style="color: #79B8FF;">1</span><span>])</span></span>
+<span class="giallo-l"><span>    )</span></span></code></pre>
+<p>Output:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="json"><span class="giallo-l"><span>[</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 1</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;post 1&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282055+00:00&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;latest_comment&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;author&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Author 7&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;body&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;lorem ipsum dolor sit amet consectetur adipisicing elit sed do&quot;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    },</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 2</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;post 2&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282266+00:00&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;latest_comment&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;author&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Author 6&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;body&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;lorem ipsum dolor sit amet consectetur adipisicing elit sed do&quot;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    },</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 3</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;post 3&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282273+00:00&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;latest_comment&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;author&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Author 8&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;body&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;lorem ipsum dolor sit amet consectetur adipisicing elit sed do&quot;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    },</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 4</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;post 4&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282277+00:00&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;latest_comment&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;author&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Author 9&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;body&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;lorem ipsum dolor sit amet consectetur adipisicing elit sed do&quot;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>]</span></span></code></pre>
+<p><strong>But why stop there?</strong> If you've been following the logic so far, you might already be ahead of me. There's nothing particularly special about those two fields they just happened to be the ones I needed first. The moment I realized the pattern generalized, the natural next question was: <em><strong>can I just pull everything across? The full row, all the columns, the whole object in everything but name?</strong></em>
+As it turns out yes, mostly. With a bit of care around how you structure things, you can annotate with as many fields from the related model as you need. The machinery doesn't change. You're just asking more of it.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span>json_obj</span><span style="color: #F97583;"> =</span><span> models.JSONObject(</span><span style="color: #FFAB70;">id</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>,</span><span style="color: #FFAB70;"> post</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;post&quot;</span><span>,</span><span style="color: #FFAB70;"> author</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;author&quot;</span><span>,</span><span style="color: #FFAB70;"> body</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;body&quot;</span><span>,</span><span style="color: #FFAB70;"> created_at</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;created_at&quot;</span><span>)</span></span></code></pre>
+<p>JSON has opinions about types, and dates are not among the ones it tolerates. So our created_at field comes back as a string, which is the kind of thing you notice, file away as mildly irritating, and then completely forget about until it bites you in production. It's fixable, and I'll get to it, but it requires a bit more ceremony than I want to get into right now.
+First, let's deal with something simpler. If you're anything like me, you probably already felt a small but persistent annoyance having to spell out every field name twice, once to build the annotation, and again to reference it. It feels like the kind of redundancy that exists only to haunt you the day you add a new field to the model and forget to update both lists.
+There's a better way. This is exactly the sort of problem the <code>Model._meta</code> API was made for, it gives you programmatic access to a model's fields, which means you can stop maintaining that list by hand entirely and just let the model tell you what it knows about itself:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span>json_obj</span><span style="color: #F97583;"> =</span><span> JSONObject(</span><span style="color: #F97583;">**</span><span>{f.name: f.name</span><span style="color: #F97583;"> for</span><span> f</span><span style="color: #F97583;"> in</span><span> Comment._meta.get_fields()})</span></span></code></pre>
+<p>Output:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="json"><span class="giallo-l"><span>[</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 1</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;post 1&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282055+00:00&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;latest_comment&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 7</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;post&quot;</span><span>:</span><span style="color: #79B8FF;"> 1</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;author&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Author 7&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;body&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;lorem ipsum dolor sit amet consectetur adipisicing elit sed do&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282630&quot;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    },</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 2</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;post 2&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282266+00:00&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;latest_comment&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 6</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;post&quot;</span><span>:</span><span style="color: #79B8FF;"> 2</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;author&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Author 6&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;body&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;lorem ipsum dolor sit amet consectetur adipisicing elit sed do&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282627&quot;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    },</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 3</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;post 3&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282273+00:00&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;latest_comment&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 8</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;post&quot;</span><span>:</span><span style="color: #79B8FF;"> 3</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;author&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Author 8&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;body&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;lorem ipsum dolor sit amet consectetur adipisicing elit sed do&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282633&quot;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    },</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 4</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;post 4&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282277+00:00&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;latest_comment&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 9</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;post&quot;</span><span>:</span><span style="color: #79B8FF;"> 4</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;author&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Author 9&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;body&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;lorem ipsum dolor sit amet consectetur adipisicing elit sed do&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282635&quot;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>]</span></span></code></pre>
+<p>This has all the same limitations as before strings where dates should be, the whole JSON impedance mismatch lurking underneath. But at least we're no longer maintaining a redundant field list by hand, and swapping in a different model is now a one-line change.
+Still, we're not quite where we said we'd end up. If you cast your mind back to the intro, We don't need dictionaries but actual model instances, real objects, with methods, with properly typed fields, with all the affordances you'd normally expect from the ORM. Something you could hand off to existing code and have it just work, none the wiser about how it was obtained.
+So let's talk about how to get there.</p>
+<h1 id="rethinking-the-problem"><a class="zola-anchor" href="#rethinking-the-problem" aria-label="Anchor link for: rethinking-the-problem">Rethinking the Problem</a></h1>
+<p>I like thinking about the Django ORM in terms of layers. On one end, there’s the database tables, columns, rows. On the other, there’s the Django model layer Python objects with rich types and attributes. The trick is finding the right “middleman” that can translate between these layers.</p>
+<p>In Django, that middleman is usually a models.Field subclass. These fields know how to convert a database column into the correct Python type. If you’ve used database functions in Django, you’ve probably sprinkled <code>output_field=SomeField()</code> in queries to make things work. That’s exactly what we’ll leverage here.</p>
+<p>We can create a custom field that takes a JSON object from the database—where each key/value pair corresponds to a model field—and turns it into an actual model instance:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> JSONModelField</span><span>(</span><span style="color: #B392F0;">models</span><span>.</span><span style="color: #B392F0;">JSONField</span><span>):</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #79B8FF;"> __init__</span><span>(self, model,</span><span style="color: #F97583;"> *</span><span>args,</span><span style="color: #F97583;"> **</span><span>kwargs):</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        super</span><span>().</span><span style="color: #79B8FF;">__init__</span><span>(</span><span style="color: #F97583;">*</span><span>args,</span><span style="color: #F97583;"> **</span><span>kwargs)</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        self</span><span>.model</span><span style="color: #F97583;"> =</span><span> model</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #B392F0;"> from_db_value</span><span>(self, value, expression, connection):</span></span>
+<span class="giallo-l"><span>        value</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> super</span><span>().from_db_value(value, expression, connection)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        return</span><span style="color: #79B8FF;"> self</span><span>.model(</span><span style="color: #F97583;">**</span><span>value)</span></span></code></pre>
+<p>Plugging this into a <code>Subquery</code> is straightforward:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span>latest_comment_qs</span><span style="color: #F97583;"> =</span><span> Comment.objects.filter(</span><span style="color: #FFAB70;">post</span><span style="color: #F97583;">=</span><span>OuterRef(</span><span style="color: #9ECBFF;">&quot;pk&quot;</span><span>)).order_by(</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;-created_at&quot;</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"><span>    json_obj</span><span style="color: #F97583;"> =</span><span> JSONObject(</span><span style="color: #F97583;">**</span><span>{f.name: f.name</span><span style="color: #F97583;"> for</span><span> f</span><span style="color: #F97583;"> in</span><span> Comment._meta.get_fields()})</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    posts</span><span style="color: #F97583;"> =</span><span> Post.objects.annotate(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        latest_comment</span><span style="color: #F97583;">=</span><span>Subquery(</span></span>
+<span class="giallo-l"><span>            latest_comment_qs.values_list(json_obj)[:</span><span style="color: #79B8FF;">1</span><span>],</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">            output_field</span><span style="color: #F97583;">=</span><span>JSONModelField(Comment),</span></span>
+<span class="giallo-l"><span>        )</span></span>
+<span class="giallo-l"><span>    )</span></span></code></pre>
+<p><strong>OOPS!</strong></p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">ValueError:</span><span style="color: #9ECBFF;"> Cannot assign &quot;1&quot;: &quot;Comment.post&quot; must be a &quot;Post&quot; instance.</span></span></code></pre>
+<p>When a model has a foreign key, the database JSON usually only contains the ID of the related object, not the full object itself. Because foreign keys introduce this relational complexity, the <code>JSONModelField</code> approach cannot reliably construct full related objects. It only works for simple, self contained fields.</p>
+<p>So in our solution, the safest route is to omit foreign keys from the <code>JSON</code> conversion.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> JSONModelField</span><span>(</span><span style="color: #B392F0;">models</span><span>.</span><span style="color: #B392F0;">JSONField</span><span>):</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #79B8FF;"> __init__</span><span>(self, model,</span><span style="color: #F97583;"> *</span><span>args,</span><span style="color: #F97583;"> **</span><span>kwargs):</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        super</span><span>().</span><span style="color: #79B8FF;">__init__</span><span>(</span><span style="color: #F97583;">*</span><span>args,</span><span style="color: #F97583;"> **</span><span>kwargs)</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        self</span><span>.model</span><span style="color: #F97583;"> =</span><span> model</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #B392F0;"> from_db_value</span><span>(self, value, expression, connection):</span></span>
+<span class="giallo-l"><span>        value</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> super</span><span>().from_db_value(value, expression, connection)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        if not</span><span> value:</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            return</span><span style="color: #79B8FF;"> None</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        field_names</span><span style="color: #F97583;"> =</span><span> {</span></span>
+<span class="giallo-l"><span>            field.name</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            for</span><span> field</span><span style="color: #F97583;"> in</span><span style="color: #79B8FF;"> self</span><span>.model._meta.local_concrete_fields</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            if not</span><span> (field.many_to_one</span><span style="color: #F97583;"> or</span><span> field.one_to_many</span><span style="color: #F97583;"> or</span><span> field.many_to_many)</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        merged_value</span><span style="color: #F97583;"> =</span><span> {k: value.get(k,</span><span style="color: #79B8FF;"> None</span><span>)</span><span style="color: #F97583;"> for</span><span> k</span><span style="color: #F97583;"> in</span><span> field_names}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">        return</span><span style="color: #79B8FF;"> self</span><span>.model(</span><span style="color: #F97583;">**</span><span>merged_value)</span></span></code></pre>
+<p>Output:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="json"><span class="giallo-l"><span>[</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 1</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;post 1&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282055+00:00&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;latest_comment&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 7</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;author&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Author 7&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;body&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;lorem ipsum dolor sit amet consectetur adipisicing elit sed do&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282630&quot;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    },</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 2</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;post 2&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282266+00:00&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;latest_comment&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 6</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;author&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Author 6&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;body&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;lorem ipsum dolor sit amet consectetur adipisicing elit sed do&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282627&quot;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    },</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 3</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;post 3&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282273+00:00&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;latest_comment&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 8</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;author&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Author 8&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;body&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;lorem ipsum dolor sit amet consectetur adipisicing elit sed do&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282633&quot;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    },</span></span>
+<span class="giallo-l"><span>    {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 4</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;title&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;post 4&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282277+00:00&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        &quot;latest_comment&quot;</span><span>: {</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;id&quot;</span><span>:</span><span style="color: #79B8FF;"> 9</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;author&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Author 9&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;body&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;lorem ipsum dolor sit amet consectetur adipisicing elit sed do&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">            &quot;created_at&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;2026-02-19 12:19:18.282635&quot;</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span>]</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">&gt;&gt;</span><span style="color: #79B8FF;"> print</span><span>(</span><span style="color: #79B8FF;">type</span><span>(posts[</span><span style="color: #79B8FF;">1</span><span>].latest_comment.created_at))</span></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;&gt; &lt;class</span><span style="color: #9ECBFF;"> &#39;str&#39;</span><span style="color: #F97583;">&gt;</span></span></code></pre>
+<p>There’s a catch, though. <code>JSON</code> has limited types, so fields like <code>created_at</code> might still come back as strings instead of date objects. Luckily, fields can handle this conversion via <code>to_python()</code>:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> JSONModelField</span><span>(</span><span style="color: #B392F0;">models</span><span>.</span><span style="color: #B392F0;">JSONField</span><span>):</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #79B8FF;"> __init__</span><span>(self, model,</span><span style="color: #F97583;"> *</span><span>args,</span><span style="color: #F97583;"> **</span><span>kwargs):</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        super</span><span>().</span><span style="color: #79B8FF;">__init__</span><span>(</span><span style="color: #F97583;">*</span><span>args,</span><span style="color: #F97583;"> **</span><span>kwargs)</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        self</span><span>.model</span><span style="color: #F97583;"> =</span><span> model</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #B392F0;"> from_db_value</span><span>(self, value, expression, connection):</span></span>
+<span class="giallo-l"><span>        value</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> super</span><span>().from_db_value(value, expression, connection)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        if not</span><span> value:</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            return</span><span style="color: #79B8FF;"> None</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        field_names</span><span style="color: #F97583;"> =</span><span> {</span></span>
+<span class="giallo-l"><span>            field.name</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            for</span><span> field</span><span style="color: #F97583;"> in</span><span style="color: #79B8FF;"> self</span><span>.model._meta.local_concrete_fields</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            if not</span><span> (field.many_to_one</span><span style="color: #F97583;"> or</span><span> field.one_to_many</span><span style="color: #F97583;"> or</span><span> field.many_to_many)</span></span>
+<span class="giallo-l"><span>        }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        merged_value</span><span style="color: #F97583;"> =</span><span> {k: value.get(k,</span><span style="color: #79B8FF;"> None</span><span>)</span><span style="color: #F97583;"> for</span><span> k</span><span style="color: #F97583;"> in</span><span> field_names}</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">        return</span><span style="color: #79B8FF;"> self</span><span>.model(</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            **</span><span>{</span></span>
+<span class="giallo-l"><span>                k:</span><span style="color: #79B8FF;"> self</span><span>.model._meta.get_field(k).to_python(v)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">                for</span><span> k, v</span><span style="color: #F97583;"> in</span><span> merged_value.items()</span></span>
+<span class="giallo-l"><span>            }</span></span>
+<span class="giallo-l"><span>        )</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">&gt;&gt;</span><span style="color: #79B8FF;"> print</span><span>(</span><span style="color: #79B8FF;">type</span><span>(posts[</span><span style="color: #79B8FF;">1</span><span>].latest_comment.created_at))</span></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;&gt; &lt;class</span><span style="color: #9ECBFF;"> &#39;datetime.datetime&#39;</span><span style="color: #F97583;">&gt;</span></span></code></pre>
+<p>Now your <code>Subquery</code> gives real model instances with proper Python types. A small tweak, but a huge payoff.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">&gt;&gt;</span><span style="color: #79B8FF;"> print</span><span>(</span><span style="color: #79B8FF;">type</span><span>(posts[</span><span style="color: #79B8FF;">1</span><span>].latest_comment))</span></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;&gt; &lt;class</span><span style="color: #9ECBFF;"> &#39;Comment&#39;</span><span style="color: #F97583;">&gt;</span></span></code></pre><h1 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">Conclusion</a></h1>
+<p>By really understanding Django’s layered architecture the way the database sits at one end with its tables, columns, and rows, and the Python model layer lives at the other with fully typed objects and rich methods we can take advantage of the middle layer, the fields, to do what they were designed to do: translate between raw database values and Python types. By creating a custom field that knows how to deserialize <code>JSON</code> into model instances, we can take what would otherwise be plain dictionaries or strings and turn them into fully usable Django objects, complete with type safe attributes. This approach preserves all the expressiveness and convenience of the ORM while keeping our queries clean, composable, and predictable. At the same time, we intentionally leave relational fields like foreign keys out of the JSON conversion, because they involve more complex relationships that can’t be fully represented in a flat JSON object, ensuring our solution remains robust and avoids subtle bugs. It’s a small tweak with an outsized payoff: by respecting the boundaries between layers and letting the right “middleman” handle the translation, we can extend Django’s ORM in powerful ways, making it even more flexible, intuitive, and capable of handling sophisticated queries while keeping the resulting model instances fully functional and ready for Python level logic.</p>
+<p>Feel free to follow this link to find the <a rel="external" href="https://github.com/malnossi/django-subquery-full-model">source code</a></p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+<footer class="mt-12 flex flex-col" tabindex="-1" accesskey="_">
+  <div class="mb-2 flex flex-wrap">
+    <span class="block-bg mr-1.5 mb-1.5 rounded-lg px-5 py-1.5">Tags</span>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/django/">Django</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/orm/">ORM</a>
+    
+  </div>
+</footer>
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/magic-wormhole/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Magic Wormhole: The Simple, Secure Way to Teleport Files Between Computers</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/django-update-annotation/" accesskey="."
+    ><span>How to update Queryset with Annotation in Django</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time> Mohamed Nossirat
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+
+  <!-- Begin Body End inject -->
+  
+
+  <script src="https:&#x2F;&#x2F;cdnapp.websitepolicies.net&#x2F;widgets&#x2F;cookies&#x2F;mzad7vzz.js" defer></script>
+
+
+
+<script>
+  // If your cookie widget exposes callbacks, flip GA consent when accepted.
+  // Adjust to your provider’s API.
+  window.addEventListener('CookieConsentAccepted', function () {
+    if (window.gtag) {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  });
+</script>
+  <!-- End Body End inject -->
+</body>
+
+</html>

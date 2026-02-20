@@ -1,0 +1,454 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Embedding a Vuetify Frontend into a Go Web Server</title>
+  <meta property="og:title" content="Embedding a Vuetify Frontend into a Go Web Server" />
+  <meta name="description" content="Vuetify adds a Material Design look to Vue apps, and Go 1.25’s embed package lets you ship static assets in a single binary.  Here you’ll see how to serve a Vuetify SPA from Go using net/http, Gin and…" />
+  <meta property="og:description" content="Vuetify adds a Material Design look to Vue apps, and Go 1.25’s embed package lets you ship static assets in a single binary.  Here you’ll see how to serve a Vuetify SPA from Go using net/http, Gin and Fiber, with pros and cons of each method" />
+  <meta property="og:url" content="https://malnossi.github.io/blog/golang-vuetify-embedded/" />
+  <link rel="canonical" href="https://malnossi.github.io/blog/golang-vuetify-embedded/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2025-10-02T00:00:00+00:00" />
+  <meta property="article:tag" content="Vuejs" />
+  <meta property="article:tag" content="Vuetify" />
+  <meta property="article:tag" content="Javascript" />
+  <meta property="article:tag" content="Go" />
+  <meta property="og:image" content="https://malnossi.github.io/goembed.png" />
+  <meta property="og:image:alt" content="" />
+  <meta property="og:image:width" content="1024" />
+  <meta property="og:image:height" content="1024" />
+  <meta property="og:image:type" content="image/png" />
+  <link rel="alternate" type="application/atom+xml" href="https://malnossi.github.io/atom.xml" title="Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://malnossi.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://malnossi.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #f4f4f5; --header: #e4e4e7;} :root.dark{--bg: #18181b; --header: #27272a;}</style>
+  <meta name="theme-color" data-light="#e4e4e7" data-dark="#27272a" content="#e4e4e7" />
+  <link rel="icon" type="image/x-icon" href="https://malnossi.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" type="image/png" href="https://malnossi.github.io/apple-touch-icon.png?h=58bee300054c5308feb3" />
+  <link rel="icon" type="image/png" href="https://malnossi.github.io/android-icon.png?h=8d80ec95446bd2c36826" />
+  <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+<meta name="author" content="Mohamed Nossirat©">
+<meta property="article:author" content="Mohamed Nossirat©">
+<meta name="twitter:creator" content="Mohamed Nossirat©">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+<script>
+  // (Optional) default deny until consent tool flips it to granted
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('consent', 'default', { analytics_storage: 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-8LBRDGLXJV', {
+    anonymize_ip: true
+  });
+</script>
+
+
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <button type="button" title="Go to home page [Alt + !]" accesskey="!"
+          onclick="window.location.href='https://malnossi.github.io/';"
+          class="btn-home h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-home,url(icons/home.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Open search [Alt + /]" accesskey="/"
+          onclick="window.zolaTheme.search.toggle();"
+          class="btn-search ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-search,url(icons/search.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/blog/"
+          >Blog</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/talks/"
+          >Talks</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/tags/"
+          >Tags</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+      <!-- Search -->
+<div id="linkita-search-wrapper" class="hidden">
+  <ul id="linkita-search-results"></ul>
+</div>
+<script>window.zolaTheme.search.init({ scripts: ["https://malnossi.github.io/elasticlunr.min.js", "https://malnossi.github.io/search_index.en.js"], arg: { w: "#linkita-search-wrapper", r: "#linkita-search-results" } });</script>
+
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Embedding a Vuetify Frontend into a Go Web Server</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2025-10-02T00:00:00+00:00">2025-10-02</time><span
+        class="middot"></span><time
+    datetime="PT0H5M0S">5&nbsp;min</time><span
+      class="middot"></span><span>Mohamed Nossirat</span>
+</div>
+
+  </header>
+  <figure class="mt-0 mb-12">
+    <img
+      class="h-auto w-full rounded-lg"
+      src="https://malnossi.github.io/goembed.png"
+      width="1024"
+      height="1024"
+    />
+  </figure>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#introduction">Introduction</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#building-the-vuetify-frontend">Building the Vuetify frontend</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#approach-1-serving-the-spa-with-the-go-standard-library">Approach 1 – Serving the SPA with the Go standard library</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#pros">Pros</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#cons">Cons</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#approach-2-serving-the-spa-with-gin">Approach 2 – Serving the SPA with Gin</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#pros-of-using-gin">Pros of using Gin</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#cons-1">Cons</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#performance-considerations">Performance considerations</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#choosing-the-right-approach">Choosing the right approach</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#conclusion">Conclusion</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><h2 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h2>
+<p>Vuetify is a Material‑Design component library for Vue. The official site describes it as a "no‑design‑skills required Open Source UI library with beautifully handcrafted Vue components". It comes with more than seventy components, automatic tree shaking, RTL support, form validation and even internationalisation for 45 languages. Because it follows Google’s Material guidelines and supports server‑side rendering (SSR) and Nuxt a Vuetify SPA makes an excellent companion for a Go back‑end.</p>
+<p>Modern Go can embed static files directly into the binary using the embed package introduced in Go 1.16. This allows us to compile a single executable that serves both the API and the front‑end. This article shows how to create a Vuetify frontend (using Vite or the CLI) and then explores three ways to host the resulting dist directory with Go:</p>
+<ol>
+<li>
+<p>Using the Go standard library (net/http)</p>
+</li>
+<li>
+<p>Using Gin, a popular HTTP framework with an opinionated API</p>
+</li>
+<li>
+<p>Using Fiber, a high‑performance framework inspired by Express.js</p>
+</li>
+</ol>
+<p>Along the way we will discuss the pros and cons of each method and when you might prefer one over another. The style used here takes inspiration from my existing posts: conversational, example‑driven and focused on practical code.</p>
+<h2 id="building-the-vuetify-frontend"><a class="zola-anchor" href="#building-the-vuetify-frontend" aria-label="Anchor link for: building-the-vuetify-frontend">Building the Vuetify frontend</a></h2>
+<p>First create the Vue/Vuetify project. Vuetify provides a CLI (npm create vuetify) or you can add it to an existing Vue project via Vite. For example:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #6A737D;"># create a new Vue 3 project and move into it</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">pnpm</span><span style="color: #9ECBFF;"> create vue@latest</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">cd</span><span style="color: #9ECBFF;"> my-vuetify-app</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;"># install Vuetify and its peer dependencies</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">pnpm</span><span style="color: #9ECBFF;"> add vuetify @vuetify/plugin-vuetify</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;"># enable Vuetify in vite.config.js</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">//</span><span style="color: #9ECBFF;"> vite.config.js</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">import</span><span style="color: #9ECBFF;"> { createVuetify } from &#39;vuetify&#39;</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">import</span><span style="color: #79B8FF;"> *</span><span style="color: #9ECBFF;"> as components from &#39;vuetify/components&#39;</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">import</span><span style="color: #79B8FF;"> *</span><span style="color: #9ECBFF;"> as directives from &#39;vuetify/directives&#39;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">export</span><span> default defineConfig({</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">  plugins:</span><span> [</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    vue</span><span>(),</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">    vuetify(</span><span style="color: #9ECBFF;">{</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">      components,</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">      directives,</span></span>
+<span class="giallo-l"><span>    }),</span></span>
+<span class="giallo-l"><span>  ],</span></span>
+<span class="giallo-l"><span>})</span></span>
+<span class="giallo-l"></span></code></pre>
+<p>Vuetify’s default preset already includes the Roboto font and Material Design icons. If you opt to embed everything via CDN, remember to include the required fonts and CSS in the <head> and load the Vue and Vuetify scripts at the bottom of the page.
+Once you’re happy with the UI, build the project:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">pnpm</span><span style="color: #9ECBFF;"> run build</span><span style="color: #6A737D;"> # produces a dist directory with index.html and assets</span></span>
+<span class="giallo-l"></span></code></pre>
+<p>The resulting dist/ directory is what we will embed into our Go application.</p>
+<h2 id="approach-1-serving-the-spa-with-the-go-standard-library"><a class="zola-anchor" href="#approach-1-serving-the-spa-with-the-go-standard-library" aria-label="Anchor link for: approach-1-serving-the-spa-with-the-go-standard-library">Approach 1 – Serving the SPA with the Go standard library</a></h2>
+<p>Go’s net/http package is minimal and gives you full control of the HTTP server. By combining it with the embed package, you can build a single binary that contains the front‑end assets. Below is a simplified example:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="go"><span class="giallo-l"><span style="color: #F97583;">package</span><span style="color: #B392F0;"> main</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">import</span><span> (</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;</span><span style="color: #B392F0;">embed</span><span style="color: #9ECBFF;">&quot;</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;</span><span style="color: #B392F0;">io/fs</span><span style="color: #9ECBFF;">&quot;</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;</span><span style="color: #B392F0;">log</span><span style="color: #9ECBFF;">&quot;</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;</span><span style="color: #B392F0;">net/http</span><span style="color: #9ECBFF;">&quot;</span></span>
+<span class="giallo-l"><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">//go:embed dist</span></span>
+<span class="giallo-l"><span style="color: #F97583;">var</span><span> embeddedFiles</span><span style="color: #B392F0;"> embed</span><span>.</span><span style="color: #B392F0;">FS</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">func</span><span style="color: #B392F0;"> main</span><span>() {</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    // strip the leading dist/ from the embedded filesystem</span></span>
+<span class="giallo-l"><span>    stripped, err</span><span style="color: #F97583;"> :=</span><span> fs.</span><span style="color: #B392F0;">Sub</span><span>(embeddedFiles,</span><span style="color: #9ECBFF;"> &quot;dist&quot;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span> err</span><span style="color: #F97583;"> !=</span><span style="color: #79B8FF;"> nil</span><span> {</span></span>
+<span class="giallo-l"><span>        log.</span><span style="color: #B392F0;">Fatal</span><span>(err)</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">    // create a file server using http.FS</span></span>
+<span class="giallo-l"><span>    spa</span><span style="color: #F97583;"> :=</span><span> http.</span><span style="color: #B392F0;">FileServer</span><span>(http.</span><span style="color: #B392F0;">FS</span><span>(stripped))</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">    // handle API routes first</span></span>
+<span class="giallo-l"><span>    http.</span><span style="color: #B392F0;">HandleFunc</span><span>(</span><span style="color: #9ECBFF;">&quot;/api/hello&quot;</span><span>,</span><span style="color: #F97583;"> func</span><span>(</span><span style="color: #FFAB70;">w</span><span style="color: #B392F0;"> http</span><span>.</span><span style="color: #B392F0;">ResponseWriter</span><span>,</span><span style="color: #FFAB70;"> r</span><span style="color: #F97583;"> *</span><span style="color: #B392F0;">http</span><span>.</span><span style="color: #B392F0;">Request</span><span>) {</span></span>
+<span class="giallo-l"><span>        w.</span><span style="color: #B392F0;">Header</span><span>().</span><span style="color: #B392F0;">Set</span><span>(</span><span style="color: #9ECBFF;">&quot;Content-Type&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;application/json&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>        w.</span><span style="color: #B392F0;">Write</span><span>([]</span><span style="color: #F97583;">byte</span><span>(</span><span style="color: #9ECBFF;">`{&quot;message&quot;: &quot;Hello from Go!&quot;}`</span><span>))</span></span>
+<span class="giallo-l"><span>    })</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">    // fallback to the SPA for all other routes</span></span>
+<span class="giallo-l"><span>    http.</span><span style="color: #B392F0;">Handle</span><span>(</span><span style="color: #9ECBFF;">&quot;/&quot;</span><span>, spa)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    log.</span><span style="color: #B392F0;">Println</span><span>(</span><span style="color: #9ECBFF;">&quot;Server listening on :8080&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    log.</span><span style="color: #B392F0;">Fatal</span><span>(http.</span><span style="color: #B392F0;">ListenAndServe</span><span>(</span><span style="color: #9ECBFF;">&quot;:8080&quot;</span><span>,</span><span style="color: #79B8FF;"> nil</span><span>))</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span></code></pre>
+<p>The call to <code>fs.Sub</code> strips the dist prefix and <code>http.FileServer</code> serves files from the embedded filesystem. Because we mount the file server at <code>/</code>, any path that is not handled by the API will fall back to the SPA’s <code>index.html</code>. This approach yields a tiny binary with zero external dependencies and maximal control. In fact, the <code>net/http</code> package is extremely fast due to minimal overhead and gives you direct access to <code>request/response</code> handling.</p>
+<h3 id="pros"><a class="zola-anchor" href="#pros" aria-label="Anchor link for: pros">Pros</a></h3>
+<ul>
+<li><strong>Maximal control and no dependencies – you explicitly define routing and middleware.</strong></li>
+<li><strong>Minimal overhead and high performance.</strong></li>
+<li><strong>Good learning exercise – you will gain deeper knowledge of Go’s networking primitives.</strong></li>
+</ul>
+<h3 id="cons"><a class="zola-anchor" href="#cons" aria-label="Anchor link for: cons">Cons</a></h3>
+<ul>
+<li><strong>Routing and middleware quickly become verbose for large applications.</strong></li>
+<li><strong>You must implement features like JSON binding, validation and error handling yourself.</strong></li>
+</ul>
+<blockquote>
+<p>This method suits small services where you need complete control and do not want any framework overhead.</p>
+</blockquote>
+<h2 id="approach-2-serving-the-spa-with-gin"><a class="zola-anchor" href="#approach-2-serving-the-spa-with-gin" aria-label="Anchor link for: approach-2-serving-the-spa-with-gin">Approach 2 – Serving the SPA with Gin</a></h2>
+<p><a rel="external" href="https://gin-gonic.com/">Gin</a> is a popular HTTP framework built around a high‑performance router. It provides concise APIs for routing, middleware, JSON binding and error handling. To embed a front‑end in Gin you still use go:embed, but Gin offers helper functions such as StaticFS and FileFromFS to serve files from an embedded filesystem.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="go"><span class="giallo-l"><span style="color: #F97583;">package</span><span style="color: #B392F0;"> main</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">import</span><span> (</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;</span><span style="color: #B392F0;">embed</span><span style="color: #9ECBFF;">&quot;</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;</span><span style="color: #B392F0;">io/fs</span><span style="color: #9ECBFF;">&quot;</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;</span><span style="color: #B392F0;">net/http</span><span style="color: #9ECBFF;">&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">    &quot;</span><span style="color: #B392F0;">github.com/gin-gonic/gin</span><span style="color: #9ECBFF;">&quot;</span></span>
+<span class="giallo-l"><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">//go:embed dist</span></span>
+<span class="giallo-l"><span style="color: #F97583;">var</span><span> embeddedFiles</span><span style="color: #B392F0;"> embed</span><span>.</span><span style="color: #B392F0;">FS</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">func</span><span style="color: #B392F0;"> main</span><span>() {</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    // create a Gin router with default middleware (logger &amp; recovery)</span></span>
+<span class="giallo-l"><span>    router</span><span style="color: #F97583;"> :=</span><span> gin.</span><span style="color: #B392F0;">Default</span><span>()</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">    // set up API routes</span></span>
+<span class="giallo-l"><span>    router.</span><span style="color: #B392F0;">GET</span><span>(</span><span style="color: #9ECBFF;">&quot;/api/hello&quot;</span><span>,</span><span style="color: #F97583;"> func</span><span>(</span><span style="color: #FFAB70;">c</span><span style="color: #F97583;"> *</span><span style="color: #B392F0;">gin</span><span>.</span><span style="color: #B392F0;">Context</span><span>) {</span></span>
+<span class="giallo-l"><span>        c.</span><span style="color: #B392F0;">JSON</span><span>(http.StatusOK,</span><span style="color: #B392F0;"> gin</span><span>.</span><span style="color: #B392F0;">H</span><span>{</span><span style="color: #9ECBFF;">&quot;message&quot;</span><span>:</span><span style="color: #9ECBFF;"> &quot;Hello from Gin&quot;</span><span>})</span></span>
+<span class="giallo-l"><span>    })</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">    // mount the embedded SPA</span></span>
+<span class="giallo-l"><span>    stripped, err</span><span style="color: #F97583;"> :=</span><span> fs.</span><span style="color: #B392F0;">Sub</span><span>(embeddedFiles,</span><span style="color: #9ECBFF;"> &quot;dist&quot;</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    if</span><span> err</span><span style="color: #F97583;"> !=</span><span style="color: #79B8FF;"> nil</span><span> {</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">        panic</span><span>(err)</span></span>
+<span class="giallo-l"><span>    }</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    // serve static files with a custom handler</span></span>
+<span class="giallo-l"><span>    fileServer</span><span style="color: #F97583;"> :=</span><span> http.</span><span style="color: #B392F0;">FileServer</span><span>(http.</span><span style="color: #B392F0;">FS</span><span>(stripped))</span></span>
+<span class="giallo-l"><span>    router.</span><span style="color: #B392F0;">NoRoute</span><span>(</span><span style="color: #F97583;">func</span><span>(</span><span style="color: #FFAB70;">c</span><span style="color: #F97583;"> *</span><span style="color: #B392F0;">gin</span><span>.</span><span style="color: #B392F0;">Context</span><span>) {</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">        // serve index.html for any route not matched by API routes</span></span>
+<span class="giallo-l"><span>        fileServer.</span><span style="color: #B392F0;">ServeHTTP</span><span>(c.Writer, c.Request)</span></span>
+<span class="giallo-l"><span>    })</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>    router.</span><span style="color: #B392F0;">Run</span><span>(</span><span style="color: #9ECBFF;">&quot;:8080&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>}</span></span>
+<span class="giallo-l"></span></code></pre>
+<p>In this setup, API routes are defined first. <code>NoRoute</code> acts as a catch‑all: if a request does not match an API route it calls the file server, which serves <code>index.html</code> or other static assets. You could also mount the SPA under a prefix using <code>router.StaticFS("/", http.FS(stripped))</code> and avoid route conflicts.</p>
+<h3 id="pros-of-using-gin"><a class="zola-anchor" href="#pros-of-using-gin" aria-label="Anchor link for: pros-of-using-gin">Pros of using Gin</a></h3>
+<ul>
+<li><strong>Rapid development – built‑in routing, middleware and JSON binding accelerate development.</strong></li>
+<li><strong>Readable code – concise API for common web patterns</strong></li>
+<li><strong>Performance and community – Gin’s trie‑based router is extremely fast and the framework has a large ecosystem</strong></li>
+<li><strong>Error handling &amp; recovery – <code>gin.Default()</code> includes logging and panic recovery.</strong></li>
+</ul>
+<h3 id="cons-1"><a class="zola-anchor" href="#cons-1" aria-label="Anchor link for: cons-1">Cons</a></h3>
+<ul>
+<li><strong>Adds an external dependency and introduces Gin‑specific abstractions.</strong></li>
+<li><strong>The framework’s conventions can hide some of the underlying HTTP details, which some developers may find too “magical”.</strong></li>
+</ul>
+<blockquote>
+<p>Use Gin when you need robust routing, middleware and request binding out‑of‑the‑box and are willing to trade a small amount of control for productivity</p>
+</blockquote>
+<h2 id="performance-considerations"><a class="zola-anchor" href="#performance-considerations" aria-label="Anchor link for: performance-considerations">Performance considerations</a></h2>
+<p>All approaches can handle a Vuetify SPA without noticeable latency. Go’s standard library is extremely fast because there is virtually no framework overhead. Gin introduces a small overhead but still ranks among the fastest frameworks. However, real‑world performance differences are often negligible compared to other factors like database calls, API logic and network latency.</p>
+<h2 id="choosing-the-right-approach"><a class="zola-anchor" href="#choosing-the-right-approach" aria-label="Anchor link for: choosing-the-right-approach">Choosing the right approach</a></h2>
+<ol>
+<li><strong>Small microservice or learning exercise</strong> – use net/http. You’ll write more boilerplate but gain mastery over Go’s HTTP primitives. Embedding the SPA is trivial and there are no dependencies.</li>
+<li><strong>General web API or REST service</strong> – use Gin. It provides robust routing, middleware, validation and has a large ecosystem. Embedding the SPA requires only a few extra lines and you get better error handling.</li>
+</ol>
+<h2 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">Conclusion</a></h2>
+<p>By combining Vuetify’s polished Material‑Design components with Go’s powerful HTTP stack, you can deliver fast, responsive single‑page applications from a single binary. Start by building your Vuetify front‑end, then choose the Go serving approach that best fits your project:</p>
+<ul>
+<li>
+<p><strong>The standard library provides raw speed and maximum control but demands more boilerplate.</strong></p>
+</li>
+<li>
+<p><strong>Gin gives you features and conciseness at the cost of extra dependencies.</strong></p>
+</li>
+</ul>
+<p>Whichever path you choose, the embed package makes it trivial to package your Vue/Vuetify build inside the Go binary, enabling self‑contained deployments and a seamless developer experience.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+<footer class="mt-12 flex flex-col" tabindex="-1" accesskey="_">
+  <div class="mb-2 flex flex-wrap">
+    <span class="block-bg mr-1.5 mb-1.5 rounded-lg px-5 py-1.5">Tags</span>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/vuejs/">Vuejs</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/vuetify/">Vuetify</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/javascript/">Javascript</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/go/">Go</a>
+    
+  </div>
+</footer>
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/serve-side-events-golang/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>Real Time Chat System With Golang, Redis and Server Side Events</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/django-drf-generic-user/" accesskey="."
+    ><span>Django &amp; DRF Model Generic Auth Stuff</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time> Mohamed Nossirat
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+
+  <!-- Begin Body End inject -->
+  
+
+  <script src="https:&#x2F;&#x2F;cdnapp.websitepolicies.net&#x2F;widgets&#x2F;cookies&#x2F;mzad7vzz.js" defer></script>
+
+
+
+<script>
+  // If your cookie widget exposes callbacks, flip GA consent when accepted.
+  // Adjust to your provider’s API.
+  window.addEventListener('CookieConsentAccepted', function () {
+    if (window.gtag) {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  });
+</script>
+  <!-- End Body End inject -->
+</body>
+
+</html>

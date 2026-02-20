@@ -1,0 +1,638 @@
+<!doctype html>
+<html class="not-ready lg:text-base overflow-y-scroll scroll-pt-14 scheme-light dark:scheme-dark" lang="en">
+
+<head prefix="og: https://ogp.me/ns# article: https://ogp.me/ns/article#">
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="generator" content="Zola v0.21.0" />
+  <title>Export PostgreSQL data to CSV with Django</title>
+  <meta property="og:title" content="Export PostgreSQL data to CSV with Django" />
+  <meta name="description" content="Building scalable back‑ends requires smart data ingestion. This guide shows how to stream large query to csv file from PostgreSQL with Django. It compares performance and memory to get the best soluti…" />
+  <meta property="og:description" content="Building scalable back‑ends requires smart data ingestion. This guide shows how to stream large query to csv file from PostgreSQL with Django. It compares performance and memory to get the best solution to your use case" />
+  <meta property="og:url" content="https://malnossi.github.io/blog/export-postgres-with-django/" />
+  <link rel="canonical" href="https://malnossi.github.io/blog/export-postgres-with-django/" />
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="2026-02-09T00:00:00+00:00" />
+  <meta property="article:tag" content="Django" />
+  <meta property="article:tag" content="PostgreSQL" />
+  <meta property="article:tag" content="Data" />
+  <meta property="article:tag" content="CSV" />
+  <meta property="og:image" content="https://malnossi.github.io/django-csv.webp" />
+  <meta property="og:image:alt" content="" />
+  <meta property="og:image:width" content="1280" />
+  <meta property="og:image:height" content="720" />
+  <meta property="og:image:type" content="image/webp" />
+  <link rel="alternate" type="application/atom+xml" href="https://malnossi.github.io/atom.xml" title="Atom" />
+  <!-- Begin Head inject -->
+  
+  <!-- End Head inject -->
+  <link rel="stylesheet" href="https://malnossi.github.io/main.min.css?h=f79a14e535af7e826ab7" />
+  <link rel="stylesheet" href="https://malnossi.github.io/icons.css?h=7dd5ab449fa840fc01e2" />
+  <style>:root{--bg: #f4f4f5; --header: #e4e4e7;} :root.dark{--bg: #18181b; --header: #27272a;}</style>
+  <meta name="theme-color" data-light="#e4e4e7" data-dark="#27272a" content="#e4e4e7" />
+  <link rel="icon" type="image/x-icon" href="https://malnossi.github.io/favicon.ico" />
+  <link rel="apple-touch-icon" type="image/png" href="https://malnossi.github.io/apple-touch-icon.png?h=58bee300054c5308feb3" />
+  <link rel="icon" type="image/png" href="https://malnossi.github.io/android-icon.png?h=8d80ec95446bd2c36826" />
+  <script src="https://malnossi.github.io/js/zola-theme.min.js?h=26975b146d48e6ff41af"></script>
+  <!-- Begin Head End inject -->
+  
+<meta name="author" content="Mohamed Nossirat©">
+<meta property="article:author" content="Mohamed Nossirat©">
+<meta name="twitter:creator" content="Mohamed Nossirat©">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-8LBRDGLXJV"></script>
+<script>
+  // (Optional) default deny until consent tool flips it to granted
+  window.dataLayer = window.dataLayer || [];
+  function gtag() { dataLayer.push(arguments); }
+  gtag('consent', 'default', { analytics_storage: 'denied' });
+  gtag('js', new Date());
+  gtag('config', 'G-8LBRDGLXJV', {
+    anonymize_ip: true
+  });
+</script>
+
+
+  <!-- End Head End inject -->
+</head>
+
+<body class="text-black duration-100 ease-out dark:text-white">
+  <!-- Header -->
+<header class="header fixed top-0 z-40 mx-auto min-h-13 w-full">
+  <div class="mx-auto w-full max-w-4xl p-2.5 lg:flex lg:justify-between">
+    <div class="flex justify-between">
+      <div class="flex items-center min-h-8 overflow-hidden">
+        <button type="button" title="Go to home page [Alt + !]" accesskey="!"
+          onclick="window.location.href='https://malnossi.github.io/';"
+          class="btn-home h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-home,url(icons/home.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Switch color scheme [Alt + $]" accesskey="$"
+          onclick="window.zolaTheme.color.toggle();"
+          class="btn-dark ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-btn-dark,url(icons/btn-dark.svg))]
+            dark:[background-image:var(--icons-btn-light,url(icons/btn-light.svg))] dark:invert"
+        ></button>
+        <button type="button" title="Open search [Alt + /]" accesskey="/"
+          onclick="window.zolaTheme.search.toggle();"
+          class="btn-search ml-4 h-6 w-6 shrink-0 cursor-pointer text-[0px]
+            bg-center bg-no-repeat bg-cover [background-image:var(--icons-search,url(icons/search.svg))] dark:invert"
+        ></button>
+      </div>
+      <div title="Toggle menu [Alt + `+`]" role="button" accesskey="+" tabindex="0"
+        class="btn-menu relative z-50 flex h-8 w-8 shrink-0 cursor-pointer select-none flex-col items-center justify-center gap-2.5 lg:hidden"
+        onclick="window.zolaTheme.menu.toggleHeader();"
+        onkeydown="(event.keyCode == 13 || event.keyCode == 32) ? event.preventDefault() || window.zolaTheme.menu.toggleHeader() : true;"
+      ></div>
+    </div>
+    <nav class="flex w-full items-center lg:w-auto">
+      <menu
+        class="nav-wrapper flex w-full flex-col py-2 lg:w-auto lg:flex-row lg:self-center lg:py-0">
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/blog/"
+          >Blog</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/talks/"
+          >Talks</a>
+        </li>
+        <li>
+          <a
+            class="primary-link block py-2 text-center text-lg font-medium lg:px-3 lg:py-0"
+            href="https://malnossi.github.io/tags/"
+          >Tags</a>
+        </li>
+      </menu>
+      <!-- Begin Header Nav inject -->
+      
+      <!-- End Header Nav inject -->
+    </nav>
+  </div>
+</header>
+
+  <!-- Begin Body Start inject -->
+  
+  <!-- End Body Start inject -->
+  <main class="prose prose-neutral dark:prose-invert prose-pre:rounded-lg prose-img:rounded-lg
+    relative mx-auto min-h-[calc(100vh-4rem)] max-w-3xl px-4 pt-28 lg:pt-32 pb-12 wrap-break-word">
+      <!-- Search -->
+<div id="linkita-search-wrapper" class="hidden">
+  <ul id="linkita-search-results"></ul>
+</div>
+<script>window.zolaTheme.search.init({ scripts: ["https://malnossi.github.io/elasticlunr.min.js", "https://malnossi.github.io/search_index.en.js"], arg: { w: "#linkita-search-wrapper", r: "#linkita-search-results" } });</script>
+
+    
+<article>
+  <!-- Begin Page Start inject -->
+  
+  <!-- End Page Start inject -->
+
+  <header class="mb-16">
+    <h1 class="my-0! pb-2.5">Export PostgreSQL data to CSV with Django</h1>
+    <!-- Page Info -->
+<div class="text-sm antialiased opacity-80"><time
+      datetime="2026-02-09T00:00:00+00:00">2026-02-09</time><span
+        class="middot"></span><time
+    datetime="PT0H5M0S">5&nbsp;min</time><span
+      class="middot"></span><span>Mohamed Nossirat</span>
+</div>
+
+  </header>
+  <figure class="mt-0 mb-12">
+    <img
+      class="h-auto w-full rounded-lg"
+      src="https://malnossi.github.io/django-csv.webp"
+      width="1280"
+      height="720"
+    />
+  </figure>
+  <!-- TOC -->
+<nav class="block-bg prose-a:secondary-link mb-12 rounded-lg p-2 text-lg">
+  <details>
+    <summary class="select-none py-0.5 lg:py-1 pl-3.5" title="[Alt + =]" accesskey="=">
+      <span class="cursor-pointer ml-0.5">Table of Contents</span>
+    </summary>
+    <ul class="ps-8">
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#introduction">Introduction</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#case-overview">Case Overview</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#models">Models</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#data-seed">Data seed</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#metrics">Metrics</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#measuring-time">Measuring Time</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#measuring-memory">Measuring Memory</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#metrics-middleware">Metrics Middleware</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#what-are-we-trying-to-achieve">What are we trying to achieve ?</a>
+        <ul>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#first-solution-using-all">First Solution using .all()</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#second-solution-using-values">Second Solution using .values()</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#third-solution-using-iterator">Third Solution using .iterator()</a>
+          </li>
+          <li class="ps-0.5">
+            <a class="no-underline hover:underline" href="#fourth-solution-using-copy">Fourth Solution using COPY</a>
+          </li>
+        </ul>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#summary">Summary</a>
+      </li>
+      <li class="ps-0.5">
+        <a class="no-underline hover:underline" href="#conclusion">Conclusion</a>
+      </li>
+    </ul>
+  </details>
+</nav>
+
+  <!-- Content -->
+  <section><h1 id="introduction"><a class="zola-anchor" href="#introduction" aria-label="Anchor link for: introduction">Introduction</a></h1>
+<p>One day, the product manager at the company I was working for came to me with what sounded like a walk in the park.
+<em><strong>“Can you add a button,”</strong></em> he said, <em><strong>“so I can export some database data for KPIs?”</strong></em></p>
+<p>Sure. Easy win. I added the button, pushed the code, and everyone walked away smiling. It felt like the stars had aligned.</p>
+<p>But as anyone who’s been in this business knows, software has a habit of hiding landmines under freshly paved roads.</p>
+<p>The very next day, the same product manager came back, wearing that familiar look <strong>the one that says something went wrong, and it’s probably your fault.</strong></p>
+<p><em><strong>“When I press the button,the app freezes… and then crashes.”</strong></em>, he said.</p>
+<p>Of course it did. Because in our line of work, nothing is ever just a button. What looks like a simple click can turn into a runaway freight train once it hits the database.</p>
+<p>Still, we live and learn. We trip, we debug, we refactor. So let’s tell this story the right way, one where the developer sharpens their tools, the project manager sleeps at night, and the readers walk away wiser than before. Because after all, every crash is just a lesson in disguise wrapped in a stack trace.</p>
+<h1 id="case-overview"><a class="zola-anchor" href="#case-overview" aria-label="Anchor link for: case-overview">Case Overview</a></h1>
+<p>Let's imagine we have a <a rel="external" href="https://en.wikipedia.org/wiki/Computerized_maintenance_management_system">CMMS</a> system. Here, we'll take the simplest case. We have a locations table, an assets table, a task table, and a table to display the users who in charge to the tasks.
+<img src="/cmms-diagram.jpeg" alt="image" /></p>
+<h1 id="models"><a class="zola-anchor" href="#models" aria-label="Anchor link for: models">Models</a></h1>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.db</span><span style="color: #F97583;"> import</span><span> models</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> Location</span><span>(</span><span style="color: #B392F0;">models</span><span>.</span><span style="color: #B392F0;">Model</span><span>):</span></span>
+<span class="giallo-l"><span>    name</span><span style="color: #F97583;"> =</span><span> models.CharField(</span><span style="color: #FFAB70;">max_length</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">100</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    class</span><span style="color: #B392F0;"> Meta</span><span>:</span></span>
+<span class="giallo-l"><span>        db_table</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;locations&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> Asset</span><span>(</span><span style="color: #B392F0;">models</span><span>.</span><span style="color: #B392F0;">Model</span><span>):</span></span>
+<span class="giallo-l"><span>    name</span><span style="color: #F97583;"> =</span><span> models.CharField(</span><span style="color: #FFAB70;">max_length</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">100</span><span>)</span></span>
+<span class="giallo-l"><span>    description</span><span style="color: #F97583;"> =</span><span> models.TextField()</span></span>
+<span class="giallo-l"><span>    location</span><span style="color: #F97583;"> =</span><span> models.ForeignKey(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        to</span><span style="color: #F97583;">=</span><span>Location,</span><span style="color: #FFAB70;"> on_delete</span><span style="color: #F97583;">=</span><span>models.</span><span style="color: #79B8FF;">PROTECT</span><span>,</span><span style="color: #FFAB70;"> related_name</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;assets&quot;</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    class</span><span style="color: #B392F0;"> Meta</span><span>:</span></span>
+<span class="giallo-l"><span>        db_table</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;assets&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> Task</span><span>(</span><span style="color: #B392F0;">models</span><span>.</span><span style="color: #B392F0;">Model</span><span>):</span></span>
+<span class="giallo-l"><span>    title</span><span style="color: #F97583;"> =</span><span> models.CharField(</span><span style="color: #FFAB70;">max_length</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">100</span><span>)</span></span>
+<span class="giallo-l"><span>    description</span><span style="color: #F97583;"> =</span><span> models.TextField()</span></span>
+<span class="giallo-l"><span>    done</span><span style="color: #F97583;"> =</span><span> models.BooleanField(</span><span style="color: #FFAB70;">default</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">False</span><span>)</span></span>
+<span class="giallo-l"><span>    asset</span><span style="color: #F97583;"> =</span><span> models.ForeignKey(</span><span style="color: #FFAB70;">to</span><span style="color: #F97583;">=</span><span>Asset,</span><span style="color: #FFAB70;"> on_delete</span><span style="color: #F97583;">=</span><span>models.</span><span style="color: #79B8FF;">PROTECT</span><span>,</span><span style="color: #FFAB70;"> related_name</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    created_by</span><span style="color: #F97583;"> =</span><span> models.ForeignKey(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        to</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;User&quot;</span><span>,</span><span style="color: #FFAB70;"> on_delete</span><span style="color: #F97583;">=</span><span>models.</span><span style="color: #79B8FF;">PROTECT</span><span>,</span><span style="color: #FFAB70;"> related_name</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;+&quot;</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"><span>    updated_by</span><span style="color: #F97583;"> =</span><span> models.ForeignKey(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">        to</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;User&quot;</span><span>,</span><span style="color: #FFAB70;"> on_delete</span><span style="color: #F97583;">=</span><span>models.</span><span style="color: #79B8FF;">PROTECT</span><span>,</span><span style="color: #FFAB70;"> related_name</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;+&quot;</span><span>,</span><span style="color: #FFAB70;"> null</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">True</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    class</span><span style="color: #B392F0;"> Meta</span><span>:</span></span>
+<span class="giallo-l"><span>        db_table</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;tasks&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> User</span><span>(</span><span style="color: #B392F0;">models</span><span>.</span><span style="color: #B392F0;">Model</span><span>):</span></span>
+<span class="giallo-l"><span>    username</span><span style="color: #F97583;"> =</span><span> models.CharField(</span><span style="color: #FFAB70;">max_length</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">100</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    class</span><span style="color: #B392F0;"> Meta</span><span>:</span></span>
+<span class="giallo-l"><span>        db_table</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;users&quot;</span></span>
+<span class="giallo-l"></span></code></pre><h1 id="data-seed"><a class="zola-anchor" href="#data-seed" aria-label="Anchor link for: data-seed">Data seed</a></h1>
+<p>Below is a complete Django management command to create <strong>50</strong> Locations, <strong>100</strong> Users, <strong>300</strong> Assets, and <strong>100000</strong> tasks</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">import</span><span> random</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.db</span><span style="color: #F97583;"> import</span><span> transaction</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.utils</span><span style="color: #F97583;"> import</span><span> lorem_ipsum</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.core.management.base</span><span style="color: #F97583;"> import</span><span> BaseCommand</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> cmms.models</span><span style="color: #F97583;"> import</span><span> Location, Asset, Task, User</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> Command</span><span>(</span><span style="color: #B392F0;">BaseCommand</span><span>):</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    help</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;Seed database with locations, assets, users and tasks&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #B392F0;"> handle</span><span>(self,</span><span style="color: #F97583;"> *</span><span>args,</span><span style="color: #F97583;"> **</span><span>options):</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        self</span><span>.stdout.write(</span><span style="color: #9ECBFF;">&quot;Seeding data...&quot;</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">        with</span><span> transaction.atomic():</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">            # USERS</span></span>
+<span class="giallo-l"><span>            users</span><span style="color: #F97583;"> =</span><span> [User(</span><span style="color: #FFAB70;">username</span><span style="color: #F97583;">=f</span><span style="color: #9ECBFF;">&quot;user_</span><span style="color: #79B8FF;">{</span><span>i</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;">&quot;</span><span>)</span><span style="color: #F97583;"> for</span><span> i</span><span style="color: #F97583;"> in</span><span style="color: #79B8FF;"> range</span><span>(</span><span style="color: #79B8FF;">1</span><span>,</span><span style="color: #79B8FF;"> 101</span><span>)]</span></span>
+<span class="giallo-l"><span>            User.objects.bulk_create(users)</span></span>
+<span class="giallo-l"><span>            users</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> list</span><span>(User.objects.all())</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">            # LOCATIONS</span></span>
+<span class="giallo-l"><span>            locations</span><span style="color: #F97583;"> =</span><span> [Location(</span><span style="color: #FFAB70;">name</span><span style="color: #F97583;">=f</span><span style="color: #9ECBFF;">&quot;Location </span><span style="color: #79B8FF;">{</span><span>i</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;">&quot;</span><span>)</span><span style="color: #F97583;"> for</span><span> i</span><span style="color: #F97583;"> in</span><span style="color: #79B8FF;"> range</span><span>(</span><span style="color: #79B8FF;">1</span><span>,</span><span style="color: #79B8FF;"> 51</span><span>)]</span></span>
+<span class="giallo-l"><span>            Location.objects.bulk_create(locations)</span></span>
+<span class="giallo-l"><span>            locations</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> list</span><span>(Location.objects.all())</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">            # ASSETS</span></span>
+<span class="giallo-l"><span>            assets</span><span style="color: #F97583;"> =</span><span> [</span></span>
+<span class="giallo-l"><span>                Asset(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">                    name</span><span style="color: #F97583;">=f</span><span style="color: #9ECBFF;">&quot;Asset </span><span style="color: #79B8FF;">{</span><span>i</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">                    description</span><span style="color: #F97583;">=</span><span>lorem_ipsum.words(</span><span style="color: #79B8FF;">100</span><span>),</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">                    location</span><span style="color: #F97583;">=</span><span>random.choice(locations),</span></span>
+<span class="giallo-l"><span>                )</span></span>
+<span class="giallo-l"><span style="color: #F97583;">                for</span><span> i</span><span style="color: #F97583;"> in</span><span style="color: #79B8FF;"> range</span><span>(</span><span style="color: #79B8FF;">1</span><span>,</span><span style="color: #79B8FF;"> 301</span><span>)</span></span>
+<span class="giallo-l"><span>            ]</span></span>
+<span class="giallo-l"><span>            Asset.objects.bulk_create(assets)</span></span>
+<span class="giallo-l"><span>            assets</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> list</span><span>(Asset.objects.all())</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">            # TASKS (100,000)</span></span>
+<span class="giallo-l"><span>            tasks</span><span style="color: #F97583;"> =</span><span> []</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            for</span><span> i</span><span style="color: #F97583;"> in</span><span style="color: #79B8FF;"> range</span><span>(</span><span style="color: #79B8FF;">1</span><span>,</span><span style="color: #79B8FF;"> 100_001</span><span>):</span></span>
+<span class="giallo-l"><span>                created_by</span><span style="color: #F97583;"> =</span><span> random.choice(users)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">                # ~70% tasks are done</span></span>
+<span class="giallo-l"><span>                done</span><span style="color: #F97583;"> =</span><span> random.random()</span><span style="color: #F97583;"> &lt;</span><span style="color: #79B8FF;"> 0.7</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">                # updated_by is NULL about 40% of the time</span></span>
+<span class="giallo-l"><span>                updated_by</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> None</span></span>
+<span class="giallo-l"><span style="color: #F97583;">                if</span><span> random.random()</span><span style="color: #F97583;"> &lt;</span><span style="color: #79B8FF;"> 0.6</span><span>:</span></span>
+<span class="giallo-l"><span>                    updated_by</span><span style="color: #F97583;"> =</span><span> random.choice(users)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>                tasks.append(</span></span>
+<span class="giallo-l"><span>                    Task(</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">                        title</span><span style="color: #F97583;">=f</span><span style="color: #9ECBFF;">&quot;Task </span><span style="color: #79B8FF;">{</span><span>i</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;">&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">                        description</span><span style="color: #F97583;">=</span><span>lorem_ipsum.words(</span><span style="color: #79B8FF;">100</span><span>),</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">                        done</span><span style="color: #F97583;">=</span><span>done,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">                        asset</span><span style="color: #F97583;">=</span><span>random.choice(assets),</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">                        created_by</span><span style="color: #F97583;">=</span><span>created_by,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">                        updated_by</span><span style="color: #F97583;">=</span><span>updated_by,</span></span>
+<span class="giallo-l"><span>                    )</span></span>
+<span class="giallo-l"><span>                )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">                # Bulk insert in chunks to avoid memory issues</span></span>
+<span class="giallo-l"><span style="color: #F97583;">                if</span><span> i</span><span style="color: #F97583;"> %</span><span style="color: #79B8FF;"> 5000</span><span style="color: #F97583;"> ==</span><span style="color: #79B8FF;"> 0</span><span>:</span></span>
+<span class="giallo-l"><span>                    Task.objects.bulk_create(tasks)</span></span>
+<span class="giallo-l"><span>                    tasks.clear()</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">                    self</span><span>.stdout.write(</span><span style="color: #F97583;">f</span><span style="color: #9ECBFF;">&quot;Inserted </span><span style="color: #79B8FF;">{</span><span>i</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;"> tasks&quot;</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">            if</span><span> tasks:</span></span>
+<span class="giallo-l"><span>                Task.objects.bulk_create(tasks)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        self</span><span>.stdout.write(</span><span style="color: #79B8FF;">self</span><span>.style.SUCCESS(</span><span style="color: #9ECBFF;">&quot;Seeding completed&quot;</span><span>))</span></span></code></pre><h1 id="metrics"><a class="zola-anchor" href="#metrics" aria-label="Anchor link for: metrics">Metrics</a></h1>
+<p>Throughout this article we are interested in two main metrics: time and memory.</p>
+<h2 id="measuring-time"><a class="zola-anchor" href="#measuring-time" aria-label="Anchor link for: measuring-time">Measuring Time</a></h2>
+<p>To measure time for each method we use the built-in <a rel="external" href="https://docs.python.org/3/library/time.html">time module</a>:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">&gt;&gt;&gt; import</span><span> time</span></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;&gt;&gt;</span><span> start</span><span style="color: #F97583;"> =</span><span> time.perf_counter()</span></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;&gt;&gt;</span><span> time.sleep(</span><span style="color: #79B8FF;">1</span><span>)</span><span style="color: #6A737D;"> # do work</span></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;&gt;&gt;</span><span> elapsed</span><span style="color: #F97583;"> =</span><span> time.perf_counter()</span><span style="color: #F97583;"> -</span><span> start</span></span>
+<span class="giallo-l"><span style="color: #F97583;">&gt;&gt;&gt;</span><span style="color: #79B8FF;"> print</span><span>(</span><span style="color: #F97583;">f</span><span style="color: #9ECBFF;">&#39;Time </span><span style="color: #79B8FF;">{</span><span>elapsed</span><span style="color: #F97583;">:0.4</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;">&#39;</span><span>)</span></span>
+<span class="giallo-l"><span>Time</span><span style="color: #79B8FF;"> 1.001</span></span></code></pre>
+<p>The function <a rel="external" href="https://docs.python.org/3/library/time.html#time.perf_counter">perf_counter</a> provides the clock with the highest available resolution, which makes it ideal for our purposes.</p>
+<h2 id="measuring-memory"><a class="zola-anchor" href="#measuring-memory" aria-label="Anchor link for: measuring-memory">Measuring Memory</a></h2>
+<p>To measure memory consumption, we are going to use the package <a rel="external" href="https://pypi.org/project/memory-profiler/">memory-profiler</a>.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">pip</span><span style="color: #9ECBFF;"> install memory-profiler</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">#or</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">uv</span><span style="color: #9ECBFF;"> add memory-profiler</span></span></code></pre>
+<p>This package provides the memory usage, and the incremental memory usage for each line in the code. This is very useful when optimizing for memory. To illustrate, this is the example provided in PyPI:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span style="color: #B392F0;">$</span><span style="color: #9ECBFF;"> python</span><span style="color: #79B8FF;"> -m</span><span style="color: #9ECBFF;"> memory_profiler example.py</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #B392F0;">Line</span><span style="color: #6A737D;"> #    Mem usage  Increment   Line Contents</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">==============================================</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">     3</span><span style="color: #9ECBFF;">                           @profile</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">     4</span><span style="color: #79B8FF;">      5.97</span><span style="color: #9ECBFF;"> MB</span><span style="color: #79B8FF;">    0.00</span><span style="color: #9ECBFF;"> MB   def my_func</span><span>()</span><span style="color: #9ECBFF;">:</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">     5</span><span style="color: #79B8FF;">     13.61</span><span style="color: #9ECBFF;"> MB</span><span style="color: #79B8FF;">    7.64</span><span style="color: #9ECBFF;"> MB       a =</span><span> [1] </span><span style="color: #F97583;">*</span><span> (</span><span style="color: #B392F0;">10</span><span style="color: #79B8FF;"> ** 6</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">     6</span><span style="color: #79B8FF;">    166.20</span><span style="color: #9ECBFF;"> MB</span><span style="color: #79B8FF;">  152.59</span><span style="color: #9ECBFF;"> MB       b =</span><span> [2] </span><span style="color: #F97583;">*</span><span> (</span><span style="color: #B392F0;">2</span><span style="color: #79B8FF;"> * 10 ** 7</span><span>)</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">     7</span><span style="color: #79B8FF;">     13.61</span><span style="color: #9ECBFF;"> MB</span><span style="color: #79B8FF;"> -152.59</span><span style="color: #9ECBFF;"> MB       del b</span></span>
+<span class="giallo-l"><span style="color: #B392F0;">     8</span><span style="color: #79B8FF;">     13.61</span><span style="color: #9ECBFF;"> MB</span><span style="color: #79B8FF;">    0.00</span><span style="color: #9ECBFF;"> MB       return a</span></span></code></pre>
+<p>The interesting part is the Increment column that shows the additional memory allocated by the code in each line.</p>
+<p>In this article we are interested in the peak memory used by the function. The peak memory is the difference between the starting value of the "Mem usage" column, and the highest value (also known as the "high watermark").</p>
+<h2 id="metrics-middleware"><a class="zola-anchor" href="#metrics-middleware" aria-label="Anchor link for: metrics-middleware">Metrics Middleware</a></h2>
+<p>To put it all together, we create the following middleware to measure and report time and memory:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #6A737D;"># app/middleware.py</span></span>
+<span class="giallo-l"><span style="color: #F97583;">import</span><span> time</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> memory_profiler</span><span style="color: #F97583;"> import</span><span> memory_usage</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">class</span><span style="color: #B392F0;"> RequestTimingMiddleware</span><span>:</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #79B8FF;"> __init__</span><span>(self, get_response):</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        self</span><span>.get_response</span><span style="color: #F97583;"> =</span><span> get_response</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    def</span><span style="color: #79B8FF;"> __call__</span><span>(self, request):</span></span>
+<span class="giallo-l"><span>        start_time</span><span style="color: #F97583;"> =</span><span> time.perf_counter()</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">        def</span><span style="color: #B392F0;"> run_view</span><span>():</span></span>
+<span class="giallo-l"><span style="color: #F97583;">            return</span><span style="color: #79B8FF;"> self</span><span>.get_response(request)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        mem_usage, response</span><span style="color: #F97583;"> =</span><span> memory_usage(</span></span>
+<span class="giallo-l"><span>            (run_view, ()),</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">            interval</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">0.01</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">            timeout</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">None</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">            retval</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">True</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #FFAB70;">            max_usage</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">True</span><span>,</span></span>
+<span class="giallo-l"><span>        )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span>        total_time</span><span style="color: #F97583;"> =</span><span> time.perf_counter()</span><span style="color: #F97583;"> -</span><span> start_time</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #79B8FF;">        print</span><span>(</span><span style="color: #F97583;">f</span><span style="color: #9ECBFF;">&quot;time=</span><span style="color: #79B8FF;">{</span><span>total_time</span><span style="color: #F97583;">:.2f</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;">s &quot;</span><span style="color: #F97583;"> f</span><span style="color: #9ECBFF;">&quot;peak_mem=</span><span style="color: #79B8FF;">{</span><span>mem_usage</span><span style="color: #F97583;">:.2f</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;">MiB&quot;</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">        return</span><span> response</span></span></code></pre><h1 id="what-are-we-trying-to-achieve"><a class="zola-anchor" href="#what-are-we-trying-to-achieve" aria-label="Anchor link for: what-are-we-trying-to-achieve">What are we trying to achieve ?</a></h1>
+<p>For testing and benchmarking purposes, our task is to extract the following information into a CSV file:</p>
+<ul>
+<li>the task ID</li>
+<li>its title,</li>
+<li>the asset name and its location,</li>
+<li>the status (Done / Not Done),</li>
+<li>the name of the user who created the task,</li>
+<li>and the name of the user who last modified it, if it has been modified.</li>
+</ul>
+<h2 id="first-solution-using-all"><a class="zola-anchor" href="#first-solution-using-all" aria-label="Anchor link for: first-solution-using-all">First Solution using <code>.all()</code></a></h2>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">import</span><span> csv</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.http</span><span style="color: #F97583;"> import</span><span> HttpResponse</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> .</span><span style="color: #F97583;"> import</span><span> models</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">def</span><span style="color: #B392F0;"> get_tasks</span><span>(request):</span></span>
+<span class="giallo-l"><span>    res</span><span style="color: #F97583;"> =</span><span> HttpResponse(</span><span style="color: #FFAB70;">content_type</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;text/csv&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    writer</span><span style="color: #F97583;"> =</span><span> csv.writer(res)</span></span>
+<span class="giallo-l"><span>    writer.writerow(</span></span>
+<span class="giallo-l"><span>        (</span><span style="color: #9ECBFF;">&quot;Id&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Title&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Asset&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Asset Location&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Done&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Created By&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Updated By&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"><span>    tasks</span><span style="color: #F97583;"> =</span><span> models.Task.objects.select_related(</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;asset&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;asset__location&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;created_by&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;updated_by&quot;</span></span>
+<span class="giallo-l"><span>    ).all()</span></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    print</span><span>(tasks.query)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    for</span><span> task</span><span style="color: #F97583;"> in</span><span> tasks:</span></span>
+<span class="giallo-l"><span>        writer.writerow(</span></span>
+<span class="giallo-l"><span>            [</span></span>
+<span class="giallo-l"><span>                task.pk,</span></span>
+<span class="giallo-l"><span>                task.title,</span></span>
+<span class="giallo-l"><span>                task.asset.name,</span></span>
+<span class="giallo-l"><span>                task.asset.location.name,</span></span>
+<span class="giallo-l"><span>                task.done,</span></span>
+<span class="giallo-l"><span>                task.created_by.username,</span></span>
+<span class="giallo-l"><span>                task.updated_by.username</span><span style="color: #F97583;"> if</span><span> task.updated_by</span><span style="color: #F97583;"> else</span><span style="color: #79B8FF;"> None</span><span>,</span></span>
+<span class="giallo-l"><span>            ]</span></span>
+<span class="giallo-l"><span>        )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    return</span><span> res</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span>time</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">2.01s</span><span> peak_mem</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">614.06MiB</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="sql"><span class="giallo-l"><span style="color: #F97583;">SELECT</span><span style="color: #9ECBFF;"> &quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;title&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;description&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;done&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;asset_id&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;created_by_id&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;updated_by_id&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;assets&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;assets&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;name&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;assets&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;description&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;assets&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;location_id&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;locations&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;locations&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;name&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;users&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;users&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;username&quot;</span><span>, T5.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>, T5.</span><span style="color: #9ECBFF;">&quot;username&quot;</span><span style="color: #F97583;"> FROM</span><span style="color: #9ECBFF;"> &quot;tasks&quot;</span><span style="color: #F97583;"> INNER JOIN</span><span style="color: #9ECBFF;"> &quot;assets&quot;</span><span style="color: #F97583;"> ON</span><span> (</span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;asset_id&quot;</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;assets&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>) </span><span style="color: #F97583;">INNER JOIN</span><span style="color: #9ECBFF;"> &quot;locations&quot;</span><span style="color: #F97583;"> ON</span><span> (</span><span style="color: #9ECBFF;">&quot;assets&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;location_id&quot;</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;locations&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>) </span><span style="color: #F97583;">INNER JOIN</span><span style="color: #9ECBFF;"> &quot;users&quot;</span><span style="color: #F97583;"> ON</span><span> (</span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;created_by_id&quot;</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;users&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>) </span><span style="color: #F97583;">LEFT OUTER JOIN</span><span style="color: #9ECBFF;"> &quot;users&quot;</span><span> T5 </span><span style="color: #F97583;">ON</span><span> (</span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;updated_by_id&quot;</span><span style="color: #F97583;"> =</span><span> T5.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>)</span></span></code></pre><h2 id="second-solution-using-values"><a class="zola-anchor" href="#second-solution-using-values" aria-label="Anchor link for: second-solution-using-values">Second Solution using <code>.values()</code></a></h2>
+<p>Since there is no need to manipulate Django model instances, the required data can be retrieved directly from the database. Therefore, when exporting to CSV, using <code>.values()</code> is sufficient and preferable to <code>.all()</code>, as it allows us to fetch only the necessary fields without instantiating full model objects.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">import</span><span> csv</span></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> django.http</span><span style="color: #F97583;"> import</span><span> HttpResponse</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">from</span><span> .</span><span style="color: #F97583;"> import</span><span> models</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">def</span><span style="color: #B392F0;"> get_tasks_values</span><span>(request):</span></span>
+<span class="giallo-l"><span>    res</span><span style="color: #F97583;"> =</span><span> HttpResponse(</span><span style="color: #FFAB70;">content_type</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;text/csv&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    writer</span><span style="color: #F97583;"> =</span><span> csv.writer(res)</span></span>
+<span class="giallo-l"><span>    writer.writerow(</span></span>
+<span class="giallo-l"><span>        (</span><span style="color: #9ECBFF;">&quot;ID&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Title&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Asset&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Asset Location&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Done&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Created By&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Updated By&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"><span>    tasks</span><span style="color: #F97583;"> =</span><span> tasks</span><span style="color: #F97583;"> =</span><span> models.Task.objects.values(</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;id&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;title&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;asset__name&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;asset__location__name&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;done&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;created_by__username&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;updated_by__username&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #79B8FF;">    print</span><span>(tasks.query)</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    for</span><span> task</span><span style="color: #F97583;"> in</span><span> tasks:</span></span>
+<span class="giallo-l"><span>        writer.writerow(</span><span style="color: #79B8FF;">list</span><span>(task.values()))</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    return</span><span> res</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span>time</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">0.58s</span><span> peak_mem</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">282.92MiB</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="sql"><span class="giallo-l"><span style="color: #F97583;">SELECT</span><span style="color: #9ECBFF;"> &quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span style="color: #F97583;"> AS</span><span style="color: #9ECBFF;"> &quot;id&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;title&quot;</span><span style="color: #F97583;"> AS</span><span style="color: #9ECBFF;"> &quot;title&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;assets&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;name&quot;</span><span style="color: #F97583;"> AS</span><span style="color: #9ECBFF;"> &quot;asset__name&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;locations&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;name&quot;</span><span style="color: #F97583;"> AS</span><span style="color: #9ECBFF;"> &quot;asset__location__name&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;done&quot;</span><span style="color: #F97583;"> AS</span><span style="color: #9ECBFF;"> &quot;done&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;users&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;username&quot;</span><span style="color: #F97583;"> AS</span><span style="color: #9ECBFF;"> &quot;created_by__username&quot;</span><span>, T5.</span><span style="color: #9ECBFF;">&quot;username&quot;</span><span style="color: #F97583;"> AS</span><span style="color: #9ECBFF;"> &quot;updated_by__username&quot;</span><span style="color: #F97583;"> FROM</span><span style="color: #9ECBFF;"> &quot;tasks&quot;</span><span style="color: #F97583;"> INNER JOIN</span><span style="color: #9ECBFF;"> &quot;assets&quot;</span><span style="color: #F97583;"> ON</span><span> (</span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;asset_id&quot;</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;assets&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>) </span><span style="color: #F97583;">INNER JOIN</span><span style="color: #9ECBFF;"> &quot;locations&quot;</span><span style="color: #F97583;"> ON</span><span> (</span><span style="color: #9ECBFF;">&quot;assets&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;location_id&quot;</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;locations&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>) </span><span style="color: #F97583;">INNER JOIN</span><span style="color: #9ECBFF;"> &quot;users&quot;</span><span style="color: #F97583;"> ON</span><span> (</span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;created_by_id&quot;</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;users&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>) </span><span style="color: #F97583;">LEFT OUTER JOIN</span><span style="color: #9ECBFF;"> &quot;users&quot;</span><span> T5 </span><span style="color: #F97583;">ON</span><span> (</span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;updated_by_id&quot;</span><span style="color: #F97583;"> =</span><span> T5.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>)</span></span></code></pre><h2 id="third-solution-using-iterator"><a class="zola-anchor" href="#third-solution-using-iterator" aria-label="Anchor link for: third-solution-using-iterator">Third Solution using <code>.iterator()</code></a></h2>
+<p>Using <code>iterator()</code> when working with Django QuerySets allows records to be fetched in chunks directly from the database, rather than being fully loaded into memory at once. This significantly reduces memory consumption, especially when handling large datasets such as those involved in CSV exports or data processing tasks.</p>
+<p>Additionally, <code>iterator()</code> bypasses Django’s QuerySet caching mechanism, ensuring that each row is processed only once. This makes it particularly suitable for streaming operations and improves overall performance and scalability when dealing with large volumes of data.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">def</span><span style="color: #B392F0;"> get_tasks_values_iterator</span><span>(request):</span></span>
+<span class="giallo-l"><span>    res</span><span style="color: #F97583;"> =</span><span> HttpResponse(</span><span style="color: #FFAB70;">content_type</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;text/csv&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    writer</span><span style="color: #F97583;"> =</span><span> csv.writer(res)</span></span>
+<span class="giallo-l"><span>    writer.writerow(</span></span>
+<span class="giallo-l"><span>        (</span><span style="color: #9ECBFF;">&quot;ID&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Title&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Asset&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Asset Location&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Done&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Created By&quot;</span><span>,</span><span style="color: #9ECBFF;"> &quot;Updated By&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"><span>    tasks</span><span style="color: #F97583;"> =</span><span> tasks</span><span style="color: #F97583;"> =</span><span> models.Task.objects.values(</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;id&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;title&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;asset__name&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;asset__location__name&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;done&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;created_by__username&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;updated_by__username&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>    ).iterator(</span><span style="color: #FFAB70;">chunk_size</span><span style="color: #F97583;">=</span><span style="color: #79B8FF;">2000</span><span>)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    for</span><span> task</span><span style="color: #F97583;"> in</span><span> tasks:</span></span>
+<span class="giallo-l"><span>        writer.writerow(</span><span style="color: #79B8FF;">list</span><span>(task.values()))</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    return</span><span> res</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span>time</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">0.59s</span><span> peak_mem</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">113.88MiB</span></span></code></pre><h2 id="fourth-solution-using-copy"><a class="zola-anchor" href="#fourth-solution-using-copy" aria-label="Anchor link for: fourth-solution-using-copy">Fourth Solution using <code>COPY</code></a></h2>
+<p>Django QuerySets are lazy, but they have a <code>.query</code> attribute representing the SQL. To see the raw SQL string:</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span>qs</span><span style="color: #F97583;"> =</span><span> models.Task.objects.values(</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;id&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;title&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;asset__name&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;asset__location__name&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;done&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;created_by__username&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;updated_by__username&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #79B8FF;">print</span><span>(</span><span style="color: #79B8FF;">str</span><span>(qs.query))</span></span>
+<span class="giallo-l"></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="sql"><span class="giallo-l"><span style="color: #F97583;">SELECT</span><span style="color: #9ECBFF;"> &quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span style="color: #F97583;"> AS</span><span style="color: #9ECBFF;"> &quot;id&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;title&quot;</span><span style="color: #F97583;"> AS</span><span style="color: #9ECBFF;"> &quot;title&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;assets&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;name&quot;</span><span style="color: #F97583;"> AS</span><span style="color: #9ECBFF;"> &quot;asset__name&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;locations&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;name&quot;</span><span style="color: #F97583;"> AS</span><span style="color: #9ECBFF;"> &quot;asset__location__name&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;done&quot;</span><span style="color: #F97583;"> AS</span><span style="color: #9ECBFF;"> &quot;done&quot;</span><span>, </span><span style="color: #9ECBFF;">&quot;users&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;username&quot;</span><span style="color: #F97583;"> AS</span><span style="color: #9ECBFF;"> &quot;created_by__username&quot;</span><span>, T5.</span><span style="color: #9ECBFF;">&quot;username&quot;</span><span style="color: #F97583;"> AS</span><span style="color: #9ECBFF;"> &quot;updated_by__username&quot;</span><span style="color: #F97583;"> FROM</span><span style="color: #9ECBFF;"> &quot;tasks&quot;</span><span style="color: #F97583;"> INNER JOIN</span><span style="color: #9ECBFF;"> &quot;assets&quot;</span><span style="color: #F97583;"> ON</span><span> (</span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;asset_id&quot;</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;assets&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>) </span><span style="color: #F97583;">INNER JOIN</span><span style="color: #9ECBFF;"> &quot;locations&quot;</span><span style="color: #F97583;"> ON</span><span> (</span><span style="color: #9ECBFF;">&quot;assets&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;location_id&quot;</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;locations&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>) </span><span style="color: #F97583;">INNER JOIN</span><span style="color: #9ECBFF;"> &quot;users&quot;</span><span style="color: #F97583;"> ON</span><span> (</span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;created_by_id&quot;</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &quot;users&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>) </span><span style="color: #F97583;">LEFT OUTER JOIN</span><span style="color: #9ECBFF;"> &quot;users&quot;</span><span> T5 </span><span style="color: #F97583;">ON</span><span> (</span><span style="color: #9ECBFF;">&quot;tasks&quot;</span><span>.</span><span style="color: #9ECBFF;">&quot;updated_by_id&quot;</span><span style="color: #F97583;"> =</span><span> T5.</span><span style="color: #9ECBFF;">&quot;id&quot;</span><span>)</span></span></code></pre>
+<p><code>str(tasks.query)</code> gives the <code>SELECT</code> statement with all joins from <code>.values()</code>.</p>
+<p>Wrapping it in <code>COPY (...) TO STDOUT WITH CSV</code> makes it directly compatible with PostgreSQL’s COPY.</p>
+<pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="python"><span class="giallo-l"><span style="color: #F97583;">from</span><span> django.db</span><span style="color: #F97583;"> import</span><span> connection</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">def</span><span style="color: #B392F0;"> get_tasks_values_copy</span><span>(request):</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # Prepare HTTP response</span></span>
+<span class="giallo-l"><span>    response</span><span style="color: #F97583;"> =</span><span> HttpResponse(</span><span style="color: #FFAB70;">content_type</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">&quot;text/csv&quot;</span><span>)</span></span>
+<span class="giallo-l"><span>    response[</span><span style="color: #9ECBFF;">&quot;Content-Disposition&quot;</span><span>]</span><span style="color: #F97583;"> =</span><span style="color: #9ECBFF;"> &#39;attachment; filename=&quot;tasks.csv&quot;&#39;</span></span>
+<span class="giallo-l"><span>    response.write(</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;,&quot;</span><span>.join(</span></span>
+<span class="giallo-l"><span>            (</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                &quot;ID&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                &quot;Title&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                &quot;Asset&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                &quot;Asset Location&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                &quot;Done&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                &quot;Created By&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">                &quot;Updated By&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>            )</span></span>
+<span class="giallo-l"><span>        )</span></span>
+<span class="giallo-l"><span style="color: #F97583;">        +</span><span style="color: #9ECBFF;"> &quot;</span><span style="color: #79B8FF;">\n</span><span style="color: #9ECBFF;">&quot;</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # Build the QuerySet</span></span>
+<span class="giallo-l"><span>    tasks</span><span style="color: #F97583;"> =</span><span> models.Task.objects.values(</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;id&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;title&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;asset__name&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;asset__location__name&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;done&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;created_by__username&quot;</span><span>,</span></span>
+<span class="giallo-l"><span style="color: #9ECBFF;">        &quot;updated_by__username&quot;</span><span>,</span></span>
+<span class="giallo-l"><span>    )</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # Convert QuerySet to raw SQL string</span></span>
+<span class="giallo-l"><span>    raw_sql</span><span style="color: #F97583;"> =</span><span style="color: #79B8FF;"> str</span><span>(tasks.query)</span></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # Wrap in COPY statement</span></span>
+<span class="giallo-l"><span>    copy_sql</span><span style="color: #F97583;"> = f</span><span style="color: #9ECBFF;">&quot;COPY (</span><span style="color: #79B8FF;">{</span><span>raw_sql</span><span style="color: #79B8FF;">}</span><span style="color: #9ECBFF;">) TO STDOUT WITH CSV&quot;</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #6A737D;">    # Stream CSV directly to response</span></span>
+<span class="giallo-l"><span style="color: #F97583;">    with</span><span> connection.cursor()</span><span style="color: #F97583;"> as</span><span> cursor:</span></span>
+<span class="giallo-l"><span>        cursor.copy_expert(</span><span style="color: #FFAB70;">sql</span><span style="color: #F97583;">=</span><span>copy_sql,</span><span style="color: #FFAB70;"> file</span><span style="color: #F97583;">=</span><span>response)</span></span>
+<span class="giallo-l"></span>
+<span class="giallo-l"><span style="color: #F97583;">    return</span><span> response</span></span></code></pre><pre class="giallo" style="color: #E1E4E8; background-color: #24292E;"><code data-lang="shellscript"><span class="giallo-l"><span>time</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">0.24s</span><span> peak_mem</span><span style="color: #F97583;">=</span><span style="color: #9ECBFF;">80.61MiB</span></span></code></pre><h1 id="summary"><a class="zola-anchor" href="#summary" aria-label="Anchor link for: summary">Summary</a></h1>
+<table><thead><tr><th>Method</th><th>Time</th><th>Memory</th></tr></thead><tbody>
+<tr><td>.all()</td><td>2.01s</td><td>614.06MiB</td></tr>
+<tr><td>.values()</td><td>0.58s</td><td>282.92MiB</td></tr>
+<tr><td>.values().iterator()</td><td>0.59s</td><td>113.88MiB</td></tr>
+<tr><td>COPY query</td><td>0.24s</td><td>80.61MiB</td></tr>
+</tbody></table>
+<h1 id="conclusion"><a class="zola-anchor" href="#conclusion" aria-label="Anchor link for: conclusion">Conclusion</a></h1>
+<p>In this project, multiple approaches were explored to export task data from Django to CSV. Initially, retrieving all task objects with <code>.all()</code> and writing them in Python using the csv module proved straightforward but inefficient, as it instantiated full model objects for each row. Switching to <code>.values()</code> and <code>.values_list()</code> allowed selecting only the required fields, returning dictionaries or tuples instead of full objects, which reduced memory usage and simplified the SQL queries. Finally, generating the raw SQL from the <code>QuerySet</code> and using PostgreSQL’s <code>COPY ... TO STDOUT</code> command enabled direct CSV export from the database, eliminating the need for Python-level iteration and improving overall performance for large datasets.</p>
+</section>
+  <hr />
+  <!-- Post Taxonomies -->
+<footer class="mt-12 flex flex-col" tabindex="-1" accesskey="_">
+  <div class="mb-2 flex flex-wrap">
+    <span class="block-bg mr-1.5 mb-1.5 rounded-lg px-5 py-1.5">Tags</span>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/django/">Django</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/postgresql/">PostgreSQL</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/data/">Data</a>
+    
+    <a
+      class="block-bg block-hover mr-1.5 mb-1.5 rounded-lg px-5 py-1.5 no-underline"
+      href="https://malnossi.github.io/tags/csv/">CSV</a>
+    
+  </div>
+</footer>
+
+  <!-- Post Nav -->
+<nav class="block-bg mt-12 flex flex-wrap rounded-lg text-lg">
+  <a
+    class="block-hover-mask flex min-w-[50%] grow items-center rounded-l-md p-6 pr-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/django-update-annotation/" accesskey=","
+    ><span class="mr-1.5">&#8249;</span><span>How to update Queryset with Annotation in Django</span></a>
+  <a
+    class="block-hover-mask ml-auto flex min-w-[50%] grow items-center justify-end rounded-r-md p-6 pl-3 font-semibold no-underline"
+    href="https://malnossi.github.io/blog/load-data-python-postgres/" accesskey="."
+    ><span>Loading Data with Python into PostgreSQL with Psycopg 3</span><span class="ml-1.5">&#8250;</span></a>
+</nav>
+
+  <!-- Begin Page End inject -->
+  
+  <!-- End Page End inject -->
+</article>
+
+  </main>
+  <!-- Footer -->
+<footer class="mx-auto flex lg:mt-5 max-w-3xl flex-wrap items-center px-4 py-3 text-sm opacity-60">
+  <div class="mr-auto basis-full lg:basis-1/2">
+  © <time datetime="2026">2026</time> Mohamed Nossirat
+  </div>
+  <div class="flex basis-full lg:basis-1/2 lg:justify-end">
+    <span class="mr-6 lg:ml-6">
+      <a class="link" href="https://www.getzola.org/" target="_blank">Powered by Zola</a>
+    </span>
+    <a class="link" href="https://www.getzola.org/themes/linkita/" target="_blank">&#9998; Linkita</a>
+  </div>
+  <!-- Begin Footer inject -->
+  
+  <!-- End Footer inject -->
+</footer>
+
+  
+
+  <!-- Begin Body End inject -->
+  
+
+  <script src="https:&#x2F;&#x2F;cdnapp.websitepolicies.net&#x2F;widgets&#x2F;cookies&#x2F;mzad7vzz.js" defer></script>
+
+
+
+<script>
+  // If your cookie widget exposes callbacks, flip GA consent when accepted.
+  // Adjust to your provider’s API.
+  window.addEventListener('CookieConsentAccepted', function () {
+    if (window.gtag) {
+      gtag('consent', 'update', { analytics_storage: 'granted' });
+    }
+  });
+</script>
+  <!-- End Body End inject -->
+</body>
+
+</html>
