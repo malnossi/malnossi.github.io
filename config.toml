@@ -51,4 +51,5 @@ social = [
     { name = "linkedin", url = "https://linkedin.com/in/mohamed-waheeb-al-nossirat" },
     { name = "github", url = "https://github.com/malnossi" },
     { name = "gitlab", url = "https://gitlab.com/mohamed.w.nossirat" },
+    { name = "mastodon", url = "https://mastodon.social/@malnossi" },
 ]
