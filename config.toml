@@ -6,6 +6,7 @@ compile_sass = true
 
 # Whether to build a search index to be used later on by a JavaScript library
 build_search_index = true
+skip_content_templating = ["blog/**"]
 theme = "linkita"
 author = "mohamed"
 generate_feeds = true
@@ -37,9 +38,10 @@ ga_id = "G-8LBRDGLXJV"
 widget_src = "https://cdnapp.websitepolicies.net/widgets/cookies/mzad7vzz.js"
 [extra.menus]
 menu_name = [
-  { url = "$BASE_URL/blog/", name = "Blog" },
-  { url = "$BASE_URL/talks/", name = "Talks" },
-  { url = "$BASE_URL/tags/", name = "Tags" },
+  { url = "@base/#experience-title", name = "Parcours" },
+  { url = "@base/blog/", name = "Blog" },
+  { url = "@base/talks/", name = "Talks" },
+  { url = "@base/tags/", name = "Tags" },
 ]
 [extra.profiles.mohamed]
 avatar_url = "/photo.jpeg"
